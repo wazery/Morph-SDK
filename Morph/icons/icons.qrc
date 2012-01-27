@@ -1,0 +1,17 @@
+<RCC>
+    <qresource prefix="/new/icons">
+        <file>fileopen.svg</file>
+        <file>ogscene.png</file>
+        <file>filesave.svg</file>
+        <file>filesaveas.svg</file>
+        <file>copy.svg</file>
+        <file>cut.svg</file>
+        <file>move.svg</file>
+        <file>paste.svg</file>
+        <file>rotate.svg</file>
+        <file>scale.svg</file>
+        <file>select.svg</file>
+        <file>translate.svg</file>
+        <file>qtOgitor.svg</file>
+    </qresource>
+</RCC>

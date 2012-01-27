@@ -1,0 +1,19 @@
+<RCC>
+    <qresource prefix="/toolbar">
+        <file>icons/copy.svg</file>
+        <file>icons/cut.svg</file>
+        <file>icons/fileopen.svg</file>
+        <file>icons/filesave.svg</file>
+        <file>icons/filesaveas.svg</file>
+        <file>icons/icons.qrc</file>
+        <file>icons/move.svg</file>
+        <file>icons/ogscene.png</file>
+        <file>icons/paste.svg</file>
+        <file>icons/qtOgitor.svg</file>
+        <file>icons/rotate.svg</file>
+        <file>icons/scale.svg</file>
+        <file>icons/scene.svg</file>
+        <file>icons/select.svg</file>
+        <file>icons/translate.svg</file>
+    </qresource>
+</RCC>
