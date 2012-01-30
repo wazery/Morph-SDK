@@ -5,7 +5,6 @@
         <file>icons/fileopen.svg</file>
         <file>icons/filesave.svg</file>
         <file>icons/filesaveas.svg</file>
-        <file>icons/icons.qrc</file>
         <file>icons/move.svg</file>
         <file>icons/ogscene.png</file>
         <file>icons/paste.svg</file>
@@ -15,5 +14,8 @@
         <file>icons/scene.svg</file>
         <file>icons/select.svg</file>
         <file>icons/translate.svg</file>
+        <file>icons/fileopen2.png</file>
+        <file>icons/ogscene2.png</file>
+        <file>icons/filesave2.png</file>
     </qresource>
 </RCC>

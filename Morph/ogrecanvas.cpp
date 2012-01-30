@@ -1,10 +1,10 @@
-#include "ogrewidget.h"
+#include "ogrecanvas.h"
 #include <QX11Info>
 
-const QPoint     OgreWidget::invalidMousePoint(-1,-1);
-const Ogre::Real OgreWidget::turboModifier(10);
+const QPoint     OgreCanvas::invalidMousePoint(-1, -1);
+const Ogre::Real OgreCanvas::turboModifier(10);
 
-OgreWidget::OgreWidget(QWidget *parent)
+OgreCanvas::OgreCanvas(QWidget *parent)
     :QWidget(parent),
       ogreRoot(0),
       ogreSceneManager(0),
@@ -17,11 +17,11 @@ OgreWidget::OgreWidget(QWidget *parent)
     setAttribute(Qt::WA_OpaquePaintEvent);
     setAttribute(Qt::WA_PaintOnScreen);
 	setAttribute(Qt::WA_InputMethodEnabled);
-    setMinimumSize(240,240);
+    setMinimumSize(240, 240);
     setFocusPolicy(Qt::ClickFocus);
 }
 
-OgreWidget::~OgreWidget()
+OgreCanvas::~OgreCanvas()
 {
     if(ogreRenderWindow)
     {
@@ -41,7 +41,7 @@ OgreWidget::~OgreWidget()
     delete ogreRoot;
 }
 
-void OgreWidget::setBackgroundColor(QColor c)
+void OgreCanvas::setBackgroundColor(QColor c)
 {
     if(ogreViewport)
     {
@@ -51,21 +51,22 @@ void OgreWidget::setBackgroundColor(QColor c)
     }
 }
 
-void OgreWidget::setCameraPosition(const Ogre::Vector3 &pos)
+void OgreCanvas::setCameraPosition(const Ogre::Vector3 &pos)
 {
     ogreCamera->setPosition(pos);
-    ogreCamera->lookAt(0,50,0);
+    ogreCamera->lookAt(0, 50, 0);
     update();
     emit cameraPositionChanged(pos);
 }
 
-void OgreWidget::keyPressEvent(QKeyEvent *e)
+void OgreCanvas::keyPressEvent(QKeyEvent *e)
 {
     static QMap<int, Ogre::Vector3> keyCoordModificationMapping;
     static bool mappingInitialised = false;
 
     if(!mappingInitialised)
     {
+		// ToDo: Enhance the navigation.
         keyCoordModificationMapping[Qt::Key_W] 		  = Ogre::Vector3( 0, 0,-5);
         keyCoordModificationMapping[Qt::Key_S] 		  = Ogre::Vector3( 0, 0, 5);
         keyCoordModificationMapping[Qt::Key_A] 		  = Ogre::Vector3(-5, 0, 0);
@@ -91,7 +92,7 @@ void OgreWidget::keyPressEvent(QKeyEvent *e)
     }
 }
 
-void OgreWidget::mouseDoubleClickEvent(QMouseEvent *e)
+void OgreCanvas::mouseDoubleClickEvent(QMouseEvent *e)
 {
     if(e->buttons().testFlag(Qt::LeftButton))
     {
@@ -131,7 +132,7 @@ void OgreWidget::mouseDoubleClickEvent(QMouseEvent *e)
     }
 }
 
-void OgreWidget::mouseMoveEvent(QMouseEvent *e)
+void OgreCanvas::mouseMoveEvent(QMouseEvent *e)
 {
     if(e->buttons().testFlag(Qt::LeftButton) && oldPos != invalidMousePoint)
     {
@@ -158,7 +159,7 @@ void OgreWidget::mouseMoveEvent(QMouseEvent *e)
     }
 }
 
-void OgreWidget::mousePressEvent(QMouseEvent *e)
+void OgreCanvas::mousePressEvent(QMouseEvent *e)
 {
     if(e->buttons().testFlag(Qt::LeftButton))
     {
@@ -171,7 +172,7 @@ void OgreWidget::mousePressEvent(QMouseEvent *e)
     }
 }
 
-void OgreWidget::mouseReleaseEvent(QMouseEvent *e)
+void OgreCanvas::mouseReleaseEvent(QMouseEvent *e)
 {
     if(!e->buttons().testFlag(Qt::LeftButton))
     {
@@ -184,7 +185,7 @@ void OgreWidget::mouseReleaseEvent(QMouseEvent *e)
     }
 }
 
-void OgreWidget::moveEvent(QMoveEvent *e)
+void OgreCanvas::moveEvent(QMoveEvent *e)
 {
     QWidget::moveEvent(e);
 
@@ -195,14 +196,14 @@ void OgreWidget::moveEvent(QMoveEvent *e)
     }
 }
 
-QPaintEngine* OgreWidget::paintEngine() const
+QPaintEngine* OgreCanvas::paintEngine() const
 {
     // I don't want another paint engine to get in the way for my Ogre based paint engine.
     // So this return nothing.
     return NULL;
 }
 
-void OgreWidget::paintEvent(QPaintEvent *e)
+void OgreCanvas::paintEvent(QPaintEvent *e)
 {
 	if(!ogreRoot)
 	{
@@ -215,7 +216,7 @@ void OgreWidget::paintEvent(QPaintEvent *e)
     e->accept();
 }
 
-void OgreWidget::resizeEvent(QResizeEvent *e)
+void OgreCanvas::resizeEvent(QResizeEvent *e)
 {
     QWidget::resizeEvent(e);
 
@@ -235,7 +236,7 @@ void OgreWidget::resizeEvent(QResizeEvent *e)
     }
 }
 
-void OgreWidget::wheelEvent(QWheelEvent *e)
+void OgreCanvas::wheelEvent(QWheelEvent *e)
 {
     Ogre::Vector3 zTranslation(0,0, -e->delta() / 10);
 
@@ -250,7 +251,7 @@ void OgreWidget::wheelEvent(QWheelEvent *e)
     e->accept();
 }
 
-void OgreWidget::initOgreSystem()
+void OgreCanvas::initOgreSystem()
 {
     ogreRoot = new Ogre::Root();
     //ogreRoot->showConfigDialog();
@@ -270,7 +271,6 @@ void OgreWidget::initOgreSystem()
     QWidget *q_parent = dynamic_cast <QWidget *> (parent());
     QX11Info xInfo = x11Info();
 
-    // FIXME: replace each qDebug param with its coresponding number
     widgetHandle =
 	        widgetHandle = Ogre::StringConverter::toString((unsigned long)(xInfo.display())) + ":"
 	        + Ogre::StringConverter::toString((unsigned int)(xInfo.screen())) + ":"
@@ -288,7 +288,7 @@ void OgreWidget::initOgreSystem()
     emit cameraPositionChanged(camPos);
 
     ogreViewport = ogreRenderWindow->addViewport(ogreCamera);
-    ogreViewport->setBackgroundColour(Ogre::ColourValue(0,0,0));
+    ogreViewport->setBackgroundColour(Ogre::ColourValue(0.19, 0.19, 0.19));
     ogreCamera->setAspectRatio(Ogre::Real(ogreViewport->getActualWidth()) / Ogre::Real(ogreViewport->getActualHeight()));
     //-------------------------------------------------------------------------------------
     // Set default mipmap level (NB some APIs ignore this)
@@ -298,7 +298,7 @@ void OgreWidget::initOgreSystem()
     createScene();
 }
 
-void OgreWidget::setupNLoadResources()
+void OgreCanvas::setupNLoadResources()
 {
     Ogre::ResourceGroupManager *rgm = Ogre::ResourceGroupManager::getSingletonPtr();
     rgm->addResourceLocation("meshes/SdkTrays.zip", "Zip", "Bootstrap");
@@ -306,26 +306,24 @@ void OgreWidget::setupNLoadResources()
     Ogre::ResourceGroupManager::getSingleton().initialiseAllResourceGroups();
 }
 
-void OgreWidget::createScene()
+void OgreCanvas::createScene()
 {
     ogreSceneManager->setAmbientLight(Ogre::ColourValue(0.5, 0.5, 0.5));
     // Create a light
     Ogre::Light* l = ogreSceneManager->createLight("MainLight");
-    l->setPosition(20,80,50);
+    l->setPosition(20, 80, 50);
 
-    Ogre::Entity* ogreHead =ogreSceneManager->createEntity("Head", "ogrehead.mesh");
+    Ogre::Entity* ogreHead = ogreSceneManager->createEntity("Head", "ogrehead.mesh");
 
     Ogre::SceneNode* headNode = ogreSceneManager->getRootSceneNode()->createChildSceneNode();
     headNode->attachObject(ogreHead);
 }
 
-/*
 // just testing the LogManager .. not yet implemented!
-Ogre::Log OgreWidget::createLogManager()
-{
-    Ogre::LogManager* logmgr = new Ogre::LogManager;
-    Ogre::Log *log = Ogre::LogManager::getSingleton().createLog("mylog.log", true, true, false);
-    Ogre::Root *root = new Ogre::Root("", "");
-    return logmgr->getLog();
-}
-*/
+//Ogre::Log OgreCanvas::createLogManager()
+//{
+//    Ogre::LogManager* logmgr = new Ogre::LogManager;
+//    Ogre::Log *log = Ogre::LogManager::getSingleton().createLog("mylog.log", true, true, false);
+////    Ogre::Root *root = new Ogre::Root("", "");
+//    return logmgr->getLog();
+//}

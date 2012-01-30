@@ -1,19 +1,20 @@
-#ifndef OGREWIDGET_H
-#define OGREWIDGET_H
+#ifndef OGRE_CANVAS_H
+#define OGRE_CANVAS_H
 
 #include <QtGui>
 #include <Ogre.h>
 
-class OgreWidget : public QWidget
+class OgreCanvas : public QWidget
 {
     Q_OBJECT
 
 public:
-    OgreWidget(QWidget *parent = 0);
-    ~OgreWidget();
+    OgreCanvas(QWidget *parent = 0);
+    ~OgreCanvas();
 
     // Override QWidget::paintEngine to return NULL
     QPaintEngine* paintEngine() const; // Turn off QTs paint engine for the Ogre widget.
+	Ogre::Log createLogManager();	   // ToDo: Implementing this function.
 
 public slots:
     void setBackgroundColor(QColor c);
@@ -53,4 +54,4 @@ private:
     Ogre::SceneNode *selectedNode;
 };
 
-#endif // OGREWIDGET_H
+#endif // OGRE_CANVAS_H

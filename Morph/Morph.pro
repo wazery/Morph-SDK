@@ -13,11 +13,11 @@ TEMPLATE = app
 
 SOURCES += main.cpp\
         mainwindow.cpp \
-    ogrewidget.cpp \
+    ogrecanvas.cpp
 
-HEADERS  += mainwindow.h \
-    ogrewidget.h \
-    splashscreen.h
+HEADERS += mainwindow.h \
+        splashscreen.h \
+    ogrecanvas.h
 
 FORMS    += mainwindow.ui
 

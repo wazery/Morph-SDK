@@ -1,6 +1,5 @@
 #include <QtGui/QApplication>
 #include "mainwindow.h"
-#include "ogrewidget.h"
 #include <QSplashScreen>
 
 int main(int argc, char *argv[])
