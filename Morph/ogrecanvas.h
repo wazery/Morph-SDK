@@ -37,7 +37,7 @@ protected:
 private:
     void initOgreSystem();
 	void setupNLoadResources();
-	void createScene();
+	void createScene(Ogre::Entity* object);
 
 private:
     static const Ogre::Real turboModifier;

@@ -108,6 +108,8 @@ void OgreCanvas::mouseDoubleClickEvent(QMouseEvent *e)
         {
             if(queryResultIterator->movable)
             {
+				// when the object is double clicked..
+				// replace the last line with whatever you want
                 selectedNode = queryResultIterator->movable->getParentSceneNode();
 				selectedNode->showBoundingBox(true);
             }
@@ -116,6 +118,7 @@ void OgreCanvas::mouseDoubleClickEvent(QMouseEvent *e)
         {
 			if (selectedNode)
 			{
+				// when you double click on any other object..
 				selectedNode->showBoundingBox(false);
 				selectedNode = 0;
 			}
@@ -295,7 +298,9 @@ void OgreCanvas::initOgreSystem()
     Ogre::TextureManager::getSingleton().setDefaultNumMipmaps(5);
 
     setupNLoadResources();
-    createScene();
+
+    // FIXME: pass the object you want to it here..
+	createScene();
 }
 
 void OgreCanvas::setupNLoadResources()
@@ -306,24 +311,29 @@ void OgreCanvas::setupNLoadResources()
     Ogre::ResourceGroupManager::getSingleton().initialiseAllResourceGroups();
 }
 
-void OgreCanvas::createScene()
+void OgreCanvas::createScene(Ogre::Entity* object)
 {
+	// This function usage is in line 303!
+
     ogreSceneManager->setAmbientLight(Ogre::ColourValue(0.5, 0.5, 0.5));
     // Create a light
     Ogre::Light* l = ogreSceneManager->createLight("MainLight");
     l->setPosition(20, 80, 50);
 
+	// Replace this line with the object --> object = ogreSceneManager->createEntity("Head", "ogrehead.mesh");
+	// and don't forgot to attach the object in the last line.
     Ogre::Entity* ogreHead = ogreSceneManager->createEntity("Head", "ogrehead.mesh");
 
     Ogre::SceneNode* headNode = ogreSceneManager->getRootSceneNode()->createChildSceneNode();
     headNode->attachObject(ogreHead);
 }
 
-// just testing the LogManager .. not yet implemented!
-//Ogre::Log OgreCanvas::createLogManager()
-//{
-//    Ogre::LogManager* logmgr = new Ogre::LogManager;
-//    Ogre::Log *log = Ogre::LogManager::getSingleton().createLog("mylog.log", true, true, false);
-////    Ogre::Root *root = new Ogre::Root("", "");
-//    return logmgr->getLog();
-//}
+// Just testing the LogManager .. not yet fully implemented!
+// ToDo: make a seperate sub-system for logging and output.
+/*Ogre::Log OgreCanvas::createLogManager()
+{
+    Ogre::LogManager* logmgr = new Ogre::LogManager;
+    Ogre::Log *log = Ogre::LogManager::getSingleton().createLog("mylog.log", true, true, false);
+//    Ogre::Root *root = new Ogre::Root("", "");
+    return logmgr->getLog();
+}*/
