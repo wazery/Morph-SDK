@@ -1,5 +1,7 @@
+#include "button.h"
 #include "ogrecanvas.h"
 #include <QX11Info>
+#include <iostream>
 
 const QPoint     OgreCanvas::invalidMousePoint(-1, -1);
 const Ogre::Real OgreCanvas::turboModifier(10);
@@ -111,7 +113,9 @@ void OgreCanvas::mouseDoubleClickEvent(QMouseEvent *e)
 				// when the object is double clicked..
 				// replace the last line with whatever you want
                 selectedNode = queryResultIterator->movable->getParentSceneNode();
+                 std::cout << "ssssssssssssssssssssssssssssssq" << endl;
 				selectedNode->showBoundingBox(true);
+
             }
         }
         else
@@ -121,6 +125,8 @@ void OgreCanvas::mouseDoubleClickEvent(QMouseEvent *e)
 				// when you double click on any other object..
 				selectedNode->showBoundingBox(false);
 				selectedNode = 0;
+                std::cout << selectedNode->getName() << endl;
+          //     object_clicked(selectedNode->getName());
 			}
         }
 
@@ -283,6 +289,7 @@ void OgreCanvas::initOgreSystem()
     ogreRenderWindow = ogreRoot->createRenderWindow("Ogre rendering window",
                                                     width(), height(), false, &viewConfig);
 
+
     ogreCamera = ogreSceneManager->createCamera("myCamera");
     Ogre::Vector3 camPos(0, 0, 80);
     ogreCamera->setPosition(camPos);
@@ -310,8 +317,13 @@ void OgreCanvas::setupNLoadResources()
     rgm->addResourceLocation("meshes", "FileSystem", "General");
     Ogre::ResourceGroupManager::getSingleton().initialiseAllResourceGroups();
 }
+/*#include <iostream>
+void print(void){
+	std::cout << "object clicked" << std::endl;
+}*/
 
-void OgreCanvas::createScene(Ogre::Entity* object)
+
+void OgreCanvas::createScene()
 {
 	// This function usage is in line 303!
 
@@ -323,17 +335,21 @@ void OgreCanvas::createScene(Ogre::Entity* object)
 	// Replace this line with the object --> object = ogreSceneManager->createEntity("Head", "ogrehead.mesh");
 	// and don't forgot to attach the object in the last line.
     Ogre::Entity* ogreHead = ogreSceneManager->createEntity("Head", "ogrehead.mesh");
-
+/*
+    Button::CanvasObject obj(*ogreHead);
+    Button n(obj);
+    n.mClicked.connect(sigc::ptr_fun(print));
+*/
     Ogre::SceneNode* headNode = ogreSceneManager->getRootSceneNode()->createChildSceneNode();
     headNode->attachObject(ogreHead);
 }
 
 // Just testing the LogManager .. not yet fully implemented!
 // ToDo: make a seperate sub-system for logging and output.
-/*Ogre::Log OgreCanvas::createLogManager()
-{
-    Ogre::LogManager* logmgr = new Ogre::LogManager;
-    Ogre::Log *log = Ogre::LogManager::getSingleton().createLog("mylog.log", true, true, false);
-//    Ogre::Root *root = new Ogre::Root("", "");
-    return logmgr->getLog();
-}*/
+//Ogre::Log OgreCanvas::createLogManager()
+//{
+//    Ogre::LogManager* logmgr = new Ogre::LogManager;
+//    Ogre::Log *log = Ogre::LogManager::getSingleton().createLog("mylog.log", true, true, false);
+////    Ogre::Root *root = new Ogre::Root("", "");
+//    return logmgr->getLog();
+//}

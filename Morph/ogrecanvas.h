@@ -4,6 +4,7 @@
 #include <QtGui>
 #include <Ogre.h>
 
+
 class OgreCanvas : public QWidget
 {
     Q_OBJECT
@@ -37,7 +38,7 @@ protected:
 private:
     void initOgreSystem();
 	void setupNLoadResources();
-	void createScene(Ogre::Entity* object);
+	void createScene();
 
 private:
     static const Ogre::Real turboModifier;
