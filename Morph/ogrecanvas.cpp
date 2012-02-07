@@ -321,7 +321,7 @@ void OgreCanvas::setupNLoadResources()
 }
 
 void print(void){
-    std::cout << "------------object clicked------------- << std::endl;
+    std::cout << "------------object clicked-------------" << std::endl;
 }
 
 
