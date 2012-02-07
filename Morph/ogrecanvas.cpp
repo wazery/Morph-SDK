@@ -113,8 +113,11 @@ void OgreCanvas::mouseDoubleClickEvent(QMouseEvent *e)
 				// when the object is double clicked..
 				// replace the last line with whatever you want
                 selectedNode = queryResultIterator->movable->getParentSceneNode();
-                 std::cout << "ssssssssssssssssssssssssssssssq" << endl;
+
+               object_clicked(selectedNode->getAttachedObject(0)->getName() );
+
 				selectedNode->showBoundingBox(true);
+
 
             }
         }
@@ -124,9 +127,8 @@ void OgreCanvas::mouseDoubleClickEvent(QMouseEvent *e)
 			{
 				// when you double click on any other object..
 				selectedNode->showBoundingBox(false);
-				selectedNode = 0;
-                std::cout << selectedNode->getName() << endl;
-          //     object_clicked(selectedNode->getName());
+				selectedNode = 0;              
+
 			}
         }
 
@@ -317,10 +319,10 @@ void OgreCanvas::setupNLoadResources()
     rgm->addResourceLocation("meshes", "FileSystem", "General");
     Ogre::ResourceGroupManager::getSingleton().initialiseAllResourceGroups();
 }
-/*#include <iostream>
+
 void print(void){
-	std::cout << "object clicked" << std::endl;
-}*/
+    std::cout << "------------object clicked------------- << std::endl;
+}
 
 
 void OgreCanvas::createScene()
@@ -335,11 +337,11 @@ void OgreCanvas::createScene()
 	// Replace this line with the object --> object = ogreSceneManager->createEntity("Head", "ogrehead.mesh");
 	// and don't forgot to attach the object in the last line.
     Ogre::Entity* ogreHead = ogreSceneManager->createEntity("Head", "ogrehead.mesh");
-/*
+
     Button::CanvasObject obj(*ogreHead);
     Button n(obj);
     n.mClicked.connect(sigc::ptr_fun(print));
-*/
+
     Ogre::SceneNode* headNode = ogreSceneManager->getRootSceneNode()->createChildSceneNode();
     headNode->attachObject(ogreHead);
 }
