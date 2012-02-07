@@ -1,7 +1,7 @@
 /********************************************************************************
 ** Form generated from reading UI file 'mainwindow.ui'
 **
-** Created: Tue Jan 31 05:39:32 2012
+** Created: Wed Feb 8 01:38:22 2012
 **      by: Qt User Interface Compiler version 4.7.4
 **
 ** WARNING! All changes made in this file will be lost when recompiling UI file!
@@ -132,7 +132,7 @@ public:
         actionQuit = new QAction(MainWindow);
         actionQuit->setObjectName(QString::fromUtf8("actionQuit"));
         QIcon icon3;
-        icon3.addFile(QString::fromUtf8(":/toolbar/icons/minus32.png"), QSize(), QIcon::Normal, QIcon::Off);
+        icon3.addFile(QString::fromUtf8(":/toolbar/icons/block32.png"), QSize(), QIcon::Normal, QIcon::Off);
         actionQuit->setIcon(icon3);
         actionNew = new QAction(MainWindow);
         actionNew->setObjectName(QString::fromUtf8("actionNew"));
@@ -150,12 +150,12 @@ public:
         actionMove = new QAction(MainWindow);
         actionMove->setObjectName(QString::fromUtf8("actionMove"));
         QIcon icon6;
-        icon6.addFile(QString::fromUtf8(":/toolbar/icons/move.svg"), QSize(), QIcon::Normal, QIcon::Off);
+        icon6.addFile(QString::fromUtf8(":/toolbar/icons/move.png"), QSize(), QIcon::Normal, QIcon::Off);
         actionMove->setIcon(icon6);
         actionTranslate = new QAction(MainWindow);
         actionTranslate->setObjectName(QString::fromUtf8("actionTranslate"));
         QIcon icon7;
-        icon7.addFile(QString::fromUtf8(":/toolbar/icons/translate.svg"), QSize(), QIcon::Normal, QIcon::Off);
+        icon7.addFile(QString::fromUtf8(":/toolbar/icons/translate.png"), QSize(), QIcon::Normal, QIcon::Off);
         actionTranslate->setIcon(icon7);
         actionCopy = new QAction(MainWindow);
         actionCopy->setObjectName(QString::fromUtf8("actionCopy"));
@@ -195,7 +195,7 @@ public:
         actionRotate = new QAction(MainWindow);
         actionRotate->setObjectName(QString::fromUtf8("actionRotate"));
         QIcon icon11;
-        icon11.addFile(QString::fromUtf8(":/toolbar/icons/rotate.svg"), QSize(), QIcon::Normal, QIcon::Off);
+        icon11.addFile(QString::fromUtf8(":/toolbar/icons/leftturnarrow32.png"), QSize(), QIcon::Normal, QIcon::Off);
         actionRotate->setIcon(icon11);
         centralWidget = new QWidget(MainWindow);
         centralWidget->setObjectName(QString::fromUtf8("centralWidget"));
@@ -420,6 +420,8 @@ public:
         mainToolBar->addAction(actionSave);
         mainToolBar->addAction(actionSave_as);
         mainToolBar->addAction(actionQuit);
+        mainToolBar->addSeparator();
+        mainToolBar->addAction(actionCut);
         toolBar->addAction(actionSelect);
         toolBar->addAction(actionMove);
         toolBar->addAction(actionTranslate);
@@ -456,7 +458,7 @@ public:
 #endif // QT_NO_TOOLTIP
         actionMove->setText(QApplication::translate("MainWindow", "&Move", 0, QApplication::UnicodeUTF8));
 #ifndef QT_NO_TOOLTIP
-        actionMove->setToolTip(QApplication::translate("MainWindow", "Move Objects", 0, QApplication::UnicodeUTF8));
+        actionMove->setToolTip(QApplication::translate("MainWindow", "Move", 0, QApplication::UnicodeUTF8));
 #endif // QT_NO_TOOLTIP
         actionTranslate->setText(QApplication::translate("MainWindow", "&Translate", 0, QApplication::UnicodeUTF8));
         actionCopy->setText(QApplication::translate("MainWindow", "&Copy", 0, QApplication::UnicodeUTF8));

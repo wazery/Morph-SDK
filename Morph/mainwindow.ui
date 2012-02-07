@@ -151,6 +151,8 @@
    <addaction name="actionSave"/>
    <addaction name="actionSave_as"/>
    <addaction name="actionQuit"/>
+   <addaction name="separator"/>
+   <addaction name="actionCut"/>
   </widget>
   <widget class="QStatusBar" name="statusBar"/>
   <widget class="QToolBar" name="toolBar">
@@ -656,7 +658,7 @@ p, li { white-space: pre-wrap; }
   <action name="actionQuit">
    <property name="icon">
     <iconset resource="icons.qrc">
-     <normaloff>:/toolbar/icons/minus32.png</normaloff>:/toolbar/icons/minus32.png</iconset>
+     <normaloff>:/toolbar/icons/block32.png</normaloff>:/toolbar/icons/block32.png</iconset>
    </property>
    <property name="text">
     <string>&amp;Quit</string>
@@ -701,19 +703,19 @@ p, li { white-space: pre-wrap; }
   <action name="actionMove">
    <property name="icon">
     <iconset resource="icons.qrc">
-     <normaloff>:/toolbar/icons/move.svg</normaloff>:/toolbar/icons/move.svg</iconset>
+     <normaloff>:/toolbar/icons/move.png</normaloff>:/toolbar/icons/move.png</iconset>
    </property>
    <property name="text">
     <string>&amp;Move</string>
    </property>
    <property name="toolTip">
-    <string>Move Objects</string>
+    <string>Move</string>
    </property>
   </action>
   <action name="actionTranslate">
    <property name="icon">
     <iconset resource="icons.qrc">
-     <normaloff>:/toolbar/icons/translate.svg</normaloff>:/toolbar/icons/translate.svg</iconset>
+     <normaloff>:/toolbar/icons/translate.png</normaloff>:/toolbar/icons/translate.png</iconset>
    </property>
    <property name="text">
     <string>&amp;Translate</string>
@@ -826,7 +828,7 @@ p, li { white-space: pre-wrap; }
   <action name="actionRotate">
    <property name="icon">
     <iconset resource="icons.qrc">
-     <normaloff>:/toolbar/icons/rotate.svg</normaloff>:/toolbar/icons/rotate.svg</iconset>
+     <normaloff>:/toolbar/icons/leftturnarrow32.png</normaloff>:/toolbar/icons/leftturnarrow32.png</iconset>
    </property>
    <property name="text">
     <string>Rotate</string>

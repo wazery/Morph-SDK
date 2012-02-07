@@ -13,9 +13,17 @@
         <file>icons/scale.svg</file>
         <file>icons/scene.svg</file>
         <file>icons/select.svg</file>
-        <file>icons/translate.svg</file>
         <file>icons/fileopen2.png</file>
         <file>icons/ogscene2.png</file>
         <file>icons/filesave2.png</file>
+        <file>icons/arrow32.png</file>
+        <file>icons/block32.png</file>
+        <file>icons/folder32.png</file>
+        <file>icons/leftturnarrow32.png</file>
+        <file>icons/minus32.png</file>
+        <file>icons/move.png</file>
+        <file>icons/scissors32.png</file>
+        <file>icons/search32.png</file>
+        <file>icons/translate.png</file>
     </qresource>
 </RCC>

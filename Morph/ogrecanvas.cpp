@@ -110,11 +110,9 @@ void OgreCanvas::mouseDoubleClickEvent(QMouseEvent *e)
         {
             if(queryResultIterator->movable)
             {
-				// when the object is double clicked..
-				// replace the last line with whatever you want
                 selectedNode = queryResultIterator->movable->getParentSceneNode();
 
-               object_clicked(selectedNode->getAttachedObject(0)->getName() );
+				object_clicked(selectedNode->getAttachedObject(0)->getName() );
 
 				selectedNode->showBoundingBox(true);
 
@@ -320,10 +318,10 @@ void OgreCanvas::setupNLoadResources()
     Ogre::ResourceGroupManager::getSingleton().initialiseAllResourceGroups();
 }
 
-void print(void){
+void print(void)
+{
     std::cout << "------------object clicked-------------" << std::endl;
 }
-
 
 void OgreCanvas::createScene()
 {

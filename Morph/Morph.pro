@@ -13,11 +13,15 @@ TEMPLATE = app
 
 SOURCES += main.cpp\
         mainwindow.cpp \
-    ogrecanvas.cpp
+    ogrecanvas.cpp \
+    button.cpp \
+    database.cpp
 
 HEADERS += mainwindow.h \
         splashscreen.h \
-    ogrecanvas.h
+    ogrecanvas.h \
+    button.h \
+    database.h
 
 FORMS    += mainwindow.ui
 
@@ -26,6 +30,10 @@ unix {
     INCLUDEPATH += /usr/include/OGRE
     CONFIG += link_pkgconfig
     PKGCONFIG += OGRE
+
+    INCLUDEPATH += /usr/include/sigc++-2.0
+    CONFIG += link_pkgconfig
+    PKGCONFIG += sigc++-2.0
 }
 
 #win32 {
