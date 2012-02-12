@@ -1,38 +1,34 @@
 #ifndef BUTTON_H
 #define BUTTON_H
 #include <sigc++/sigc++.h>
-#include "database.h"
 #include <OGRE/OgreEntity.h>
 #include <string>
 #include <vector>
+#include "mdatabase.h"
+#include "MEvent.h"
 
 
-void object_clicked(std::string inObjName);
 
 class Button
 {
 public:
 	class CanvasObject{
 	public:
-		CanvasObject(const Ogre::Entity& inEntity){
-			mName = inEntity.getName();
-		}
-		std::string getName(){
-			return mName;
-		}
+        CanvasObject(const Ogre::Entity& inEntity);
+        const std::string& getName() const;
 	protected:
 		std::string mName;
 	};
-	friend void object_clicked(std::string inObjName);
 
-    Button(CanvasObject& inCO) : mCO(inCO){
-		mDB.Insert(*this);
-	}
-	CanvasObject mCO;
-	sigc::signal<void> mClicked;
-	static DataBase mDB;
+    Button(const CanvasObject& inCO);
+    ~Button();
+    const CanvasObject& getCanvasObject() const;
+    sigc::signal<void>& Clicked();
+protected:
+    CanvasObject mCO;
+    sigc::signal<void> mClicked;
+    static MDataBase<Button> mDB;
+    friend void button_object_clicked(std::string inObjName);
 };
-
-
 
 #endif // BUTTON_H

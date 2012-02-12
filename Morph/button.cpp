@@ -1,15 +1,30 @@
 #include "button.h"
 #include <string>
+#include <iostream>
 
-DataBase Button::mDB;
+MDataBase<Button> Button::mDB;
 
-void object_clicked(std::string inObjName)
-{
-
-    int test = Button::mDB.Found(inObjName);
-    if( test != -1)
-	{
-        Button::mDB.mDB.at(test).mClicked();
-	}
-
+Button::CanvasObject::CanvasObject(const Ogre::Entity& inEntity){
+    mName = inEntity.getName();
 }
+
+const std::string& Button::CanvasObject::getName() const{
+    return mName;
+}
+
+Button::Button(const CanvasObject& inCO) : mCO(inCO){
+    mDB.addWidget(*this);
+}
+
+Button::~Button(){
+    mDB.removeWidget(mCO.getName());
+}
+
+const Button::CanvasObject& Button::getCanvasObject() const{
+    return mCO;
+}
+
+sigc::signal<void>& Button::Clicked(){
+    return mClicked;
+}
+
