@@ -1,4 +1,4 @@
-#ifndef OGRE_CANVAS_H
+    #ifndef OGRE_CANVAS_H
 #define OGRE_CANVAS_H
 
 #include <QtGui>

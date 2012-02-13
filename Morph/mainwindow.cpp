@@ -7,7 +7,6 @@ MainWindow::MainWindow(QWidget *parent) :
 {
     ui->setupUi(this);
 //	ui->dockWidgetContents_2->findChildren(
-
 }
 
 MainWindow::~MainWindow()
