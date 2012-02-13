@@ -15,26 +15,29 @@ SOURCES += main.cpp\
         mainwindow.cpp \
     ogrecanvas.cpp \
     button.cpp \
-    database.cpp
+    MEvent.cpp
 
 HEADERS += mainwindow.h \
         splashscreen.h \
     ogrecanvas.h \
     button.h \
-    database.h
+    mdatabase.h \
+    MWidget.h \
+    MEvent.h
 
 FORMS    += mainwindow.ui
 
-unix {
+#unix {
     # You may need to change this include directory
     INCLUDEPATH += /usr/include/OGRE
     CONFIG += link_pkgconfig
     PKGCONFIG += OGRE
 
+
     INCLUDEPATH += /usr/include/sigc++-2.0
     CONFIG += link_pkgconfig
     PKGCONFIG += sigc++-2.0
-}
+#}
 
 #win32 {
 #    # You may need to change this include directory
@@ -48,7 +51,7 @@ unix {
 
 CONFIG(debug, debug|release) {
     TARGET = $$join(TARGET,,,d)
-    LIBS *= -lOgreMain_d
+    #LIBS *= -lOgreMain_d
 }
 CONFIG(release, debug|release):LIBS *= -lOgreMain
 
