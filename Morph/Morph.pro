@@ -14,16 +14,16 @@ TEMPLATE = app
 SOURCES += main.cpp\
         mainwindow.cpp \
     ogrecanvas.cpp \
-    button.cpp \
-    MEvent.cpp
+    MEvent.cpp \
+    MButtonWidget.cpp
 
 HEADERS += mainwindow.h \
         splashscreen.h \
     ogrecanvas.h \
-    button.h \
-    mdatabase.h \
     MWidget.h \
-    MEvent.h
+    MEvent.h \
+    MButtonWidget.h \
+    MWidgetDataBase.h
 
 FORMS    += mainwindow.ui
 
