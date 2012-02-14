@@ -1,9 +1,9 @@
-#include "MWidget.h"
+#include "MEvent.h"
 
-void button_object_clicked(std::string inObjName){
-    int test = Button::mDB.findWidget(inObjName);
+void ButtonEventEmitter::objectClicked(std::string inObjName){
+    int test = MButtonWidget::mWidgetsDataBase.findWidgetIndex(inObjName);
     if( test != -1){
-        Button::mDB.getWidgetAt(test).mClicked();
+        MButtonWidget::mWidgetsDataBase.widgetAt(test).mClicked();
     }
 
 }

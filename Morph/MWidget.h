@@ -1,5 +1,5 @@
 #ifndef MWIDGET_H
 #define MWIDGET_H
-#include "button.h"
+#include "MButtonWidget.h"
 
 #endif // MWIDGET_H

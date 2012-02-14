@@ -1,4 +1,4 @@
-#include "button.h"
+#include "MButtonWidget.h"
 #include "MEvent.h"
 #include "ogrecanvas.h"
 #include <QX11Info>
@@ -115,7 +115,7 @@ void OgreCanvas::mouseDoubleClickEvent(QMouseEvent *e)
 				// replace the last line with whatever you want
                 selectedNode = queryResultIterator->movable->getParentSceneNode();
 
-               button_object_clicked(selectedNode->getAttachedObject(0)->getName() );
+               ButtonEventEmitter::objectClicked(selectedNode->getAttachedObject(0)->getName() );
 
 				selectedNode->showBoundingBox(true);
 
@@ -339,8 +339,8 @@ void OgreCanvas::createScene()
 	// and don't forgot to attach the object in the last line.
     Ogre::Entity* ogreHead = ogreSceneManager->createEntity("Head", "ogrehead.mesh");
 
-    static Button::CanvasObject obj(*ogreHead);
-    static Button n(obj);
+    static MButtonWidget::CanvasObject obj(*ogreHead);
+    static MButtonWidget n(obj);
     n.Clicked().connect(sigc::ptr_fun(print));
 
     Ogre::SceneNode* headNode = ogreSceneManager->getRootSceneNode()->createChildSceneNode();
