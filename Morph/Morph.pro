@@ -15,15 +15,20 @@ SOURCES += main.cpp\
         mainwindow.cpp \
     ogrecanvas.cpp \
     button.cpp \
-    MEvent.cpp
+    MEvent.cpp \
+    MorphCore/Editor/msystemmanager.cpp \
+    #MorphCore/Editor/msingleton.cpp
+    MorphCore/Editor/mlogmanager.cpp
 
 HEADERS += mainwindow.h \
-        splashscreen.h \
     ogrecanvas.h \
     button.h \
     mdatabase.h \
     MWidget.h \
-    MEvent.h
+    MEvent.h \
+    MorphCore/Editor/msystemmanager.h \
+    #MorphCore/Editor/msingleton.h // FIXME: implement it.
+    MorphCore/Editor/mlogmanager.h
 
 FORMS    += mainwindow.ui
 
