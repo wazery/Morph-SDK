@@ -4,7 +4,8 @@
 #include <OGRE/OgreEntity.h>
 #include <string>
 #include <vector>
-#include "MWidgetDataBase.h"
+#include <QMap>
+//#include "MWidgetDataBase.h"
 #include "MEvent.h"
 
 class MButtonWidget
@@ -22,11 +23,11 @@ public:
 
     MButtonWidget(const CanvasObject& inCO);
     ~MButtonWidget();
-    const std::string& canvasObjectName() const;
+    //const std::string& canvasObjectName() const;
     sigc::signal<void>& Clicked();
 protected:
     CanvasObject mCanvasObject;
-    static MWidgetDataBase<MButtonWidget> mWidgetsDataBase;
+    static QMap<std::string, MButtonWidget*> mWidgetsDataBase;
     sigc::signal<void> mClicked;
     friend class ButtonEventEmitter;
 };
