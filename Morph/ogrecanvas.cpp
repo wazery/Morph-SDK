@@ -115,7 +115,7 @@ void OgreCanvas::mouseDoubleClickEvent(QMouseEvent *e)
 				// replace the last line with whatever you want
                 selectedNode = queryResultIterator->movable->getParentSceneNode();
 
-               ButtonEventEmitter::objectClicked(selectedNode->getAttachedObject(0)->getName() );
+               MButtonEvents::emitObjectClickedEvent(selectedNode->getAttachedObject(0)->getName() );
 
 				selectedNode->showBoundingBox(true);
 
@@ -339,8 +339,8 @@ void OgreCanvas::createScene()
 	// and don't forgot to attach the object in the last line.
     Ogre::Entity* ogreHead = ogreSceneManager->createEntity("Head", "ogrehead.mesh");
 
-    static MButtonWidget::CanvasObject obj(*ogreHead);
-    static MButtonWidget n(obj);
+    static MButtonWidget::MCanvasObject obj(*ogreHead);
+    static MButtonWidget n(&obj);
     n.Clicked().connect(sigc::ptr_fun(print));
 
     Ogre::SceneNode* headNode = ogreSceneManager->getRootSceneNode()->createChildSceneNode();

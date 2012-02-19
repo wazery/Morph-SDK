@@ -5,31 +5,30 @@
 #include <string>
 #include <vector>
 #include <QMap>
-//#include "MWidgetDataBase.h"
 #include "MEvent.h"
 
 class MButtonWidget
 {
 public:
-	class CanvasObject{
+    class MCanvasObject
+    {
 	public:
-        CanvasObject(const Ogre::Entity& inEntity);
+        MCanvasObject(const Ogre::Entity& entity);
 	protected:
         const std::string& name() const;
     private:
-		std::string mName;
-        friend class MButtonWidget;
+        std::string         mName;
+        friend class        MButtonWidget;
 	};
 
-    MButtonWidget(const CanvasObject& inCO);
+    MButtonWidget(const MCanvasObject* canvasObject);
     ~MButtonWidget();
-    //const std::string& canvasObjectName() const;
     sigc::signal<void>& Clicked();
 protected:
-    CanvasObject mCanvasObject;
+    const MCanvasObject*                     mCanvasObject;
     static QMap<std::string, MButtonWidget*> mWidgetsDataBase;
-    sigc::signal<void> mClicked;
-    friend class ButtonEventEmitter;
+    sigc::signal<void>                       mClicked;
+    friend class MButtonEvents;
 };
 
 #endif // BUTTON_H

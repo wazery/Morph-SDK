@@ -2,8 +2,9 @@
 #define MEVENT_H
 #include "MWidget.h"
 
-class ButtonEventEmitter{
+class MButtonEvents
+{
 public:
-static void objectClicked(std::string inObjName);
+static void emitObjectClickedEvent(std::string objectName);
 };
 #endif // MEVENT_H

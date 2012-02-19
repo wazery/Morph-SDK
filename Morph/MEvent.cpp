@@ -1,13 +1,7 @@
 #include "MEvent.h"
 
-void ButtonEventEmitter::objectClicked(std::string inObjName){
-    if( MButtonWidget::mWidgetsDataBase.contains(inObjName) ){
-        MButtonWidget::mWidgetsDataBase[inObjName]->mClicked();
+void MButtonEvents::emitObjectClickedEvent(std::string objectName){
+    if( MButtonWidget::mWidgetsDataBase.contains(objectName) ){
+        MButtonWidget::mWidgetsDataBase[objectName]->mClicked();
     }
-//    int test = MButtonWidget::mWidgetsDataBase.findWidgetIndex(inObjName);
-//    if( test != -1){
-//        MButtonWidget::mWidgetsDataBase.widgetAt(test).mClicked();
-//    }
-
 }
-
