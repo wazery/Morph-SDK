@@ -22,7 +22,7 @@
  *
  * ============================================================ */
 
-#pragma once // To take the advantege of its optimizations the compiler may support.
+//#pragma once // To take the advantege of its optimizations the compiler may support.
 
 #ifndef MLOGMANAGER_H
 #define MLOGMANAGER_H
@@ -31,7 +31,7 @@
 #include <vector>
 #include <iostream>
 #include <fstream>
-
+#include <QString>
 enum logType
 {
     M_MESSAGE,
@@ -48,13 +48,14 @@ public:
     MLogListener();
     ~MLogListener();
 
-    /** This is called whenever the log receives a message and is about to write it out.
+    /** This is called whenever the log manager receives a message and the receiver
+        is responsible of writing it out by its way, in onther word the receiver overrides this function.
     @param message string
         The message to be logged.
     @param type logType
         Message from Ogre, Error, or even a Warnning.
     */
-    virtual void messageLogged(const std::string& message, logType type) = 0;
+    virtual void messageLogged(QString message, logType type) = 0;
 };
 
 class MLogManager
@@ -67,11 +68,11 @@ public:
     @param message string
         The message to be logged.
     @param type logType
-        Handles the type of output to be logged.
+        Handles the type of output to be logged, i.e message, error or warn.
     @param writeToFile bool
         True if the log will be written to a file, set by default to true, set by default to true.
     */
-    void logOutput(const std::string &message, logType type, bool writeToFile = true);
+    void logOutput(QString message, logType type = M_MESSAGE, bool writeToFile = true);
 
     /** Add a listner
     @param listener MLogListener
@@ -79,7 +80,7 @@ public:
     void addListener(MLogListener* listener) { mLogListnerList.push_back(listener); }
 
     /** Remove a listner
-    @param listener MLogListener
+    @param listener MLogdListener
     */
     // FIXME: void removeListner(MLogListener* listener) { mLogListnerList.erase(std::find(mLogListnerList.begin(), mLogListnerList.end(), listener)); }
 
@@ -94,6 +95,5 @@ protected:
     std::ofstream mOutputFile;
 };
 
-MLogManager* MLogManager::smInstance = NULL;
 
 #endif // MLOGMANAGER_H

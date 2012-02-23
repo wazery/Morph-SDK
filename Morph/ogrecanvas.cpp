@@ -3,6 +3,8 @@
 #include "ogrecanvas.h"
 #include <QX11Info>
 #include <iostream>
+#include "MorphCore/Editor/MLogManager.h"
+#include "mOgreEntityViewer/mogrelogproxy.h"
 
 const QPoint     OgreCanvas::invalidMousePoint(-1, -1);
 const Ogre::Real OgreCanvas::turboModifier(10);
@@ -23,6 +25,11 @@ OgreCanvas::OgreCanvas(QWidget *parent)
     setMinimumSize(240, 240);
     setFocusPolicy(Qt::ClickFocus);
 }
+
+//Total number of lines in one dimension will be FLOOR_LINE_NUM*2 + 1
+#define FLOOR_LINE_NUM 3
+//Units of space between lines
+#define FLOOR_LINE_SPACE 80
 
 OgreCanvas::~OgreCanvas()
 {
@@ -115,7 +122,7 @@ void OgreCanvas::mouseDoubleClickEvent(QMouseEvent *e)
 				// replace the last line with whatever you want
                 selectedNode = queryResultIterator->movable->getParentSceneNode();
 
-               button_object_clicked(selectedNode->getAttachedObject(0)->getName() );
+				button_object_clicked(selectedNode->getAttachedObject(0)->getName() );
 
 				selectedNode->showBoundingBox(true);
 
@@ -266,6 +273,10 @@ void OgreCanvas::wheelEvent(QWheelEvent *e)
 void OgreCanvas::initOgreSystem()
 {
     ogreRoot = new Ogre::Root();
+
+    MOgreLogProxy* log = new MOgreLogProxy();
+    Ogre::LogManager::getSingleton().getDefaultLog()->addListener(log);
+
     //ogreRoot->showConfigDialog();
 	Ogre::RenderSystem *renderSystem = ogreRoot->getRenderSystemByName("OpenGL Rendering Subsystem");
 	ogreRoot->setRenderSystem(renderSystem);
@@ -280,7 +291,7 @@ void OgreCanvas::initOgreSystem()
 #ifdef Q_WS_WIN
     widgetHandle = Ogre::StringConverter::toString((size_t)((HWND)winId()));
 #else
-    QWidget *q_parent = dynamic_cast <QWidget *> (parent());
+    //QWidget *q_parent = dynamic_cast <QWidget *> (parent());
     QX11Info xInfo = x11Info();
 
     widgetHandle =
@@ -321,8 +332,9 @@ void OgreCanvas::setupNLoadResources()
     Ogre::ResourceGroupManager::getSingleton().initialiseAllResourceGroups();
 }
 
-void print(void){
-    std::cout << "------------object clicked-------------" << std::endl;
+void print(void)
+{
+    MLogManager::getSingleton().logOutput("------------object clicked-------------");
 }
 
 
@@ -337,22 +349,58 @@ void OgreCanvas::createScene()
 
 	// Replace this line with the object --> object = ogreSceneManager->createEntity("Head", "ogrehead.mesh");
 	// and don't forgot to attach the object in the last line.
-    Ogre::Entity* ogreHead = ogreSceneManager->createEntity("Head", "ogrehead.mesh");
+	// Create a skydome
+	//ogreSceneManager->setSkyDome(true, "Examples/CloudySky", 5, 8);
 
-    static Button::CanvasObject obj(*ogreHead);
+
+	this->createGridObjects();
+
+	Ogre::Entity* ogreheadEntity = ogreSceneManager->createEntity("ogreHead", "ogrehead.mesh");
+	ogreSceneManager->getRootSceneNode()->createChildSceneNode("ogreHead")->attachObject(ogreheadEntity);
+
+    static Button::CanvasObject obj(*ogreheadEntity);
     static Button n(obj);
     n.Clicked().connect(sigc::ptr_fun(print));
 
-    Ogre::SceneNode* headNode = ogreSceneManager->getRootSceneNode()->createChildSceneNode();
-    headNode->attachObject(ogreHead);
 }
+void OgreCanvas::createGridObjects()
+{
+        mFloorGrid = ogreSceneManager->createManualObject("editingFloorGrid");
+		mFloorGrid->begin("editingFloorGridLines", Ogre::RenderOperation::OT_LINE_LIST);
 
-// Just testing the LogManager .. not yet fully implemented!
-// ToDo: make a seperate sub-system for logging and output.
-//Ogre::Log OgreCanvas::createLogManager()
-//{
-//    Ogre::LogManager* logmgr = new Ogre::LogManager;
-//    Ogre::Log *log = Ogre::LogManager::getSingleton().createLog("mylog.log", true, true, false);
-////    Ogre::Root *root = new Ogre::Root("", "");
-//    return logmgr->getLog();
-//}
+        for (int x=(-FLOOR_LINE_NUM * FLOOR_LINE_SPACE); x <= FLOOR_LINE_NUM * FLOOR_LINE_SPACE; x += FLOOR_LINE_SPACE)
+        {
+            mFloorGrid->position(Ogre::Vector3(x, 0, -FLOOR_LINE_NUM * FLOOR_LINE_SPACE));
+            mFloorGrid->position(Ogre::Vector3(x, 0, FLOOR_LINE_NUM * FLOOR_LINE_SPACE));
+        }
+
+        for (int z = -FLOOR_LINE_NUM * FLOOR_LINE_SPACE; z <= FLOOR_LINE_NUM * FLOOR_LINE_SPACE; z += FLOOR_LINE_SPACE)
+        {
+            mFloorGrid->position(Ogre::Vector3(-FLOOR_LINE_NUM * FLOOR_LINE_SPACE, 0, z));
+            mFloorGrid->position(Ogre::Vector3(FLOOR_LINE_NUM * FLOOR_LINE_SPACE, 0, z));
+        }
+        mFloorGrid->colour(Ogre::ColourValue::Black);
+
+        mFloorGrid->end();
+		mFloorGrid->setCastShadows(false);
+        mFloorGrid->setQueryFlags(0);
+
+		ogreSceneManager->getRootSceneNode()->createChildSceneNode("floorGrid")->attachObject(mFloorGrid);
+
+
+        mCircle = ogreSceneManager->createManualObject("circle");
+		mCircle->begin("circle_line", Ogre::RenderOperation::OT_LINE_STRIP);
+
+        const int segs = 200;
+		const float delta = (float)(2 * Ogre::Math::PI / segs);
+
+        for (int i = 0; i < segs; ++i)
+			mCircle->position((float)Ogre::Math::Sin(i * delta), 0, (float)Ogre::Math::Cos(i * delta));
+
+        mCircle->end();
+		Ogre::SceneNode * centerNode = ogreSceneManager->getRootSceneNode()->createChildSceneNode("centerCircle");
+		centerNode->attachObject(mCircle);
+
+		//this->mCurrCamera->setAutoTracking(true,centerNode);
+		//this->mCurrCamera->setFixedYawAxis(true);
+}

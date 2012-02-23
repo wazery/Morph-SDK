@@ -18,7 +18,9 @@ SOURCES += main.cpp\
     MEvent.cpp \
     MorphCore/Editor/msystemmanager.cpp \
     #MorphCore/Editor/msingleton.cpp
-    MorphCore/Editor/mlogmanager.cpp
+    MorphCore/Editor/mlogmanager.cpp \
+    mOgreEntityViewer/logview.cpp \
+    mOgreEntityViewer/mogrelogproxy.cpp
 
 HEADERS += mainwindow.h \
     ogrecanvas.h \
@@ -28,7 +30,9 @@ HEADERS += mainwindow.h \
     MEvent.h \
     MorphCore/Editor/msystemmanager.h \
     #MorphCore/Editor/msingleton.h // FIXME: implement it.
-    MorphCore/Editor/mlogmanager.h
+    MorphCore/Editor/mlogmanager.h \
+    mOgreEntityViewer/logview.h \
+    mOgreEntityViewer/mogrelogproxy.h
 
 FORMS    += mainwindow.ui
 

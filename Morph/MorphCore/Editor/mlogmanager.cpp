@@ -25,9 +25,19 @@
 #include "MLogManager.h"
 #include <iomanip>
 
+MLogListener::MLogListener()
+{
+}
+
+MLogManager* MLogManager::smInstance = NULL;
+
+MLogListener::~MLogListener()
+{
+}
+
 MLogManager::MLogManager()
 {
-    mOutputFile.open("Morph_log.log", std::ios::out);
+    mOutputFile.open("Morph.log");
 }
 
 MLogManager::~MLogManager()
@@ -35,7 +45,7 @@ MLogManager::~MLogManager()
     mOutputFile.close();
 }
 
-void MLogManager::logOutput(const std::string &message, logType type, bool writeToFile)
+void MLogManager::logOutput(QString message, logType type, bool writeToFile)
 {
     for (std::vector<MLogListener*>::iterator it = mLogListnerList.begin(); it != mLogListnerList.end(); ++it)
         (*it)->messageLogged(message, type);
@@ -46,10 +56,27 @@ void MLogManager::logOutput(const std::string &message, logType type, bool write
 		time_t ctTime;
         time(&ctTime);
 		pTime = localtime(&ctTime);
-		mOutputFile << std::setw(2) << std::setfill(('0')) << pTime->tm_hour
-			<< (":") << std::setw(2) << std::setfill(('0')) << pTime->tm_min
-			<< (":") << std::setw(2) << std::setfill(('0')) << pTime->tm_sec
-			<< (":") << message << std::endl;
+        switch (type)
+        {
+        case M_MESSAGE:
+            mOutputFile << std::setw(2) << std::setfill(('0')) << pTime->tm_hour
+                        << (":") << std::setw(2) << std::setfill(('0')) << pTime->tm_min
+                        << (":") << std::setw(2) << std::setfill(('0')) << pTime->tm_sec
+                        << (", Message: ") << message.toUtf8().constData() << std::endl;
+            break;
+        case M_ERROR:
+            mOutputFile << std::setw(2) << std::setfill(('0')) << pTime->tm_hour
+                        << (":") << std::setw(2) << std::setfill(('0')) << pTime->tm_min
+                        << (":") << std::setw(2) << std::setfill(('0')) << pTime->tm_sec
+                        << (", Error: ") << message.toUtf8().constData() << std::endl;
+            break;
+        case M_WARN:
+            mOutputFile << std::setw(2) << std::setfill(('0')) << pTime->tm_hour
+                        << (":") << std::setw(2) << std::setfill(('0')) << pTime->tm_min
+                        << (":") << std::setw(2) << std::setfill(('0')) << pTime->tm_sec
+                        << (", Warning: ") << message.toUtf8().constData() << std::endl;
+            break;
+        }
 
 		// Flush stcmdream to ensure it is written (incase of a crash, we need log to be up to date)
 		mOutputFile.flush();
