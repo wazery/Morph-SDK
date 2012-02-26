@@ -2,9 +2,9 @@
 #include <string>
 #include <iostream>
 
-QMap<std::string, MButtonWidget*> MButtonWidget::mWidgetsDataBase;
+QMap<std::string, MButtonWidget*> MButtonWidget::sWidgetsDataBase;
 
-MButtonWidget::MCanvasObject::MCanvasObject(const Ogre::Entity& entity){
+MButtonWidget::MCanvasObject::MCanvasObject(const Ogre::Entity &entity){
     mName = entity.getName();
 }
 
@@ -12,12 +12,12 @@ const std::string& MButtonWidget::MCanvasObject::name() const{
     return mName;
 }
 
-MButtonWidget::MButtonWidget(const MCanvasObject* canvasObject) : mCanvasObject(canvasObject){
-    mWidgetsDataBase.insert(mCanvasObject->name(), this);
+MButtonWidget::MButtonWidget(const MCanvasObject *canvasObject) : mCanvasObject(canvasObject){
+    sWidgetsDataBase.insert(mCanvasObject->name(), this);
 }
 
 MButtonWidget::~MButtonWidget(){
-    mWidgetsDataBase.remove( mCanvasObject->name() );
+    sWidgetsDataBase.remove( mCanvasObject->name() );
 }
 
 

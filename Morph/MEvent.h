@@ -5,6 +5,6 @@
 class MButtonEvents
 {
 public:
-static void emitObjectClickedEvent(std::string objectName);
+static void emitObjectClickedEvent(const std::string &objectName);
 };
 #endif // MEVENT_H
