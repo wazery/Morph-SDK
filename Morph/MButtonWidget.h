@@ -13,7 +13,7 @@ public:
     class MCanvasObject
     {
 	public:
-        MCanvasObject(const Ogre::Entity &entity);
+        MCanvasObject(const Ogre::Entity& entity);
 	protected:
         const std::string& name() const;
     private:
@@ -21,11 +21,11 @@ public:
         friend class        MButtonWidget;
 	};
 
-    MButtonWidget(const MCanvasObject *canvasObject);
+    MButtonWidget(const MCanvasObject* canvasObject);
     ~MButtonWidget();
     sigc::signal<void>& Clicked();
 protected:
-    const MCanvasObject                     *mCanvasObject;
+    const MCanvasObject*                     mCanvasObject;
     static QMap<std::string, MButtonWidget*> mWidgetsDataBase;
     sigc::signal<void>                       mClicked;
     friend class MButtonEvents;
