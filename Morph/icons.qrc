@@ -16,16 +16,10 @@
         <file>icons/filesave2.png</file>
         <file>icons/arrow32.png</file>
         <file>icons/folder32.png</file>
-        <file>icons/gear32.png</file>
-        <file>icons/leftarrow32.png</file>
         <file>icons/leftturnarrow32.png</file>
-        <file>icons/linedpaper32.png</file>
         <file>icons/scissors32.png</file>
         <file>icons/search32.png</file>
-        <file>icons/spanner32.png</file>
-        <file>icons/wrench32.png</file>
         <file>icons/minus32.png</file>
-        <file>icons/upload32.png</file>
         <file>icons/block32.png</file>
         <file>icons/move.png</file>
         <file>icons/translate.png</file>

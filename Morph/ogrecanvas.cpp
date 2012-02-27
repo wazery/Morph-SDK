@@ -312,7 +312,7 @@ void OgreCanvas::initOgreSystem()
     emit cameraPositionChanged(camPos);
 
     ogreViewport = ogreRenderWindow->addViewport(ogreCamera);
-    ogreViewport->setBackgroundColour(Ogre::ColourValue(0.19, 0.19, 0.19));
+    ogreViewport->setBackgroundColour(Ogre::ColourValue(0.117647059, 0.117647059, 0.117647059));
     ogreCamera->setAspectRatio(Ogre::Real(ogreViewport->getActualWidth()) / Ogre::Real(ogreViewport->getActualHeight()));
     //-------------------------------------------------------------------------------------
     // Set default mipmap level (NB some APIs ignore this)
@@ -340,8 +340,6 @@ void print(void)
 
 void OgreCanvas::createScene()
 {
-	// This function usage is in line 303!
-
     ogreSceneManager->setAmbientLight(Ogre::ColourValue(0.5, 0.5, 0.5));
     // Create a light
     Ogre::Light* l = ogreSceneManager->createLight("MainLight");
@@ -352,7 +350,6 @@ void OgreCanvas::createScene()
 	// Create a skydome
 	//ogreSceneManager->setSkyDome(true, "Examples/CloudySky", 5, 8);
 
-
 	this->createGridObjects();
 
 	Ogre::Entity* ogreheadEntity = ogreSceneManager->createEntity("ogreHead", "ogrehead.mesh");
@@ -361,8 +358,8 @@ void OgreCanvas::createScene()
     static Button::CanvasObject obj(*ogreheadEntity);
     static Button n(obj);
     n.Clicked().connect(sigc::ptr_fun(print));
-
 }
+
 void OgreCanvas::createGridObjects()
 {
         mFloorGrid = ogreSceneManager->createManualObject("editingFloorGrid");
@@ -386,7 +383,6 @@ void OgreCanvas::createGridObjects()
         mFloorGrid->setQueryFlags(0);
 
 		ogreSceneManager->getRootSceneNode()->createChildSceneNode("floorGrid")->attachObject(mFloorGrid);
-
 
         mCircle = ogreSceneManager->createManualObject("circle");
 		mCircle->begin("circle_line", Ogre::RenderOperation::OT_LINE_STRIP);

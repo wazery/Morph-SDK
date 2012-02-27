@@ -1,12 +1,32 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 
-MainWindow::MainWindow(QWidget *parent) :
-    QMainWindow(parent),
-    ui(new Ui::MainWindow)
+#include "MorphCore/Editor/MLogManager.h"
+
+MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
-//	ui->dockWidgetContents_2->findChildren(
+
+    ui->listWidget->addItem(new QListWidgetItem(QIcon("settings.png"), "Toggle Button"));
+    ui->listWidget->addItem(new QListWidgetItem(QIcon("pictures.png"), "Check Button"));
+    ui->listWidget->addItem(new QListWidgetItem(QIcon("calculator.png"), "Radio Button"));
+
+    MLogManager::getSingleton().addListener(ui->textBrowser);
+
+    connect(ui->actionAbout_Morph, SIGNAL(triggered()), this, SLOT(about()));
+}
+
+void MainWindow::about()
+{
+    QString ogreVersion = QString::number(OGRE_VERSION_MAJOR) + "." + QString::number(OGRE_VERSION_MINOR) + "." + QString::number(OGRE_VERSION_PATCH);
+    QMessageBox::about(this, tr("About Morph SDK"),
+                       tr("Morph SDK %1\n").arg("1.0") +
+                       tr("Copyright (C) 2012 Zeology\n\n") +
+                       tr("Licensed under the LGPL\n") +
+                       tr("Using Ogre %1 and Qt %2\n\n").arg(ogreVersion).arg(qVersion()) +
+                       tr("Developers:\n") +
+                       tr("ISlam Wazery <wazery@ubuntu.com>\n") +
+                       tr("Mohammed Yosry <mohammedyosry3000@gmail.com>"));
 }
 
 MainWindow::~MainWindow()

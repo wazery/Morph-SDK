@@ -1,4 +1,4 @@
-    #ifndef OGRE_CANVAS_H
+#ifndef OGRE_CANVAS_H
 #define OGRE_CANVAS_H
 
 #include <QtGui>
@@ -15,7 +15,6 @@ public:
 
     // Override QWidget::paintEngine to return NULL
     QPaintEngine* paintEngine() const; // Turn off QTs paint engine for the Ogre widget.
-	Ogre::Log createLogManager();	   // ToDo: Implementing this function.
 
 public slots:
     void setBackgroundColor(QColor c);
@@ -39,6 +38,7 @@ private:
     void initOgreSystem();
 	void setupNLoadResources();
 	void createScene();
+    void createGridObjects();
 
 private:
     static const Ogre::Real turboModifier;
@@ -50,6 +50,8 @@ private:
     Ogre::RenderWindow  *ogreRenderWindow;
     Ogre::Viewport      *ogreViewport;
     Ogre::Camera        *ogreCamera;
+    Ogre::ManualObject  *mFloorGrid;
+    Ogre::ManualObject  *mCircle;
 
     QPoint oldPos;
     Ogre::SceneNode *selectedNode;
