@@ -28,7 +28,7 @@ MButtonWidget::~MButtonWidget(){
 
 
 void MButtonWidget::Clicked(){
-    clicked();
+     emit clicked();
 }
 
 void MButtonWidget::print(){

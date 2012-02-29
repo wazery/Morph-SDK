@@ -25,12 +25,12 @@ public:
 
     MButtonWidget(const MCanvasObject *canvasObject, QObject *parent = 0);
     ~MButtonWidget();
-    void Clicked();
 protected:
     const MCanvasObject                     *mCanvasObject;
     static QMap<std::string, MButtonWidget*> sWidgetsDataBase;
     friend class MButtonEvents;
 
+    void Clicked();
 signals:
     void clicked();
 

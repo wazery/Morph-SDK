@@ -321,9 +321,7 @@ void OgreCanvas::setupNLoadResources()
     Ogre::ResourceGroupManager::getSingleton().initialiseAllResourceGroups();
 }
 
-void print(void){
-    std::cout << "------------object clicked-------------" << std::endl;
-}
+
 
 
 void OgreCanvas::createScene()
@@ -341,7 +339,7 @@ void OgreCanvas::createScene()
 
     static MButtonWidget::MCanvasObject obj(*ogreHead);
     static MButtonWidget n(&obj);
-    n.Clicked().connect(sigc::ptr_fun(print));
+    QObject::connect(&n, SIGNAL(clicked()),&n ,SLOT(print()));
 
     Ogre::SceneNode* headNode = ogreSceneManager->getRootSceneNode()->createChildSceneNode();
     headNode->attachObject(ogreHead);
