@@ -2,28 +2,20 @@
 #include <string>
 #include <iostream>
 
-QMap<std::string, MButtonWidget*> MButtonWidget::sWidgetsDataBase;
+QMap<std::string, MButtonWidget*> MButtonWidget::smWidgetsDataBase;
 
 MButtonWidget::MButtonWidget(QObject *parent) :
     QObject(parent){
 
 }
 
-MButtonWidget::MCanvasObject::MCanvasObject(const Ogre::Entity &entity){
-    mName = entity.getName();
-}
-
-const std::string& MButtonWidget::MCanvasObject::name() const{
-    return mName;
-}
-
-MButtonWidget::MButtonWidget(const MCanvasObject *canvasObject, QObject *parent) :
+MButtonWidget::MButtonWidget(const MButtonCanvasObject *canvasObject, QObject *parent) :
     QObject(parent), mCanvasObject(canvasObject){
-    sWidgetsDataBase.insert(mCanvasObject->name(), this);
+    smWidgetsDataBase.insert(mCanvasObject->name(), this);
 }
 
 MButtonWidget::~MButtonWidget(){
-    sWidgetsDataBase.remove( mCanvasObject->name() );
+    smWidgetsDataBase.remove( mCanvasObject->name() );
 }
 
 

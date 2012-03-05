@@ -1,35 +1,23 @@
 #ifndef MBUTTONWIDGET_H
 #define MBUTTONWIDGET_H
 #include <QObject>
-#include <OGRE/OgreEntity.h>
 #include <string>
-#include <vector>
 #include <QMap>
-#include "MEvent.h"
+#include "MButtonCanvasObject.h"
+#include "MButtonEventEmitter.h"
 
 class MButtonWidget : public QObject
 {
     Q_OBJECT
 public:
     explicit MButtonWidget(QObject *parent = 0);
-    class MCanvasObject
-    {
-	public:
-        MCanvasObject(const Ogre::Entity &entity);
-	protected:
-        const std::string& name() const;
-    private:
-        std::string         mName;
-        friend class        MButtonWidget;
-	};
-
-    MButtonWidget(const MCanvasObject *canvasObject, QObject *parent = 0);
+    MButtonWidget(const MButtonCanvasObject *canvasObject, QObject *parent = 0);
     ~MButtonWidget();
 protected:
-    const MCanvasObject                     *mCanvasObject;
-    static QMap<std::string, MButtonWidget*> sWidgetsDataBase;
-    friend class MButtonEvents;
-
+    const MButtonCanvasObject                  *mCanvasObject;
+    static QMap<std::string, MButtonWidget*>    smWidgetsDataBase;
+    friend class MButtonEventEmitter;
+private:
     void Clicked();
 signals:
     void clicked();
