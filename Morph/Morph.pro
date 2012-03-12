@@ -14,16 +14,17 @@ TEMPLATE = app
 SOURCES += main.cpp\
         mainwindow.cpp \
     ogrecanvas.cpp \
-    MEvent.cpp \
-    MButtonWidget.cpp
+    MButtonWidget.cpp \
+    to-do.cpp \
+    MButtonEventEmitter.cpp \
+    MButtonCanvasObject.cpp
 
 HEADERS += mainwindow.h \
         splashscreen.h \
     ogrecanvas.h \
-    MWidget.h \
-    MEvent.h \
     MButtonWidget.h \
-    MWidgetDataBase.h
+    MButtonEventEmitter.h \
+    MButtonCanvasObject.h
 
 FORMS    += mainwindow.ui
 
@@ -32,11 +33,6 @@ FORMS    += mainwindow.ui
     INCLUDEPATH += /usr/include/OGRE
     CONFIG += link_pkgconfig
     PKGCONFIG += OGRE
-
-
-    INCLUDEPATH += /usr/include/sigc++-2.0
-    CONFIG += link_pkgconfig
-    PKGCONFIG += sigc++-2.0
 #}
 
 #win32 {

@@ -1,7 +1,7 @@
 #include "MButtonEventEmitter.h"
 #include "MButtonWidget.h"
 #include <cstddef>
-#include <cassert>
+#include <QtGlobal>
 
 MButtonEventEmitter* MButtonEventEmitter::smInstance = NULL;
 
@@ -32,10 +32,29 @@ void MButtonEventEmitter::releaseSingleton(){
 }
 
 void MButtonEventEmitter::emitClicked(const std::string &entityName){
-    assert(MButtonWidget::smWidgetsDataBase.contains(entityName));
+    Q_ASSERT(MButtonWidget::smWidgetsDataBase.contains(entityName));
     MButtonWidget::smWidgetsDataBase[entityName]->Clicked();
 }
 
+void MButtonEventEmitter::emitPressed(const std::string &entityName){
+    Q_ASSERT(MButtonWidget::smWidgetsDataBase.contains(entityName));
+    MButtonWidget::smWidgetsDataBase[entityName]->Pressed();
+}
+
+void MButtonEventEmitter::emitReleased(const std::string &entityName){
+    Q_ASSERT(MButtonWidget::smWidgetsDataBase.contains(entityName));
+    MButtonWidget::smWidgetsDataBase[entityName]->Released();
+}
+
+void MButtonEventEmitter::emitEnter(const std::string &entityName){
+    Q_ASSERT(MButtonWidget::smWidgetsDataBase.contains(entityName));
+    MButtonWidget::smWidgetsDataBase[entityName]->Enter();
+}
+
+void MButtonEventEmitter::emitLeave(const std::string &entityName){
+    Q_ASSERT(MButtonWidget::smWidgetsDataBase.contains(entityName));
+    MButtonWidget::smWidgetsDataBase[entityName]->Leave();
+}
 
 MButtonEventEmitter::~MButtonEventEmitter(){
 

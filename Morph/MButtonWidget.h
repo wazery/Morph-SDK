@@ -19,8 +19,16 @@ protected:
     friend class MButtonEventEmitter;
 private:
     void Clicked();
+    void Pressed();
+    void Released();
+    void Enter();
+    void Leave();
 signals:
     void clicked();
+    void pressed();
+    void released();
+    void enter();
+    void leave();
 
 public slots:
     void print();

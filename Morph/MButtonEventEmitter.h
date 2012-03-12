@@ -12,6 +12,10 @@ public:
 
      //event emitters
      void emitClicked(const std::string &entityName);
+     void emitPressed(const std::string &entityName);
+     void emitReleased(const std::string &entityName);
+     void emitEnter(const std::string &entityName);
+     void emitLeave(const std::string &entityName);
 
 private:
      MButtonEventEmitter();
