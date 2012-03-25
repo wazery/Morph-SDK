@@ -64,7 +64,7 @@ bool MAttribute::_setValueByString(boost::any &dstValue, const MString &valueStr
                 dstValue = false;
             else
             {
-                MLogManager::getSingleton().logOutput(("ERROR: MAttribute::convertMStringToValue ,input syntax error."));
+                MLogManager::getSingleton().logOutput(("ERROR: MAttribute::convertMStringToValue ,input syntax error."), M_ERROR);
                     return false;
             }
             //dstValue = v;
@@ -75,7 +75,7 @@ bool MAttribute::_setValueByString(boost::any &dstValue, const MString &valueStr
         }
         else if(dstValue.type() == typeid(MEnumList))
         {
-            // FIXME: need to be refactored.
+            // FIXME: needs some refactoring.
             MString valueString = MString::fromUtf8(trim(valueStr.toUtf8().constData()).c_str());
             MEnumList enumList = boost::any_cast<MEnumList>(dstValue);
             // if found
@@ -87,7 +87,7 @@ bool MAttribute::_setValueByString(boost::any &dstValue, const MString &valueStr
             }
             else
             {
-                MLogManager::getSingleton().logOutput(("ERROR: MAttribute::setValueByString input syntax error,not not found the string in the enumList.")+valueString);
+                MLogManager::getSingleton().logOutput(("ERROR: MAttribute::setValueByString input syntax error,not not found the string in the enumList.") + valueString, M_ERROR);
                 return false;
             }
         }
@@ -107,7 +107,7 @@ bool MAttribute::_setValueByString(boost::any &dstValue, const MString &valueStr
             else
             {
                 //dstValue = MVector2::ZERO;
-                MLogManager::getSingleton().logOutput(("ERROR: MAttribute::setValueByString input syntax error, you should input 2 MVector2 value"));
+                MLogManager::getSingleton().logOutput(("ERROR: MAttribute::setValueByString input syntax error, you should input 2 MVector2 value"), M_ERROR);
                     return false;
             }
         }
@@ -128,7 +128,7 @@ bool MAttribute::_setValueByString(boost::any &dstValue, const MString &valueStr
             else
             {
                 //dstValue = MVector3::ZERO;
-                MLogManager::getSingleton().logOutput(("ERROR: MAttribute::setValueByString input syntax error, you should input 3 MVector3 value"));
+                MLogManager::getSingleton().logOutput(("ERROR: MAttribute::setValueByString input syntax error, you should input 3 MVector3 value"), M_ERROR);
                     return false;
             }
         }
@@ -150,7 +150,7 @@ bool MAttribute::_setValueByString(boost::any &dstValue, const MString &valueStr
             else
             {
                 //dstValue = MVector4::ZERO;
-                MLogManager::getSingleton().logOutput(("ERROR: MAttribute::setValueByString input syntax error, you should input 4 MVector4 value"));
+                MLogManager::getSingleton().logOutput(("ERROR: MAttribute::setValueByString input syntax error, you should input 4 MVector4 value"), M_ERROR);
                     return false;
             }
         }
@@ -179,7 +179,7 @@ bool MAttribute::_setValueByString(boost::any &dstValue, const MString &valueStr
             else
             {
                 //dstValue = MMatrix3::IDENTITY;
-                MLogManager::getSingleton().logOutput(("ERROR: MAttribute::setValueByString input syntax error, you should input 3x3 matrix value"));
+                MLogManager::getSingleton().logOutput(("ERROR: MAttribute::setValueByString input syntax error, you should input 3x3 matrix value"), M_ERROR);
                     return false;
             }
         }
@@ -216,7 +216,7 @@ bool MAttribute::_setValueByString(boost::any &dstValue, const MString &valueStr
             else
             {
                 //dstValue = MMatrix4::IDENTITY;
-                MLogManager::getSingleton().logOutput(("ERROR: MAttribute::setValueByString input syntax error, you should input 4x4 matrix value"));
+                MLogManager::getSingleton().logOutput(("ERROR: MAttribute::setValueByString input syntax error, you should input 4x4 matrix value"), M_ERROR);
                     return false;
             }
         }
@@ -238,7 +238,7 @@ bool MAttribute::_setValueByString(boost::any &dstValue, const MString &valueStr
             else
             {
                 //dstValue = MVector4::ZERO;
-                MLogManager::getSingleton().logOutput(("ERROR: MAttribute::setValueByString input syntax error, you should input 4 MVector4 value"));
+                MLogManager::getSingleton().logOutput(("ERROR: MAttribute::setValueByString input syntax error, you should input 4 MVector4 value"), M_ERROR);
                     return false;
             }
         }
@@ -246,21 +246,28 @@ bool MAttribute::_setValueByString(boost::any &dstValue, const MString &valueStr
         else if(dstValue.type() == typeid(MComboAttr))
         {
             //string valueString = valueStr.toUtf8().constData());
-            vector<string> split_str_list ;
-            split_str_list = bracketSplit(trim(valueStr.toUtf8().constData()), ('{'), ('}'));
+            vector<MString> split_str_list ;
+            vector<string> tmp;
+            tmp = bracketSplit(trim(valueStr.toUtf8().constData()), ('{'), ('}'));
+            string s;
+            foreach (s, tmp)
+            {
+                split_str_list.push_back(MString::fromStdString(s));
+            }
+
             MComboAttr comboAttr = getValue<MComboAttr>();
             if(comboAttr.mValueList.size() != split_str_list.size())
             {
-                MLogManager::getSingleton().logOutput(("ERROR: MAttribute::setValueByString input syntax error, params number for MComboAttr not macth"));
+                MLogManager::getSingleton().logOutput(("ERROR: MAttribute::setValueByString input syntax error, params number for MComboAttr not macth"), M_ERROR);
                 return false;
             }
-            std::map<string, boost::any>::iterator it;
+            std::map<MString, boost::any>::iterator it;
             it = comboAttr.mValueList.begin();
             for(size_t i=0; i < split_str_list.size(); i++)
             {
-                if(!_setValueByString(it->second, MString::fromUtf8(split_str_list[i].c_str())))
+                if(!_setValueByString(it->second, split_str_list[i]))
                 {
-                    MLogManager::getSingleton().logOutput(("ERROR: MAttribute::setValueByString input syntax error, on MComboAttr"));
+                    MLogManager::getSingleton().logOutput(("ERROR: MAttribute::setValueByString input syntax error, on MComboAttr"), M_ERROR);
                     return false;
                 }
                 it++;
@@ -290,12 +297,12 @@ bool MAttribute::_setValueByString(boost::any &dstValue, const MString &valueStr
             }
             else
             {
-                MLogManager::getSingleton().logOutput(("ERROR: MAttribute::setValueByString input syntax error, you should input 3 or 4 colour value[0.0 ~ 1.0]"));
+                MLogManager::getSingleton().logOutput(("ERROR: MAttribute::setValueByString input syntax error, you should input 3 or 4 colour value[0.0 ~ 1.0]"), M_ERROR);
                     return false;
             }
             if(bgColor.r > 1.0 || bgColor.r < 0.0 || bgColor.g > 1.0 || bgColor.g < 0.0 || bgColor.b > 1.0 || bgColor.b < 0.0 || bgColor.a > 1.0 || bgColor.a < 0.0)
             {
-                MLogManager::getSingleton().logOutput(("ERROR: MAttribute::setValueByString input syntax error, you should input colour value between[0.0 ~ 1.0]"));
+                MLogManager::getSingleton().logOutput(("ERROR: MAttribute::setValueByString input syntax error, you should input colour value betMeen[0.0 ~ 1.0]"), M_ERROR);
                     return false;
             }
 
@@ -303,7 +310,7 @@ bool MAttribute::_setValueByString(boost::any &dstValue, const MString &valueStr
         }
         else
         {
-            MLogManager::getSingleton().logOutput(("ERROR: MAttribute::convertMStringToValue, input attribute type not suport."));
+            MLogManager::getSingleton().logOutput(("ERROR: MAttribute::convertMStringToValue, input attribute type not suport."), M_ERROR);
             return false;
         }
     }
@@ -355,7 +362,7 @@ vector<string> MAttribute::tokenize(const string& src, string tok, bool trim, bo
     return v;
 }
 
-vector<string> bracketSplit(const string& src, char beginChar, char endChar)
+vector<string> MAttribute::bracketSplit(const string& src, char beginChar, char endChar)
 {
     vector<char> beginCharList;
 
@@ -397,12 +404,312 @@ MString MAttribute::getValuetoString() const
 
 MString MAttribute::_getValueToString(const boost::any &srcValue) const
 {
+    MString result = "";
+
+    try{
+        if(srcValue.empty())// if the pAttr is NULL,MAKE a Marn!
+            return "";
+
+        if(srcValue.type() == typeid(int))
+        {
+
+            int value = boost::any_cast<int>(srcValue);
+            stringstream stream;
+            stream<<value;
+            result = MString::fromUtf8(stream.str().c_str());
+        }
+        else if(srcValue.type() == typeid(unsigned int))
+        {
+            unsigned int value = boost::any_cast<unsigned int>(srcValue);
+            stringstream stream;
+            stream<<value;
+            result = MString::fromUtf8(stream.str().c_str());
+        }
+        else if(srcValue.type() == typeid(long))
+        {
+            long value = boost::any_cast<long>(srcValue);
+            stringstream stream;
+            stream<<value;
+            result = MString::fromUtf8(stream.str().c_str());
+        }
+        else if(srcValue.type() == typeid(unsigned long))
+        {
+            unsigned long value = boost::any_cast<unsigned long>(srcValue);
+            stringstream stream;
+            stream<<value;
+            result = MString::fromUtf8(stream.str().c_str());
+        }
+        else if(srcValue.type() == typeid(unsigned short))
+        {
+            unsigned short value = boost::any_cast<unsigned short>(srcValue);
+            stringstream stream;
+            stream<<value;
+            result = MString::fromUtf8(stream.str().c_str());
+        }
+        else if(srcValue.type() == typeid(MDegreeAngle))
+        {
+
+            MDegreeAngle value = boost::any_cast<MDegreeAngle>(srcValue);
+            stringstream stream;
+            stream<<value.valueDegrees();
+            result = MString::fromUtf8(stream.str().c_str());
+        }
+        else if(srcValue.type() == typeid(float))
+        {
+            float value = boost::any_cast<float>(srcValue);
+            stringstream stream;
+            stream<<value;
+            result = MString::fromUtf8(stream.str().c_str());
+        }
+        else if(srcValue.type() == typeid(MLimitFloat))
+        {
+            MLimitFloat limitFloat = boost::any_cast<MLimitFloat>(srcValue);
+            float value = limitFloat.mValue;
+            stringstream stream;
+            stream<<value;
+            result = MString::fromUtf8(stream.str().c_str());
+        }
+        else if(srcValue.type() == typeid(bool))
+        {
+            bool value = boost::any_cast<bool>(srcValue);
+            if(value)
+                result = "true";
+            else
+                result = "false";
+        }
+        else if(srcValue.type() == typeid(MString))
+        {
+            result = boost::any_cast<MString>(srcValue);
+        }
+        else if(srcValue.type() == typeid(MEnumList))
+        {
+
+            MEnumList enumList = boost::any_cast<MEnumList>(srcValue);
+            if(enumList.mStrSelected == "true" || enumList.mStrSelected == "on" || enumList.mStrSelected == "yes" ||enumList.mStrSelected == "1")
+                result = "true";
+            else if(enumList.mStrSelected == "false" || enumList.mStrSelected == "off" || enumList.mStrSelected == "no" || enumList.mStrSelected == "0")
+                result = "false";
+            else
+                result = enumList.mStrSelected;
+        }
+        else if(srcValue.type() == typeid(MVector2))
+        {
+            MVector2 value = boost::any_cast<MVector2>(srcValue);
+            stringstream stream;
+            stream << value.x << " " << value.y;
+            result = MString::fromUtf8(stream.str().c_str());
+
+        }
+        else if(srcValue.type() == typeid(MVector3))
+        {
+            MVector3 value = boost::any_cast<MVector3>(srcValue);
+            stringstream stream;
+            stream << value.x << " " << value.y << " " << value.z;
+            result = MString::fromUtf8(stream.str().c_str());
+        }
+        else if(srcValue.type() == typeid(MVector4))
+        {
+            MVector4 value = boost::any_cast<MVector4>(srcValue);
+            stringstream stream;
+            stream << value.x << " " << value.y << " " << value.z << " " << value.w;
+            result = MString::fromUtf8(stream.str().c_str());
+        }
+        else if(srcValue.type() == typeid(MColor))
+        {
+            MColor value = boost::any_cast<MColor>(srcValue);
+            stringstream stream;
+            stream << value.r << " " << value.g << " " << value.b << " " << value.a;
+            result = MString::fromUtf8(stream.str().c_str());
+        }
+        else if(srcValue.type() == typeid(MMatrix3))
+        {
+            MMatrix3 val = boost::any_cast<MMatrix3>(srcValue);
+            stringstream stream;
+            stream << val[0][0] << " "
+                << val[0][1] << " "
+                << val[0][2] << " "
+                << val[1][0] << " "
+                << val[1][1] << " "
+                << val[1][2] << " "
+                << val[2][0] << " "
+                << val[2][1] << " "
+                << val[2][2];
+            result = MString::fromUtf8(stream.str().c_str());
+        }
+        else if(srcValue.type() == typeid(MMatrix4))
+        {
+            MMatrix4 val = boost::any_cast<MMatrix4>(srcValue);
+            stringstream stream;
+            stream << val[0][0] << " "
+                << val[0][1] << " "
+                << val[0][2] << " "
+                << val[0][3] << " "
+                << val[1][0] << " "
+                << val[1][1] << " "
+                << val[1][2] << " "
+                << val[1][3] << " "
+                << val[2][0] << " "
+                << val[2][1] << " "
+                << val[2][2] << " "
+                << val[2][3] << " "
+                << val[3][0] << " "
+                << val[3][1] << " "
+                << val[3][2] << " "
+                << val[3][3];
+            result = MString::fromUtf8(stream.str().c_str());
+        }
+        else if(srcValue.type() == typeid(MQuaternion))
+        {
+            MQuaternion val = boost::any_cast<MQuaternion>(srcValue);
+            stringstream stream;
+            stream << val.x << " " << val.y << " " << val.z << " " << val.w;
+            result = MString::fromUtf8(stream.str().c_str());
+
+        }
+        else if(srcValue.type() == typeid(MComboAttr))
+        {
+            MComboAttr comboAttr = boost::any_cast<MComboAttr>(srcValue);
+            stringstream stream;
+
+            std::map<MString,boost::any>::iterator it;
+            for(it = comboAttr.mValueList.begin();it!=comboAttr.mValueList.end();it++)
+            {
+                MString val = this->_getValueToString(it->second);
+
+                val = "{" + val + "}";//braces the string;
+                if(it == comboAttr.mValueList.begin())
+                    stream << val.toUtf8().constData();
+                else
+                    stream << " " << val.toUtf8().constData();
+
+            }
+            result = MString::fromUtf8(stream.str().c_str());
+
+        }
+        else
+        {
+            MLogManager::getSingleton().logOutput("ERROR:  MAttribute::converMStringToValue ,input attribute type not suport.", M_ERROR);
+            return "";
+        }
+    }
+    catch(boost::bad_lexical_cast& e)
+    {
+        MLogManager::getSingleton().logOutput("ERROR:  MAttribute::converMStringToValue " + MString::fromUtf8(std::string(e.what()).c_str()), M_ERROR);
+            return "";
+    }
+
+    return result;
 }
 
 bool MAttribute::setValue(const boost::any &value)
 {
+    try
+    {
+        if(isEmpty())
+        {
+            mValue = value;
+            return true;
+        }
+        else if(getType() == typeid(MEnumList) && value.type() == typeid(MString))
+        {
+            MString strValue = boost::any_cast<MString>(value);
+            this->setValueByString(strValue);
+            return true;
+        }
+        else if(getType() == typeid(MLimitFloat) && value.type() == typeid(float))
+        {
+            float input = boost::any_cast<float>(value);
+            MLimitFloat limitFloat = this->getValue<MLimitFloat>();
+            limitFloat.mValue = input;
+            this->mValue = limitFloat;
+            return true;
+        }
+        else if(getType() == typeid(MDegreeAngle) && (value.type() != typeid(MDegreeAngle)))
+        {
+            MReal input = 0.0;
+            if(value.type() == typeid(float))
+                input = boost::any_cast<float>(value);
+            else if(value.type() == typeid(MReal))
+                input = boost::any_cast<MReal>(value);
+            else if(value.type() == typeid(int))
+                input = boost::any_cast<int>(value);
+            else if(value.type() == typeid(double))
+                input = boost::any_cast<double>(value);
+            else
+            {
+                MLogManager::getSingleton().logOutput("ERROR: MAttribute::setAnyValue >>MDegreeAngle>> dstValue.type() != typeid(T) ", M_ERROR);
+                return false;
+            }
+
+            MDegreeAngle angle(input);
+
+            this->mValue = angle;
+            return true;
+        }
+        else if(getType() != value.type())
+        {
+            MLogManager::getSingleton().logOutput("ERROR: MAttribute::setAnyValue >> dstValue.type() != typeid(T) ", M_ERROR);
+            return false;
+        }
+
+        mValue = value;
+
+    }
+    catch(boost::bad_lexical_cast& e)
+    {
+        MLogManager::getSingleton().logOutput("ERROR: MAttribute::setValue " + MString::fromUtf8(std::string(e.what()).c_str()), M_ERROR);
+            return false;
+    }
+    return(true);
 }
 
 bool MAttribute::setDefaultValue(const boost::any &value)
 {
+    try
+    {
+        if(isEmpty())
+        {
+            mDefaultValue = value;
+            return true;
+        }
+        else if(getType() == typeid(MEnumList) && value.type() == typeid(MString))
+        {
+            MString strValue = boost::any_cast<MString>(value);
+            MEnumList v = this->getDefaultValue<MEnumList>();
+            v.mStrSelected = strValue;
+            mDefaultValue = v;
+            return true;
+        }
+        else if(getType() == typeid(MLimitFloat) && value.type() == typeid(float))
+        {
+            float input = boost::any_cast<float>(value);
+            MLimitFloat limitFloat = this->getDefaultValue<MLimitFloat>();
+            limitFloat.mValue = input;
+            this->mDefaultValue = limitFloat;
+            return true;
+        }
+        else if(getType() == typeid(MDegreeAngle) && value.type() == typeid(float))
+        {
+            float input = boost::any_cast<float>(value);
+            MDegreeAngle angle(input);
+
+            this->mDefaultValue = angle;
+            return true;
+        }
+
+        else if(getType() != value.type())
+        {
+            MLogManager::getSingleton().logOutput("ERROR: MAttribute::setAnyValue >> dstValue.type() != typeid(T) ", M_ERROR);
+            return false;
+        }
+
+        mDefaultValue = value;
+
+    }
+    catch(boost::bad_lexical_cast& e)
+    {
+        MLogManager::getSingleton().logOutput("ERROR: MAttribute::setValue " + MString::fromUtf8(std::string(e.what()).c_str()), M_ERROR);
+        return false;
+    }
+    return(true);
 }

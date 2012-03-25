@@ -124,7 +124,7 @@ namespace Morph
 
         // Some Utility functions,
         vector<string> tokenize(const string &src, string tok, bool trim, bool quote, string null_subst);
-        vector<string> bracketSplit(const string &src, char beginChar, char endChar);
+        vector<string> bracketSplit(const string& src, char beginChar, char endChar);
         static string trim(const string &source, const string &t = " ")
         {
             string str = source;
