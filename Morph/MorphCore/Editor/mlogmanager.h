@@ -32,6 +32,9 @@
 #include <iostream>
 #include <fstream>
 #include <QString>
+
+#include "MType.h"
+
 enum logType
 {
     M_MESSAGE,
@@ -40,7 +43,8 @@ enum logType
 };
 
 // TODO: Implement some log levels.
-
+namespace Morph
+{
 /** @class Pure abstract class for registring logs */
 class MLogListener
 {
@@ -55,7 +59,7 @@ public:
     @param type logType
         Message from Ogre, Error, or even a Warnning.
     */
-    virtual void messageLogged(QString message, logType type) = 0;
+    virtual void messageLogged(MString message, logType type) = 0;
 };
 
 class MLogManager
@@ -72,7 +76,7 @@ public:
     @param writeToFile bool
         True if the log will be written to a file, set by default to true, set by default to true.
     */
-    void logOutput(QString message, logType type = M_MESSAGE, bool writeToFile = true);
+    void logOutput(MString message, logType type = M_MESSAGE, bool writeToFile = true);
 
     /** Add a listner
     @param listener MLogListener
@@ -95,5 +99,5 @@ protected:
     std::ofstream mOutputFile;
 };
 
-
+}
 #endif // MLOGMANAGER_H

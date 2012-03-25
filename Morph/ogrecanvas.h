@@ -46,8 +46,8 @@ private:
 
 private:
     Ogre::Root          *ogreRoot;
-    Ogre::SceneManager  *ogreSceneManager;
     Ogre::RenderWindow  *ogreRenderWindow;
+    Ogre::SceneManager  *ogreSceneManager;
     Ogre::Viewport      *ogreViewport;
     Ogre::Camera        *ogreCamera;
     Ogre::ManualObject  *mFloorGrid;

@@ -23,7 +23,8 @@
 
 #include "mogrelogproxy.h"
 #include "MorphCore/Editor/MLogManager.h"
-#include "QString"
+
+using namespace Morph;
 
 MOgreLogProxy::MOgreLogProxy()
 {
@@ -31,5 +32,5 @@ MOgreLogProxy::MOgreLogProxy()
 
 void MOgreLogProxy::messageLogged(const Ogre::String &message, Ogre::LogMessageLevel lml, bool maskDebug, const Ogre::String &logName)
 {
-    MLogManager::getSingleton().logOutput(QString::fromUtf8(message.data()));
+    MLogManager::getSingleton().logOutput(MString::fromUtf8(message.data()));
 }

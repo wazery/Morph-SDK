@@ -25,6 +25,8 @@
 #include "MLogManager.h"
 #include <iomanip>
 
+using namespace Morph;
+
 MLogListener::MLogListener()
 {
 }
@@ -45,7 +47,7 @@ MLogManager::~MLogManager()
     mOutputFile.close();
 }
 
-void MLogManager::logOutput(QString message, logType type, bool writeToFile)
+void MLogManager::logOutput(MString message, logType type, bool writeToFile)
 {
     for (std::vector<MLogListener*>::iterator it = mLogListnerList.begin(); it != mLogListnerList.end(); ++it)
         (*it)->messageLogged(message, type);

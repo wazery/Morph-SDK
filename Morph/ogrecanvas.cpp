@@ -6,6 +6,8 @@
 #include "MorphCore/Editor/MLogManager.h"
 #include "mOgreEntityViewer/mogrelogproxy.h"
 
+using namespace Morph;
+
 const QPoint     OgreCanvas::invalidMousePoint(-1, -1);
 const Ogre::Real OgreCanvas::turboModifier(10);
 

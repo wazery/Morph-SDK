@@ -28,13 +28,15 @@
 
 #include "MorphCore/Editor/MLogManager.h"
 
+using namespace Morph;
+
 class LogView : public QTextBrowser, public MLogListener
 {
     Q_OBJECT
 public:
     LogView(QWidget* parent = 0);
 
-    void messageLogged(QString message, logType type);
+    void messageLogged(MString message, logType type);
 };
 
 #endif // LOGVIEW_H
