@@ -108,7 +108,7 @@ protected:
         @remarks
             Create a render window. This window should be the current
             childView window using the externalWindowHandle value pair option.
-        @param windowName Ogre::Strin identifying the name of the parent window.
+        @param windowName Ogre::String identifying the name of the parent window.
         @param width int containing the width of the Ogre Canvas.
         @param height int containing the height of the Ogre Canvas.
         @param params NameValuePairList Name / value parameter pair (first = name, second = value).

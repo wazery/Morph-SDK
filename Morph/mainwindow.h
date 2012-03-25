@@ -18,6 +18,7 @@ public:
 
 public slots:
     void about();
+    void fakeSlot();
 
 private:
     Ui::MainWindow *ui;
