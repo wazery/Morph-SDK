@@ -20,7 +20,10 @@ SOURCES += main.cpp\
     #MorphCore/Editor/msingleton.cpp
     MorphCore/Editor/mlogmanager.cpp \
     mOgreEntityViewer/logview.cpp \
-    mOgreEntityViewer/mogrelogproxy.cpp
+    mOgreEntityViewer/mogrelogproxy.cpp \
+    MorphCore/Editor/mnodemanager.cpp \
+    MorphCore/Editor/mnode.cpp \
+    MorphCore/Editor/mattribute.cpp
 
 HEADERS += mainwindow.h \
     ogrecanvas.h \
@@ -32,7 +35,12 @@ HEADERS += mainwindow.h \
     #MorphCore/Editor/msingleton.h // FIXME: implement it.
     MorphCore/Editor/mlogmanager.h \
     mOgreEntityViewer/logview.h \
-    mOgreEntityViewer/mogrelogproxy.h
+    mOgreEntityViewer/mogrelogproxy.h \
+    MorphCore/Editor/mnodemanager.h \
+    MorphCore/Editor/mnode.h \
+    MorphCore/Editor/MNode.h \
+    MorphCore/Editor/MType.h \
+    MorphCore/Editor/mattribute.h
 
 FORMS    += mainwindow.ui
 
