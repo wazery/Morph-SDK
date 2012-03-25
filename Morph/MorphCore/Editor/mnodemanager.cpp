@@ -24,6 +24,11 @@
 
 #include "mnodemanager.h"
 
+#include "MNode.h"
+#include "MLogManager.h"
+
+using namespace Morph;
+
 MNodeManager::MNodeManager()
 {
     mIsInitialised = false;
@@ -31,30 +36,66 @@ MNodeManager::MNodeManager()
 
 MNodeManager::~MNodeManager()
 {
-    if (mInstance)
+    if (smInstance)
     {
-        delete mInstance;
-        mInstance = NULL;
+        delete smInstance;
+        smInstance = NULL;
     }
 }
 
-virtual bool MNodeManager::registerNode(const Ogre::String &nodeID, MNodeCreatorFun creatorFun)
+bool MNodeManager::registerNode(const MString &nodeID, MNodeCreatorFun creatorFun)
+{
+    // Check if the node id exist
+    if (!creatorFun)
+    {
+        MString errorString = "ERROR: The function creator is NULL for this node(" + nodeID + ")";
+        MLogManager::getSingletonPtr()->logOutput(errorString);
+        return false;
+    }
+    else
+        mNormalNodeRegList[nodeID] = creatorFun;
+
+    return true;
+}
+
+bool MNodeManager::deregisterNode(const MString &nodeID)
+{
+    // Check if the node id exist
+    // FIXME: selectNode();
+    if (mNormalNodeRegList.find(nodeID) != mNormalNodeRegList.end())
+    {
+        mNormalNodeRegList.erase(mNormalNodeRegList.find(nodeID));
+
+        if (mRootNodePtr && nodeID == mRootNodePtr->getNodeID())
+        {
+            mRootNodePtr->release();
+        }
+        // Free all nodes created by this nodeID.
+        else if(mRootNodePtr)
+        {
+            mRootNodePtr->deleteChildNodeByID(nodeID);
+            notifyRemoveNode("", mRootNodePtr->getName());
+        }
+    }
+    else
+    {
+        MString errorString = "WARN: The node name (" + nodeID + ") that you want to de-register doesn't exist!";
+        MLogManager::getSingleton().logOutput(errorString);
+        return false;
+    }
+    // FIXME: selectNode("");
+    return true;
+}
+
+bool MNodeManager::selectNode(const MString &nodeChainName)
 {
 }
 
-virtual bool MNodeManager::deregisterNode(const Ogre::String &nodeID)
+bool MNodeManager::isNodeSelected(const MString &nodeChainName)
 {
 }
 
-virtual bool MNodeManager::selectNode(const Ogre::String &nodeChainName)
-{
-}
-
-bool MNodeManager::isNodeSelected(const Ogre::String &nodeChainName)
-{
-}
-
-virtual bool MNodeManager::findNodeByChainName(const Ogre::String &nodeChainName, MNodePtr distinationNodePtr, MNodePtr parentNodePtr)
+bool MNodeManager::findNodeByChainName(const MString &nodeChainName, MNodePtr distinationNodePtr, MNodePtr parentNodePtr)
 {
 }
 
@@ -86,37 +127,37 @@ void MNodeManager::initialise()
 {
 }
 
-virtual MNodePtr MNodeManager::createNode()
+MNodePtr MNodeManager::createNode(const MString &nodeID, const MString &nodeName)
 {
 }
 
-virtual MNodeManager::deleteNode()
+void MNodeManager::deleteNode(const MString &nodeChainName)
 {
 }
 
-virtual void MNodeManager::notifyAttributeChanged()
+void MNodeManager::notifyAttributeChanged(const MString &parentNodeChainName, const MString &nodename, const MString &attrName, const MAttribute &attr)
 {
 }
 
-virtual void MNodeManager::notifyAddNode()
+void MNodeManager::notifyAddNode(const MString &parentNodeChinName, const MString &nodeName)
 {
 }
 
-virtual void MNodeManager::notifyRemoveNode()
+void MNodeManager::notifyRemoveNode(const MString &parentNodeChinName, const MString &nodeName)
 {
 }
 
-static MNodeManager* MNodeManager::getSingletonPtr()
+MNodeManager* MNodeManager::getSingletonPtr()
 {
     if (smInstance == NULL)
     {
-        mInstance = new MNodeManager*;
+        smInstance = new MNodeManager;
     }
 
     return smInstance;
 }
 
-static MNodeManager* &MNodeManager::getSingleton()
+MNodeManager &MNodeManager::getSingleton()
 {
     if (smInstance == NULL)
     {
@@ -126,11 +167,11 @@ static MNodeManager* &MNodeManager::getSingleton()
     return *smInstance;
 }
 
-static void MNodeManager::releaseSingleton()
+void MNodeManager::releaseSingleton()
 {
     if (smInstance)
     {
         delete smInstance;
-       smIntance = NULL;
+        smInstance = NULL;
     }
 }

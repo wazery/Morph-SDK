@@ -25,150 +25,170 @@
 #ifndef MNODEMANAGER_H
 #define MNODEMANAGER_H
 
-#include <OGRE/Ogre.h>
+#include "Ogre.h"
+#include <QMap>
 
+#include "MType.h"
 #include "mnode.h"
+#include "mattribute.h"
 
-class MSelectListener
-{};
+using namespace std;
 
-class MAttributeListener
-{};
-
-class MNodeTreeListener
-{};
-
-class MNodeManager
+namespace Morph
 {
-public:
-    MNodeManager();
-    ~MNodeManager();
 
-    /** Registers new node to the register list.
-      @param nodeID Ogre::String Identifier of the node.
-      @param creatorFun MNodeCreatorFun The creator fun.
-      @returns true if the node registered correctly.
-    */
-    virtual bool registerNode(const Ogre::String &nodeID, MNodeCreatorFun creatorFun);
+    /** Pure abstract class, derive it and register to listen to selection change.*/
+    class MSelectListener
+    {
+    public:
+        virtual ~MSelectListener(){}
 
-    /** De-registers the node from the register list.
-      @param nodeID Ogre::String Identifier of the node.
-    */
-    virtual bool deregisterNode(const Ogre::String &nodeID);
+        /** Called when the selected node changed. */
+        virtual void selectChanged(const MNodePtrList &selectNodeList) = 0;
+    };
 
-    /** Select a given node and insert it to the selected node list.
-      @remarks For a given chain name this function splits the name and try to find every node,
-               if the node itself and its parents are all found, it inserts the node poiner to the selected node list.
-      @param nodeChainName Ogre::String The full name of the node and its parents, e.x. "grandparent.parent.child".
-      @returns true if the node found and selected.
-    */
-    virtual bool selectNode(const Ogre::String &nodeChainName);
+    class MAttributeListener
+    {
+    public:
+        virtual ~MAttributeListener(){}
 
-    /** It asks if the node is selected, if yes it returns true.
-      @param nodeChainName Ogre::String
-      @return true of the node is selcted.
-    */
-    bool isNodeSelected(const Ogre::String &nodeChainName);
+        /** Will be called when the attribute changed.*/
+        virtual void attributeChanged(const MString &parentNodeChainName, const MString &nodeName, const MString &attrName, const MAttribute &attr) = 0;
+    };
 
-    /** Searchs for a node using its chain name.
-      @remarks This function takes the chain name ant of this chain name contain some '.' char,
-               it will split the string into parent and child name, such as "john.sam.lily",
-               then it will first find "john", and then at john's children nodes
-               find "sam", and then at sam's children fild "lily". If all of
-               them have been found,and then return lily node pointer.
-      @param nodeChainName Ogre::String the chain name of a particular node.
-      @param distinationNodePtr MNodePtr pointer of the distination node.
-      @param parentNodePtr MNodePtr pointer of the parent node.
-      @return true if it finds the node successfully.
-    */
-    virtual bool findNodeByChainName(const Ogre::String &nodeChainName, MNodePtr distinationNodePtr, MNodePtr parentNodePtr);
+    class MNodeTreeListener
+    {
+    public:
+        virtual ~MNodeTreeListener(){}
 
-    /** Gets the selected node list */
-    MNodePtrList &getSelectedNodeList(){};
+        virtual void addNode(const MString &parentNodeChainName, const MString &nodeName) = 0;
+        virtual void removeNode(const MString &parentNodeChainName, const MString &nodeName) = 0;
+    };
 
-    /** Register a select listener.
-      @param listener MSelectListener* A pointer to a select listener class.
-      @return void
-    */
-    void addSelectListener(MSelectListener* listener);
+    // FIXME: Is it better to be qMap?
+    typedef map<MString, MNodeCreatorFun> MNodeRegList;
 
-    /** De-register a select listener
-      @param listener MSelectListener* A pointer to a select listener class.
-      @return void
-    */
-    void removeSelectListener(MSelectListener* listener);
+    class MNodeManager
+    {
 
-    /** Register an attribute listener.
-      @param listener MAttributeListener*
-      @return void
-    */
-    void addAttributeListener(MAttributeListener* listener);
+    public:
 
-    /** De-register an attribute listener.
-      @param listener MAttributeListener*
-      @return void
-    */
-    void removeAttributeListener(MAttributeListener* listener);
+        MNodeManager();
+        ~MNodeManager();
 
-    /** Register a node tree listener.
-      @param listener MNodeTreeListener*
-      @return void
-    */
-    void addNodeTreeListener(MNodeTreeListener* listener);
+        /** Registers new node to the register list.
+          @param nodeID MString Identifier of the node.
+          @param creatorFun MNodeCreatorFun The creator fun.
+          @returns true if the node registered correctly.
+        */
+        virtual bool registerNode(const MString &nodeID, MNodeCreatorFun creatorFun);
 
-    /** De-register a node tree listener.
-      @param listener MNodeTreeListener*
-      @return void
-    */
-    void removeNodeTreeListener(MNodeTreeListener* listener);
+        /** De-registers the node from the register list.
+          @param nodeID MString Identifier of the node.
+        */
+        virtual bool deregisterNode(const MString &nodeID);
 
-    /**
-      @param
-      @return
-    */
-    void initialise();
+        /** Select a given node and insert it to the selected node list.
+          @remarks For a given chain name this function splits the name and try to find every node,
+                   if the node itself and its parents are all found, it inserts the node poiner to the selected node list.
+          @param nodeChainName MString The full name of the node and its parents, e.x. "grandparent.parent.child".
+          @returns true if the node found and selected.
+        */
+        virtual bool selectNode(const MString &nodeChainName);
 
-    /**
-      @remarks
-      @param
-      @return
-    */
-    virtual MNodePtr createNode();
+        /** It asks if the node is selected, if yes it returns true.
+          @param nodeChainName MString
+          @return true of the node is selcted.
+        */
+        bool isNodeSelected(const MString &nodeChainName);
 
-    /**
-      @remarks
-      @param
-      @return
-    */
-    virtual deleteNode();
+        /** Searchs for a node using its chain name.
+          @remarks This function takes the chain name ant of this chain name contain some '.' char,
+                   it will split the string into parent and child name, such as "john.sam.lily",
+                   then it will first find "john", and then at john's children nodes
+                   find "sam", and then at sam's children fild "lily". If all of
+                   them have been found,and then return lily node pointer.
+          @param nodeChainName MString the chain name of a particular node.
+          @param distinationNodePtr MNodePtr pointer of the distination node.
+          @param parentNodePtr MNodePtr pointer of the parent node.
+          @return true if it finds the node successfully.
+        */
+        virtual bool findNodeByChainName(const MString &nodeChainName, MNodePtr distinationNodePtr, MNodePtr parentNodePtr);
 
-    virtual void notifyAttributeChanged();
-    virtual void notifyAddNode();
-    virtual void notifyRemoveNode();
+        /** Gets the selected node list */
+        MNodePtrList &getSelectedNodeList(void){ return(mSelectedNodeList); }
+        void setSelectedNodeList(MNodePtrList &selectedNodeList);
 
-    static MNodeManager* smInstance;
+        /** Register a select listener.
+          @param listener MSelectListener* A pointer to a select listener class.
+          @return void
+        */
+        void addSelectListener(MSelectListener* listener);
 
-    /** Get the class address pointer */
-    static MNodeManager* getSingletonPtr();
-    /** Get the class instance */
-    static MNodeManager &getSingleton();
-    /** Delete the class instance */
-    static void releaseSingleton();
+        /** De-register a select listener
+          @param listener MSelectListener* A pointer to a select listener class.
+          @return void
+        */
+        void removeSelectListener(MSelectListener* listener);
 
-protected:
+        /** Register an attribute listener.
+          @param listener MAttributeListener*
+          @return void
+        */
+        void addAttributeListener(MAttributeListener* listener);
 
-    bool mIsInitialised;
+        /** De-register an attribute listener.
+          @param listener MAttributeListener*
+          @return void
+        */
+        void removeAttributeListener(MAttributeListener* listener);
 
-    MNodeRegList mNodeRegList;
-    MNodePtr mRootNodePtr;
-    MNodePtrList mSelectedNodeList;
+        /** Register a node tree listener.
+          @param listener MNodeTreeListener*
+          @return void
+        */
+        void addNodeTreeListener(MNodeTreeListener* listener);
 
-    MNodePtrList::iterator mSelectedNodeListIterator;
+        /** De-register a node tree listener.
+          @param listener MNodeTreeListener*
+          @return void
+        */
+        void removeNodeTreeListener(MNodeTreeListener* listener);
 
-    std::vector<MSelectListener*> mSelectListenerList;
-    std::vector<MAttributeListener*> mAttributeListenerList;
-    std::vector<MNodeTreeListener*> mNodeTreeListenerList;
+        void initialise();
 
-};
+        virtual MNodePtr createNode(const MString &nodeID, const MString &nodeName = "");
+        virtual void deleteNode(const MString &nodeChainName);
 
+        virtual void notifyAttributeChanged(const MString &parentNodeChainName, const MString &nodename, const MString &attrName, const MAttribute &attr);
+        virtual void notifyAddNode(const MString &parentNodeChinName,const MString &nodeName);
+        virtual void notifyRemoveNode(const MString &parentNodeChinName,const MString &nodeName);
+
+        static MNodeManager* smInstance;
+
+        /** Get the class address pointer */
+        static MNodeManager* getSingletonPtr();
+        /** Get the class instance */
+        static MNodeManager &getSingleton();
+        /** Delete the class instance */
+        static void releaseSingleton();
+
+    protected:
+
+        bool mIsInitialised;
+
+        //MNodeRegList mNodeRegList;
+        MNodePtr mRootNodePtr;
+        MNodePtrList mSelectedNodeList;
+        MNodeRegList mNormalNodeRegList;
+        MNodePtrList::iterator mSelectedNodeListIterator;
+
+        std::vector<MSelectListener*> mSelectListenerList;
+        std::vector<MAttributeListener*> mAttributeListenerList;
+        std::vector<MNodeTreeListener*> mNodeTreeListenerList;
+
+    };
+
+    MNodeManager* MNodeManager::smInstance = NULL;
+}
 #endif // MNODEMANAGER_H
