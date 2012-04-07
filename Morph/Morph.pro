@@ -5,7 +5,7 @@
 #-------------------------------------------------
 
 QT       += core gui
-QT		 += opengl
+QT       += opengl
 
 TARGET = Morph
 TEMPLATE = app
@@ -40,7 +40,8 @@ HEADERS += mainwindow.h \
     MorphCore/Editor/mnode.h \
     MorphCore/Editor/MNode.h \
     MorphCore/Editor/MType.h \
-    MorphCore/Editor/mattribute.h
+    MorphCore/Editor/mattribute.h \
+    MorphCore/Editor/MNodeManager.h
 
 FORMS    += mainwindow.ui
 

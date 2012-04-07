@@ -25,7 +25,7 @@ namespace Morph
         M_SELECT_REPLACE,
         M_SELECT_ADD,
         M_SELECT_SUBTRACT,
-        MSELECT_CLEAR
+        M_SELECT_CLEAR
     };
 }
 

@@ -34,6 +34,10 @@
 // Units of space between lines
 #define GRID_LINE_SPACE 80
 
+using namespace Morph;
+
+MSystemManager* MSystemManager::smInstance = NULL;
+
 MSystemManager::MSystemManager()
 {
     mRoot = 0;
