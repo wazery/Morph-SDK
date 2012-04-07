@@ -22,12 +22,11 @@
  *
  * ============================================================ */
 
-#include "mnodemanager.h"
-
-#include "MNode.h"
-#include "MLogManager.h"
+#include "MNodeManager.h"
 
 using namespace Morph;
+
+MNodeManager* MNodeManager::smInstance = NULL;
 
 MNodeManager::MNodeManager()
 {
@@ -36,11 +35,11 @@ MNodeManager::MNodeManager()
 
 MNodeManager::~MNodeManager()
 {
-    if (smInstance)
-    {
-        delete smInstance;
-        smInstance = NULL;
-    }
+//    if (smInstance)
+//    {
+//        delete smInstance;
+//        smInstance = NULL;
+//    }
 }
 
 bool MNodeManager::registerNode(const MString &nodeID, MNodeCreatorFun creatorFun)
@@ -80,51 +79,113 @@ bool MNodeManager::deregisterNode(const MString &nodeID)
     else
     {
         MString errorString = "WARN: The node name (" + nodeID + ") that you want to de-register doesn't exist!";
-        MLogManager::getSingleton().logOutput(errorString);
+        MLogManager::getSingleton().logOutput(errorString, M_WARN);
         return false;
     }
-    // FIXME: selectNode("");
+
+    selectNode("", M_SELECT_CLEAR);
     return true;
 }
 
-bool MNodeManager::selectNode(const MString &nodeChainName)
+bool MNodeManager::selectNode(const MString &nodeChainName, eSelectMode mode)
 {
 }
 
 bool MNodeManager::isNodeSelected(const MString &nodeChainName)
 {
+    MNodePtrList::iterator it = mSelectedNodeList.find(nodeChainName);
+    if (it != mSelectedNodeList.end())
+    {
+        return true;
+    }
+
+    return false;
 }
 
 bool MNodeManager::findNodeByChainName(const MString &nodeChainName, MNodePtr distinationNodePtr, MNodePtr parentNodePtr)
 {
+    if(!mIsInitialised)
+        return false;
+
+//    vector<MString> namesList = nodeChainName.split(".");
+
+//    MNodePtr nodePtr;
+//    MNodePtr parentPtr;
+
+//    for (size_t i = 0; i < namesList.size(); i++)
+//    {
+//        if (i == 0)
+//        {
+//            if (namesList[i] != getroo)
+//            {
+
+//            }
+//        }
+//    }
 }
 
 void MNodeManager::addSelectListener(MSelectListener* listener)
 {
+    if (!mIsInitialised)
+        return;
+
+    // Return if it is existed.
+    if(find(mSelectListenerList.begin(), mSelectListenerList.end(), listener) != mSelectListenerList.end())
+        return;
+
+    if(listener)
+        mSelectListenerList.push_back(listener);
 }
 
 void MNodeManager::removeSelectListener(MSelectListener* listener)
 {
+    if (listener)
+        mSelectListenerList.erase(find(mSelectListenerList.begin(), mSelectListenerList.end(), listener));
 }
 
 void MNodeManager::addAttributeListener(MAttributeListener* listener)
 {
+    if(!mIsInitialised)
+        return;
+
+    // Return if it is existed.
+    if(find(mAttributeListenerList.begin(), mAttributeListenerList.end(), listener) != mAttributeListenerList.end())
+        return;
+
+    if(listener)
+        mAttributeListenerList.push_back(listener);
 }
 
 void MNodeManager::removeAttributeListener(MAttributeListener* listener)
 {
+    if(listener)
+        mAttributeListenerList.erase(find(mAttributeListenerList.begin(), mAttributeListenerList.end(), listener));
 }
 
 void MNodeManager::addNodeTreeListener(MNodeTreeListener* listener)
 {
+    if(!mIsInitialised)
+        return;
+
+    // Return if it is existed.
+    if(find(mNodeTreeListenerList.begin(), mNodeTreeListenerList.end(), listener) != mNodeTreeListenerList.end())
+        return;
+
+    if (listener)
+    {
+        mNodeTreeListenerList.push_back(listener);
+    }
 }
 
 void MNodeManager::removeNodeTreeListener(MNodeTreeListener* listener)
 {
+    if(listener)
+        mNodeTreeListenerList.erase(find(mNodeTreeListenerList.begin(), mNodeTreeListenerList.end(), listener));
 }
 
 void MNodeManager::initialise()
 {
+    mIsInitialised = true;
 }
 
 MNodePtr MNodeManager::createNode(const MString &nodeID, const MString &nodeName)
@@ -135,16 +196,34 @@ void MNodeManager::deleteNode(const MString &nodeChainName)
 {
 }
 
-void MNodeManager::notifyAttributeChanged(const MString &parentNodeChainName, const MString &nodename, const MString &attrName, const MAttribute &attr)
+void MNodeManager::notifyAttributeChanged(const MString &parentNodeChainName, const MString &nodeName, const MString &attrName, const MAttribute &attr)
 {
+    std::vector<MAttributeListener*>::iterator it;
+    for (it = mAttributeListenerList.begin(); it != mAttributeListenerList.end(); ++it)
+    {
+        assert(*it);
+        (*it)->attributeChanged(parentNodeChainName, nodeName, attrName, attr);
+    }
 }
 
 void MNodeManager::notifyAddNode(const MString &parentNodeChinName, const MString &nodeName)
 {
+    std::vector<MNodeTreeListener*>::iterator it;
+    for (it = mNodeTreeListenerList.begin(); it != mNodeTreeListenerList.end(); ++it)
+    {
+        assert(*it);
+        (*it)->addNode(parentNodeChinName, nodeName);
+    }
 }
 
 void MNodeManager::notifyRemoveNode(const MString &parentNodeChinName, const MString &nodeName)
 {
+    std::vector<MNodeTreeListener*>::iterator it;
+    for (it = mNodeTreeListenerList.begin(); it != mNodeTreeListenerList.end(); ++it)
+    {
+        assert(*it);
+        (*it)->removeNode(parentNodeChinName, nodeName);
+    }
 }
 
 MNodeManager* MNodeManager::getSingletonPtr()

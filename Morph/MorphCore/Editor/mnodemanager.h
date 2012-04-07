@@ -31,6 +31,7 @@
 #include "MType.h"
 #include "mnode.h"
 #include "mattribute.h"
+#include "MLogManager.h"
 
 using namespace std;
 
@@ -70,7 +71,6 @@ namespace Morph
 
     class MNodeManager
     {
-
     public:
 
         MNodeManager();
@@ -94,7 +94,7 @@ namespace Morph
           @param nodeChainName MString The full name of the node and its parents, e.x. "grandparent.parent.child".
           @returns true if the node found and selected.
         */
-        virtual bool selectNode(const MString &nodeChainName);
+        virtual bool selectNode(const MString &nodeChainName, eSelectMode mode);
 
         /** It asks if the node is selected, if yes it returns true.
           @param nodeChainName MString
@@ -189,6 +189,6 @@ namespace Morph
 
     };
 
-    MNodeManager* MNodeManager::smInstance = NULL;
+    //MNodeManager* MNodeManager::smInstance = NULL;
 }
 #endif // MNODEMANAGER_H
