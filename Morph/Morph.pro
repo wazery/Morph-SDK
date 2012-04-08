@@ -13,7 +13,6 @@ TEMPLATE = app
 
 SOURCES += main.cpp\
         mainwindow.cpp \
-    ogrecanvas.cpp \
     button.cpp \
     MEvent.cpp \
     MorphCore/Editor/msystemmanager.cpp \
@@ -26,7 +25,6 @@ SOURCES += main.cpp\
     MorphCore/Editor/mattribute.cpp
 
 HEADERS += mainwindow.h \
-    ogrecanvas.h \
     button.h \
     mdatabase.h \
     MWidget.h \

@@ -34,25 +34,24 @@
 
 //#include "MSingleton.h" // FIXME: Implement this header file.
 
-using namespace Ogre; // FIXME: Remove this line. What makes me need it is the Frame listner inheritnce!
-// TODO: Create a namespace Morph-Editor, for the editor sub-systems
+using namespace Ogre;
 
 namespace Morph
 {
     /** @class*/
-    class MSystemManager : public FrameListener, public QWidget
+    class MSystemManager : public QWidget
     {
+        Q_OBJECT
+
     public:
         /** Default constructor */
-        MSystemManager(void);
+        MSystemManager(QWidget *parent = 0);
 
         /** Finaliser */
-        ~MSystemManager(void);
+        ~MSystemManager();
 
-        // FIXME: retest this overridden function.
         // Override QWidget::paintEngine to return NULL
-        // Turn off Qts paint engine for the Ogre widget.
-        //QPaintEngine *paintEngine() const;
+        QPaintEngine* paintEngine() const; // Turn off QTs paint engine for the Ogre widget.
 
         /** Initialise Ogre System
             @remarks
@@ -64,16 +63,10 @@ namespace Morph
             @param params NameValuePairList Name / value parameter pair (first = name, second = value).
             @param pRoot Root pointer to the Ogre root.
         */
-        bool initialise(String windowName, int width, int height, NameValuePairList *params, Root *pRoot=NULL);
+        bool initialise();
 
         /** Rendring the canvas */
         void doRender();
-
-        /** Create the grid for the canvas */
-        void createGrid();
-
-        /** change window size */
-        void resizeWindow(int width, int height);
 
         /** Access the Root */
         Ogre::Root* getRoot(void) const    { /** @return mRoot */ return(mRoot); }
@@ -99,11 +92,25 @@ namespace Morph
         /** Access the WindowHeight */
         int getWindowHeight(void) const    { /** @return mWindowHeight */ return(mWindowHeight); }
 
+    public slots:
         /** Sets the viewport background */
-        void setBackgroundColour(QColor c);
-
+        //void setBackgroundColour(QColor c);
         /** Sets the current camera position */
         void setCameraPosition(const Ogre::Vector3 &pos);
+
+    signals:
+        void cameraPositionChanged(const Ogre::Vector3 &pos);
+
+    protected:
+        virtual void paintEvent(QPaintEvent *e);
+        virtual void resizeEvent(QResizeEvent *e);
+        virtual void keyPressEvent(QKeyEvent *e);
+        virtual void moveEvent(QMoveEvent *e);
+        virtual void mouseDoubleClickEvent(QMouseEvent *e);
+        virtual void mouseMoveEvent(QMouseEvent *e);
+        virtual void mousePressEvent(QMouseEvent *e);
+        virtual void mouseReleaseEvent(QMouseEvent *e);
+        virtual void wheelEvent(QWheelEvent *e);
 
     protected:
          /** Initialise Ogre Core
@@ -115,7 +122,7 @@ namespace Morph
             @param height int containing the height of the Ogre Canvas.
             @param params NameValuePairList Name / value parameter pair (first = name, second = value).
         */
-        bool initOgreCore(String windowName, int width, int height, Ogre::NameValuePairList *params);
+        bool initOgreCore(Ogre::Real width, Ogre::Real height);
 
         /** Shut Down Ogre System */
         void shutDown();
@@ -149,15 +156,22 @@ namespace Morph
         // TODO: check if this function is logical
         void addViewport(Ogre::Camera camera);
 
+        /** Create the grid for the canvas */
+        void createGrid();
+
     public:
-        static MSystemManager* smInstance;
+        //static MSystemManager* smInstance;
 
-        /** Get the class address pointer */
-        static MSystemManager* getSingletonPtr();
+//        /** Get the class address pointer */
+//        static MSystemManager* getSingletonPtr();
 
-        static MSystemManager &getSingleton();
+//        static MSystemManager &getSingleton();
 
-        static void releaseSingleton();
+//        static void releaseSingleton();
+
+    private:
+        static const Ogre::Real turboModifier;
+        static const QPoint invalidMousePoint;
 
     protected:
         Ogre::Root          *mRoot;
@@ -171,6 +185,9 @@ namespace Morph
 
         Ogre::Camera        *mMainCamera;
         Ogre::Camera        *mCurrCamera;
+
+        QPoint oldPos;
+        Ogre::SceneNode *selectedNode;
 
         bool		mIsInitialised;
         int			mWindowWidth;

@@ -2,6 +2,7 @@
 #include "ui_mainwindow.h"
 
 #include "MorphCore/Editor/MLogManager.h"
+#include <QMessageBox>
 
 using namespace Morph;
 
