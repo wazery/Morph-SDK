@@ -78,6 +78,12 @@ void MLogManager::logOutput(MString message, logType type, bool writeToFile)
                         << (":") << std::setw(2) << std::setfill(('0')) << pTime->tm_sec
                         << (", Warning: ") << message.toUtf8().constData() << std::endl;
             break;
+        case M_EDITOR_MESSAGE:
+            mOutputFile << std::setw(2) << std::setfill(('0')) << pTime->tm_hour
+                        << (":") << std::setw(2) << std::setfill(('0')) << pTime->tm_min
+                        << (":") << std::setw(2) << std::setfill(('0')) << pTime->tm_sec
+                        << (", Editor Message: ") << message.toUtf8().constData() << std::endl;
+            break;
         }
 
 		// Flush stcmdream to ensure it is written (incase of a crash, we need log to be up to date)

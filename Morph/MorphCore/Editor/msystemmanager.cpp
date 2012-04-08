@@ -346,7 +346,7 @@ void MSystemManager::shutDown()
 bool MSystemManager::initOgreCore(Ogre::Real width, Ogre::Real height)
 {
     mMainCamera = mSceneManager->createCamera("Main Camera");
-    MLogManager::getSingleton().logOutput("Main camera created", M_WARN);
+    MLogManager::getSingleton().logOutput("Main camera created", M_EDITOR_MESSAGE);
     mMainCamera->setPosition(0, 0, 80);
     mMainCamera->lookAt(0, 0, -300);
     mMainCamera->setNearClipDistance(5);
@@ -354,7 +354,7 @@ bool MSystemManager::initOgreCore(Ogre::Real width, Ogre::Real height)
 
     // Create one viewport to the entire window
     mViewport = mRenderWindow->addViewport(mMainCamera);
-    MLogManager::getSingleton().logOutput("Added viewport", M_WARN);
+    MLogManager::getSingleton().logOutput("Added viewport", M_EDITOR_MESSAGE);
     mViewport->setBackgroundColour(Ogre::ColourValue(0.117647059, 0.117647059, 0.117647059));
     mMainCamera->setAspectRatio(Ogre::Real(width) / Ogre::Real(height));
     mCurrCamera = mMainCamera;
@@ -366,9 +366,9 @@ bool MSystemManager::initOgreCore(Ogre::Real width, Ogre::Real height)
     Ogre::Animation::setDefaultRotationInterpolationMode(Ogre::Animation::RIM_LINEAR);
 
     initResources();
-    MLogManager::getSingleton().logOutput("Initialised all resources", M_WARN);
+    MLogManager::getSingleton().logOutput("Initialised all resources", M_EDITOR_MESSAGE);
     createScene();
-    MLogManager::getSingleton().logOutput("Scene created", M_WARN);
+    MLogManager::getSingleton().logOutput("Scene created", M_EDITOR_MESSAGE);
     createGrid();
 
     return mIsInitialised;

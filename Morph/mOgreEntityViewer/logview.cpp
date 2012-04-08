@@ -32,6 +32,7 @@ void LogView::messageLogged(QString message, logType type)
     QTextCursor cursor = this->textCursor();
     QString errorHtml = "<font color=\"Red\">";
     QString warnHtml = "<font color=\"Aqua\">";
+    QString editorMessageHtml = "<font color=\"Brown\">";
     QString messageHtml = "<font color=\"Gray\">";
     QString endHtml = "</font><br>";
 
@@ -42,6 +43,9 @@ void LogView::messageLogged(QString message, logType type)
         break;
     case M_WARN:
         message = warnHtml + message;
+        break;
+    case M_EDITOR_MESSAGE:
+        message = editorMessageHtml + message;
         break;
     default:
         message = messageHtml + message;

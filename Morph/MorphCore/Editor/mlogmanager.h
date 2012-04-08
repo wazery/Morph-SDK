@@ -39,7 +39,8 @@ enum logType
 {
     M_MESSAGE,
     M_ERROR,
-    M_WARN
+    M_WARN,
+    M_EDITOR_MESSAGE // an editor specific messages, like "Resources Initialised"
 };
 
 // TODO: Implement some log levels.
