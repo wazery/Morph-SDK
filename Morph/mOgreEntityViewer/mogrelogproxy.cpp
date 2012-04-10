@@ -32,5 +32,5 @@ MOgreLogProxy::MOgreLogProxy()
 
 void MOgreLogProxy::messageLogged(const Ogre::String &message, Ogre::LogMessageLevel lml, bool maskDebug, const Ogre::String &logName)
 {
-    MLogManager::getSingleton().logOutput(MString::fromUtf8(message.data()));
+    MLogManager::getSingleton().logOutput(MString::fromUtf8(message.data()), M_OGRE);
 }

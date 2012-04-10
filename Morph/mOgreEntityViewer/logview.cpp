@@ -35,25 +35,45 @@ void LogView::messageLogged(QString message, logType type)
     QString editorMessageHtml = "<font color=\"Brown\">";
     QString messageHtml = "<font color=\"Gray\">";
     QString endHtml = "</font><br>";
+    QString resultMessage;
 
     switch (type)
     {
     case M_ERROR:
-        message = errorHtml + message;
+        resultMessage = errorHtml + message + endHtml;
         break;
     case M_WARN:
-        message = warnHtml + message;
+        resultMessage = warnHtml + message + endHtml;
         break;
     case M_EDITOR_MESSAGE:
-        message = editorMessageHtml + message;
-        break;
-    default:
-        message = messageHtml + message;
+        resultMessage = editorMessageHtml + message + endHtml;
         break;
     }
 
-    message = message + endHtml;
-    this->insertHtml(message);
+    this->insertHtml(resultMessage);
+    cursor.movePosition(QTextCursor::End);
+    this->setTextCursor(cursor);
+}
+
+LogViewOgre::LogViewOgre(QWidget* parent)
+{
+}
+
+void LogViewOgre::messageLogged(QString message, logType type)
+{
+    QTextCursor cursor = this->textCursor();
+    QString OgreHtml = "<font color=\"Gray\">";
+    QString endHtml = "</font><br>";
+    QString resultMessage;
+
+    switch (type)
+    {
+    case M_OGRE:
+        resultMessage = OgreHtml + message + endHtml;
+        break;
+    }
+
+    this->insertHtml(resultMessage);
     cursor.movePosition(QTextCursor::End);
     this->setTextCursor(cursor);
 }

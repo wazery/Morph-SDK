@@ -39,4 +39,13 @@ public:
     void messageLogged(MString message, logType type);
 };
 
+class LogViewOgre : public QTextBrowser, public MLogListener
+{
+    Q_OBJECT
+public:
+    LogViewOgre(QWidget* parent = 0);
+
+    void messageLogged(MString message, logType type);
+};
+
 #endif // LOGVIEW_H

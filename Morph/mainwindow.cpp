@@ -15,6 +15,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     ui->listWidget->addItem(new QListWidgetItem(QIcon("calculator.png"), "Radio Button"));
 
     MLogManager::getSingleton().addListener(ui->textBrowser);
+    MLogManager::getSingleton().addListener(ui->textBrowser_2);
 
     connect(ui->actionFakeError, SIGNAL(triggered()), this, SLOT(fakeSlot()));
     connect(ui->actionAbout_Morph, SIGNAL(triggered()), this, SLOT(about()));
