@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
+ <author>Zeology</author>
  <class>MainWindow</class>
  <widget class="QMainWindow" name="MainWindow">
   <property name="geometry">
@@ -59,6 +60,9 @@
     <addaction name="actionOpen"/>
     <addaction name="actionSave"/>
     <addaction name="actionSave_as"/>
+    <addaction name="separator"/>
+    <addaction name="actionAdd_Ogre_Mesh"/>
+    <addaction name="separator"/>
     <addaction name="actionQuit"/>
    </widget>
    <widget class="QMenu" name="menuEdit">
@@ -115,6 +119,12 @@
     </property>
     <addaction name="actionAbout_Morph"/>
    </widget>
+   <widget class="QMenu" name="menuSettings">
+    <property name="title">
+     <string>Settings</string>
+    </property>
+    <addaction name="actionConfigure_Editor"/>
+   </widget>
    <addaction name="menuFile"/>
    <addaction name="menuEdit"/>
    <addaction name="menuTools"/>
@@ -122,6 +132,7 @@
    <addaction name="menuObjects"/>
    <addaction name="menuView"/>
    <addaction name="menuWindows"/>
+   <addaction name="menuSettings"/>
    <addaction name="menuHelp"/>
   </widget>
   <widget class="QToolBar" name="mainToolBar">
@@ -223,7 +234,7 @@
         <enum>QTabWidget::Rounded</enum>
        </property>
        <property name="currentIndex">
-        <number>1</number>
+        <number>0</number>
        </property>
        <property name="elideMode">
         <enum>Qt::ElideNone</enum>
@@ -695,6 +706,16 @@ p, li { white-space: pre-wrap; }
   <action name="actionShow_Bounding_Box">
    <property name="text">
     <string>Show Bounding Box</string>
+   </property>
+  </action>
+  <action name="actionConfigure_Editor">
+   <property name="text">
+    <string>Configure Editor</string>
+   </property>
+  </action>
+  <action name="actionAdd_Ogre_Mesh">
+   <property name="text">
+    <string>Add Ogre Mesh</string>
    </property>
   </action>
  </widget>

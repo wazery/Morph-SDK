@@ -10,6 +10,9 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
 {
     ui->setupUi(this);
 
+    // Pointer to the MSystemManager.
+    systemManager = ui->widget;
+
     ui->listWidget->addItem(new QListWidgetItem(QIcon("settings.png"), "Toggle Button"));
     ui->listWidget->addItem(new QListWidgetItem(QIcon("check.png"), "Check Button"));
     ui->listWidget->addItem(new QListWidgetItem(QIcon("calculator.png"), "Radio Button"));
@@ -17,8 +20,16 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     MLogManager::getSingleton().addListener(ui->textBrowser);
     MLogManager::getSingleton().addListener(ui->textBrowser_2);
 
+    // Connect actions to slots.
     connect(ui->actionFakeError, SIGNAL(triggered()), this, SLOT(fakeSlot()));
     connect(ui->actionAbout_Morph, SIGNAL(triggered()), this, SLOT(about()));
+    connect(ui->actionConfigure_Editor, SIGNAL(triggered()), this, SLOT(openSettingsdialog()));
+    connect(ui->actionAdd_Ogre_Mesh, SIGNAL(triggered()), this, SLOT(addObj()));
+}
+
+MainWindow::~MainWindow()
+{
+    delete ui;
 }
 
 void MainWindow::fakeSlot()
@@ -41,7 +52,30 @@ void MainWindow::about()
                        tr("Ahmed Adel    <mohammedyosry3000@gmail.com>"));
 }
 
-MainWindow::~MainWindow()
+void MainWindow::openSettingsdialog()
 {
-    delete ui;
+    settingsdialog = new Settingsdialog();
+    settingsdialog->show();
 }
+
+void MainWindow::addObj()
+{
+    QString meshName = QFileDialog::getOpenFileName(this, "Add a model", QDir::currentPath() + "/Media/models", "Mesh (*.mesh)");
+    loadObj(meshName);
+}
+
+void MainWindow::loadObj(const QString &meshName)
+{
+    if(!meshName.isNull())
+    {
+        systemManager->addObject(meshName.toStdString()); // Create the new one
+        MLogManager::getSingleton().logOutput("Added object: " + meshName, M_EDITOR_MESSAGE);
+
+        if(systemManager->mainEnt->hasSkeleton())
+            MLogManager::getSingleton().logOutput("Has Skeleton : YES", M_EDITOR_MESSAGE);
+        else
+            MLogManager::getSingleton().logOutput("Has Skeleton : NO", M_EDITOR_MESSAGE);
+    }
+}
+
+

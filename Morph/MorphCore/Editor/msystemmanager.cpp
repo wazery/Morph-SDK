@@ -28,6 +28,8 @@
 #include "MLogManager.h"
 #include "mOgreEntityViewer/mogrelogproxy.h"
 
+#include "mainwindow.h"
+
 // TODO: Include all other sub-systems to manage them
 
 // Total number of lines in one dimension will be (GRID_LINE_NUM * 2 + 1)
@@ -41,6 +43,8 @@ using namespace Morph;
 const QPoint     MSystemManager::invalidMousePoint(-1, -1);
 const Ogre::Real MSystemManager::turboModifier(10);
 
+MSystemManager* MSystemManager::smInstance = NULL;
+
 MSystemManager::MSystemManager(QWidget *parent)
     : QWidget(parent),
       mRoot(0),
@@ -51,6 +55,10 @@ MSystemManager::MSystemManager(QWidget *parent)
     mMainCamera(0),
     mCurrCamera(0),
     mViewport(0),
+    mainEnt(0),
+    mainEntAnim(0),
+    mainNode(0),
+    mainSubEnt(0),
     oldPos(invalidMousePoint),
 
     mFloorGrid(0),
@@ -137,34 +145,72 @@ void MSystemManager::resizeEvent(QResizeEvent *e)
 
 void MSystemManager::keyPressEvent(QKeyEvent *e)
 {
-    static QMap<int, Ogre::Vector3> keyCoordModificationMapping;
-    static bool mappingInitialised = false;
-
-    if(!mappingInitialised)
+    if(mainEnt != NULL && mainNode != NULL)
     {
-        // ToDo: Enhance the navigation.
-        keyCoordModificationMapping[Qt::Key_W] 		  = Ogre::Vector3( 0, 0,-5);
-        keyCoordModificationMapping[Qt::Key_S] 		  = Ogre::Vector3( 0, 0, 5);
-        keyCoordModificationMapping[Qt::Key_A] 		  = Ogre::Vector3(-5, 0, 0);
-        keyCoordModificationMapping[Qt::Key_D] 		  = Ogre::Vector3( 5, 0, 0);
-        keyCoordModificationMapping[Qt::Key_PageUp]   = Ogre::Vector3( 0, 5, 0);
-        keyCoordModificationMapping[Qt::Key_PageDown] = Ogre::Vector3( 0,-5, 0);
-
-        mappingInitialised = true;
+        switch(e->key())
+        {
+        case Qt::Key_W:
+        case Qt::Key_Up:
+            rotX = -0.1;
+            mainNode->pitch(Radian(rotX));
+            repaint();
+            break;
+        case Qt::Key_S:
+        case Qt::Key_Down:
+            rotX = 0.1;
+            mainNode->pitch(Radian(rotX));
+            repaint();
+            break;
+        case Qt::Key_A:
+        case Qt::Key_Left:
+            rotY = -0.1;
+            mainNode->yaw(Radian(rotY));
+            repaint();
+            break;
+        case Qt::Key_D:
+        case Qt::Key_Right:
+            rotY = 0.1;
+            mainNode->yaw(Radian(rotY));
+            repaint();
+            break;
+        case Qt::Key_R:
+            mCurrCamera->setPosition(0, 50, 0);
+            repaint();
+            break;
+        }
     }
+}
 
-    QMap<int, Ogre::Vector3>::iterator keyPressed =
-            keyCoordModificationMapping.find(e->key());
-    if(keyPressed != keyCoordModificationMapping.end() && mCurrCamera)
+void MSystemManager::keyReleaseEvent(QKeyEvent* e)
+{
+    if(mainEnt != NULL && mainNode != NULL)
     {
-        const Ogre::Vector3 &actualCamPos = mCurrCamera->getPosition();
-        setCameraPosition(actualCamPos + keyPressed.value());
-
-        e->accept();
-    }
-    else
-    {
-        e->ignore();
+        switch(e->key()){
+            case Qt::Key_W:
+            case Qt::Key_Up:
+                rotX = 0.0;
+                mainNode->pitch(Radian(rotX));
+                repaint();
+                break;
+            case Qt::Key_S:
+            case Qt::Key_Down:
+                rotX = 0.0;
+                mainNode->pitch(Radian(rotX));
+                repaint();
+                break;
+            case Qt::Key_A:
+            case Qt::Key_Left:
+                rotY = 0.0;
+                mainNode->yaw(Radian(rotY));
+                repaint();
+                break;
+            case Qt::Key_D:
+            case Qt::Key_Right:
+                rotY = 0.0;
+                mainNode->yaw(Radian(rotY));
+                repaint();
+                break;
+        }
     }
 }
 
@@ -225,72 +271,131 @@ void MSystemManager::mouseDoubleClickEvent(QMouseEvent *e)
 
 void MSystemManager::mouseMoveEvent(QMouseEvent *e)
 {
-    if(e->buttons().testFlag(Qt::LeftButton) && oldPos != invalidMousePoint)
+    if(mouseMiddleBtn || mouseLeftPressed)
     {
-        const QPoint &pos = e->pos();
-        Ogre::Real deltaX = pos.x() - oldPos.x();
-        Ogre::Real deltaY = pos.y() - oldPos.y();
+        QPoint currentPos = e->pos();
 
-        if(e->modifiers().testFlag(Qt::ControlModifier))
-        {
-            deltaX *= turboModifier;
-            deltaY *= turboModifier;
-        }
+        if(mousePos.x() < currentPos.x())
+            mDirection.x = 1;
+        else if(mousePos.x() > currentPos.x())
+            mDirection.x = -1;
+        else
+            mDirection.x = 0;
 
-        Ogre::Vector3 camTranslation(deltaX, deltaY, 0);
-        const Ogre::Vector3 &actualCamPos = mCurrCamera->getPosition();
-        setCameraPosition(actualCamPos + camTranslation);
+        if(mousePos.y() < currentPos.y())
+            mDirection.y = -1;
+        else if(mousePos.y() > currentPos.y())
+            mDirection.y = 1;
+        else
+            mDirection.y = 0;
 
-        oldPos = pos;
-        e->accept();
+        update();
+        mousePos = currentPos;
+        mDirection = Vector3::ZERO;
     }
-    else
+    if(mouseRightPressed)
     {
-        e->ignore();
+        QPoint currentPos = e->pos();
+
+        if(mousePos.x() < currentPos.x())
+            angleX = -0.01;
+        else if(mousePos.x() > currentPos.x())
+            angleX = 0.01;
+        else
+            angleX = 0.00;
+
+        if(mousePos.y() < currentPos.y())
+            angleY = -0.01;
+        else if(mousePos.y() > currentPos.y())
+            angleY = 0.01;
+        else
+            angleY = 0.00;
+
+        update();
+        mousePos = currentPos;
+        angleX = 0.00;
+        angleY = 0.00;
     }
+    //if(mouseLeftPressed){
+    //	QPoint currentPos = e->pos();
+
+    //	if(mousePos.x() < currentPos.x())
+    //		mDirection.x = -0.01;
+    //	else if(mousePos.x() > currentPos.x())
+    //		mDirection.x = 0.01;
+    //	else
+    //		mDirection.x = 0;
+    //
+    //	update();
+    //	mousePos = currentPos;
+    //	mDirection = Vector3::ZERO;
+    //}
+    //if(mouseRightPressed){
+    //       QPoint currentPos = e->pos();
+
+    //	if(mousePos.x() < currentPos.x())
+    //		mDirection.x = -0.01;
+    //	else if(mousePos.x() > currentPos.x())
+    //		mDirection.x = 0.01;
+    //	else
+    //		mDirection.x = 0;
+
+    //	if(mousePos.y() < currentPos.y())
+    //		mDirection.y = -0.01;
+    //	else if(mousePos.y() > currentPos.y())
+    //		mDirection.y = 0.01;
+    //	else
+    //		mDirection.y = 0;
+
+    //	mousePos = currentPos;
+ //       update();
+    //	mDirection = Vector3::ZERO;
+    //}
 }
 
 void MSystemManager::mousePressEvent(QMouseEvent *e)
 {
-    if(e->buttons().testFlag(Qt::LeftButton))
+    if(e->button() == Qt::LeftButton)
+        mouseLeftPressed = true;
+    if(e->button() == Qt::RightButton)
     {
-        oldPos = e->pos();
-        e->accept();
+        mouseRightPressed = true;
+        mousePos = e->pos();
     }
-    else
-    {
-        e->ignore();
-    }
+    if(e->button() == Qt::MidButton)
+        mouseMiddleBtn = true;
 }
 
 void MSystemManager::mouseReleaseEvent(QMouseEvent *e)
 {
-    if(!e->buttons().testFlag(Qt::LeftButton))
-    {
-        oldPos = QPoint(invalidMousePoint);
-        e->accept();
-    }
-    else
-    {
-        e->ignore();
-    }
+    Q_UNUSED(e);
+    mouseLeftPressed = false;
+    mouseRightPressed = false;
+    mouseMiddleBtn = false;
 }
 
 void MSystemManager::wheelEvent(QWheelEvent *e)
 {
-    Ogre::Vector3 zTranslation(0,0, -e->delta() / 10);
-
-    if(e->modifiers().testFlag(Qt::ControlModifier))
-    {
-        zTranslation.z *= turboModifier;
-    }
-
-    const Ogre::Vector3 &actualCamPos = mCurrCamera->getPosition();
-    setCameraPosition(actualCamPos + zTranslation);
-
-    e->accept();
+    mDirection.z = -e->delta()/12;
+    update();
+    mDirection.z = 0;
 }
 
+void MSystemManager::update()
+{
+    if(mRenderWindow != NULL)
+    {
+        mRoot->_fireFrameStarted();
+        mRenderWindow->update();
+
+        mCurrCamera->moveRelative(mDirection);
+        mCurrCamera->yaw(Radian(angleX));
+        mCurrCamera->pitch(Radian(angleY));
+
+        updateStats();
+        mRoot->_fireFrameEnded();
+    }
+}
 bool MSystemManager::initialise()
 {      
         mRoot = OGRE_NEW Ogre::Root();
@@ -365,11 +470,15 @@ bool MSystemManager::initOgreCore(Ogre::Real width, Ogre::Real height)
     Ogre::Animation::setDefaultInterpolationMode(Ogre::Animation::IM_LINEAR);
     Ogre::Animation::setDefaultRotationInterpolationMode(Ogre::Animation::RIM_LINEAR);
 
+    addResourceLocations();
     initResources();
     MLogManager::getSingleton().logOutput("Initialised all resources", M_EDITOR_MESSAGE);
     createScene();
     MLogManager::getSingleton().logOutput("Scene created", M_EDITOR_MESSAGE);
     createGrid();
+
+    //FIXME: Implement it for the debug overlay
+    //createFrameListener();
 
     return mIsInitialised;
     /** @return mIsInitialised */
@@ -378,26 +487,35 @@ bool MSystemManager::initOgreCore(Ogre::Real width, Ogre::Real height)
 // TODO: Parameterize this function if needed.
 void MSystemManager::addResourceLocations()
 {
-//    ConfigFile cf;
-//    cf.load("resources.cfg");
+    // Load resource paths from config file
+    ConfigFile cf;
+    cf.load("resources.cfg");
 
-//    // Go through all sections & settings in the file
-//    ConfigFile::SectionIterator seci = cf.getSectionIterator();
+    // Go through all sections & settings in the file
+    ConfigFile::SectionIterator seci = cf.getSectionIterator();
 
-//    String secName, typeName, archName;
-//    while (seci.hasMoreElements())
-//    {
-//        secName = seci.peekNextKey();
-//        ConfigFile::SettingsMultiMap *settings = seci.getNext();
-//        ConfigFile::SettingsMultiMap::iterator i;
-//        for (i = settings->begin(); i != settings->end(); ++i)
-//        {
-//            typeName = i->first;
-//            archName = i->second;
-//            ResourceGroupManager::getSingleton().addResourceLocation(
-//                        archName, typeName, secName);
-//        }
-//    }
+    String secName, typeName, archName;
+    while (seci.hasMoreElements())
+    {
+        secName = seci.peekNextKey();
+        ConfigFile::SettingsMultiMap *settings = seci.getNext();
+        ConfigFile::SettingsMultiMap::iterator i;
+        for (i = settings->begin(); i != settings->end(); ++i)
+        {
+            typeName = i->first;
+            archName = i->second;
+#if OGRE_PLATFORM == OGRE_PLATFORM_APPLE
+            // OS X does not set the working directory relative to the app,
+            // In order to make things portable on OS X we need to provide
+            // the loading with it's own bundle path location
+            ResourceGroupManager::getSingleton().addResourceLocation(
+                String(macBundlePath() + "/" + archName), typeName, secName);
+#else
+            ResourceGroupManager::getSingleton().addResourceLocation(
+                archName, typeName, secName);
+#endif
+        }
+    }
 }
 
 void MSystemManager::initResources()
@@ -405,7 +523,9 @@ void MSystemManager::initResources()
     Ogre::ResourceGroupManager *rgm = Ogre::ResourceGroupManager::getSingletonPtr();
     rgm->addResourceLocation("meshes/SdkTrays.zip", "Zip", "Bootstrap");
     rgm->addResourceLocation("meshes", "FileSystem", "General");
-    Ogre::ResourceGroupManager::getSingleton().initialiseAllResourceGroups();
+    rgm->addResourceLocation("meshes/ogrehead.mesh", "FileSystem", "General");
+    rgm->addResourceLocation("meshes/jaiqua.mesh", "FileSystem", "General");
+    ResourceGroupManager::getSingleton().initialiseAllResourceGroups();
 }
 
 void MSystemManager::createScene()
@@ -414,10 +534,7 @@ void MSystemManager::createScene()
     Ogre::Light* lightSource = mSceneManager->createLight("Main Light Source");
     lightSource->setPosition(Ogre::Vector3(20, 80, 50));
 
-    Ogre::Entity* ogrehead = mSceneManager->createEntity("Ogre Head", "ogrehead.mesh");
-    mSceneManager->getRootSceneNode()->createChildSceneNode("ogreHead")->attachObject(ogrehead);
-
-    // TODO: logging the complete of initialisation.
+    addObject("jaiqua.mesh");
 }
 
 void MSystemManager::destroyScene()
@@ -481,7 +598,7 @@ void MSystemManager::createGrid()
     }
     catch (Ogre::Exception& e)
     {
-        // TODO: Logging to the LogManager
+        MLogManager::getSingletonPtr()->logOutput("Couldn't create the grid!", M_ERROR);
     }
 }
 
@@ -491,6 +608,30 @@ void MSystemManager::setCameraPosition(const Ogre::Vector3 &pos)
     mCurrCamera->lookAt(0, 50, 0);
     update();
     emit cameraPositionChanged(pos);
+}
+
+void MSystemManager::setBoundingBoxes(int value)
+{
+    if(value)
+        mainNode->showBoundingBox(true);
+    else
+        mainNode->showBoundingBox(false);
+}
+
+void MSystemManager::setSkeleton(int value)
+{
+    if(value)
+        mainEnt->setDisplaySkeleton(true);
+    else
+        mainEnt->setDisplaySkeleton(false);
+}
+
+void MSystemManager::updateMaterial()
+{
+    for(unsigned int i=0; i<mainEnt->getNumSubEntities(); ++i){
+        mainSubEnt = mainEnt->getSubEntity(i);
+        mainSubEnt->getMaterial()->reload();
+    }
 }
 
 void MSystemManager::addViewport(Ogre::Camera camera)
@@ -506,6 +647,10 @@ void MSystemManager::addViewport(Ogre::Camera camera)
 
 void MSystemManager::createFrameListener()
 {
+//   mDebugOverlay = OverlayManager::getSingleton().getByName("Core/DebugOverlay");
+//   mDebugOverlay->show();
+
+   //mRoot->getSingletonPtr()->addFrameListener(this);
 }
 
 void MSystemManager::updateStats(void)
@@ -513,17 +658,17 @@ void MSystemManager::updateStats(void)
     //mRenderWindow->updateStats();
 }
 
-bool MSystemManager::frameStarted(const FrameEvent& evt)
+bool MSystemManager::frameStarted(const FrameEvent& e)
 {
     if (mRenderWindow->isClosed())
         return false;
 
-    // TODO: MManipToolsManager::getSingleton().updateFrame(evt.timeSinceLastFrame);
+    // TODO: MManipToolsManager::getSingleton().updateFrame(e.timeSinceLastFrame);
     return true;
     /** @return bool */
 }
 
-bool MSystemManager::frameEnded(const FrameEvent& evt)
+bool MSystemManager::frameEnded(const FrameEvent& e)
 {
     updateStats();
 
@@ -531,29 +676,94 @@ bool MSystemManager::frameEnded(const FrameEvent& evt)
     return true;
 }
 
-//MSystemManager* MSystemManager::getSingletonPtr()
-//{
-//    if (smInstance == NULL)
-//        smInstance = new MSystemManager();
+void MSystemManager::dragEnterEvent(QDragEnterEvent* e)
+{
+#if defined(Q_WS_WIN)
+    if(e->mimeData()->hasUrls())
+    {
+        QRegExp fileMatcher("^/([A-Z]:/.*\\.mesh)$");
+        if( fileMatcher.exactMatch(e->mimeData()->urls().first().path()) )
+            e->acceptProposedAction();
+    }
+#else
+    QRegExp fileMatcher("^file://(/.*\\.mesh)$");
+    if( fileMatcher.exactMatch(e->mimeData()->text()) )
+        e->acceptProposedAction();
+#endif
+}
 
-//    return smInstance;
-//    /** @return smInstance */
-//}
+void MSystemManager::dropEvent(QDropEvent* e)
+{
+#if defined(Q_WS_WIN)
+    QRegExp fileMatcher("^/([A-Z]:/.*\\.mesh)$");
+    if( fileMatcher.exactMatch(e->mimeData()->urls().first().path()) )
+    {
+        QString meshName = fileMatcher.cap(1);
+        meshName.replace("/", "\\");
+#else
+    QRegExp fileMatcher("^file://(/.*\\.mesh)$");
+    if( fileMatcher.exactMatch(e->mimeData()->text()) )
+    {
+        QString name = fileMatcher.cap(1);
+#endif
+        //FIXME:
+        addObject(name.toStdString());
+        e->acceptProposedAction();
+    }
+}
 
-//MSystemManager &MSystemManager::getSingleton()
-//{
-//    if (smInstance == NULL)
-//        smInstance = new MSystemManager();
+void MSystemManager::addObject(Ogre::String name)
+{
+    Ogre::ResourceGroupManager *rgm = Ogre::ResourceGroupManager::getSingletonPtr();
+    rgm->addResourceLocation(name, "FileSystem", "General");
 
-//    return *smInstance;
-//    /** @return *smInstance */
-//}
+    //Update the name
+    String meshName = name;
+    meshName.substr(meshName.size()-5, 5);
 
-//void MSystemManager::releaseSingleton()
-//{
-//    if (smInstance)
-//    {
-//        delete smInstance;
-//        smInstance = NULL;
-//    }
-//}
+    //Remove old object
+    if(mainEnt != NULL)
+    {
+        mSceneManager->destroyEntity(mainEnt);
+        mainEntAnim = 0;
+    }
+    if(mainNode != NULL)
+        mSceneManager->destroySceneNode(mainNode->getName());
+
+    //Add New Object
+    mainEnt = mSceneManager->createEntity(meshName, name);
+    mainNode = mSceneManager->getRootSceneNode()->createChildSceneNode(meshName+"node");
+    mainNode->attachObject(mainEnt);
+    mainNode->setPosition(Vector3(0, 0, 0));
+
+    //Update the camera's pos to fit whith the object size
+    mCurrCamera->setPosition(mainNode->getPosition().x, mainNode->getPosition().y, mainNode->getPosition().z - 200);
+    mCurrCamera->lookAt(mainNode->getPosition());
+}
+
+MSystemManager* MSystemManager::getSingletonPtr()
+{
+    if (smInstance == NULL)
+        smInstance = new MSystemManager();
+
+    return smInstance;
+    /** @return smInstance */
+}
+
+MSystemManager &MSystemManager::getSingleton()
+{
+    if (smInstance == NULL)
+        smInstance = new MSystemManager();
+
+    return *smInstance;
+    /** @return *smInstance */
+}
+
+void MSystemManager::releaseSingleton()
+{
+    if (smInstance)
+    {
+        delete smInstance;
+        smInstance = NULL;
+    }
+}

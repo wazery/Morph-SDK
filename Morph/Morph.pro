@@ -22,7 +22,10 @@ SOURCES += main.cpp\
     mOgreEntityViewer/mogrelogproxy.cpp \
     MorphCore/Editor/mnodemanager.cpp \
     MorphCore/Editor/mnode.cpp \
-    MorphCore/Editor/mattribute.cpp
+    MorphCore/Editor/mattribute.cpp \
+    MorphCore/Editor/mattrobject.cpp \
+    mOgreEntityViewer/objpropertiesview.cpp \
+    settingsdialog.cpp
 
 HEADERS += mainwindow.h \
     button.h \
@@ -39,9 +42,13 @@ HEADERS += mainwindow.h \
     MorphCore/Editor/MNode.h \
     MorphCore/Editor/MType.h \
     MorphCore/Editor/mattribute.h \
-    MorphCore/Editor/MNodeManager.h
+    MorphCore/Editor/MNodeManager.h \
+    MorphCore/Editor/mattrobject.h \
+    mOgreEntityViewer/objpropertiesview.h \
+    settingsdialog.h
 
-FORMS    += mainwindow.ui
+FORMS    += mainwindow.ui \
+    settingsdialog.ui
 
 #unix {
     # You may need to change this include directory

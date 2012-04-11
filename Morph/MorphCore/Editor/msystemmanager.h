@@ -92,6 +92,21 @@ namespace Morph
         /** Access the WindowHeight */
         int getWindowHeight(void) const    { /** @return mWindowHeight */ return(mWindowHeight); }
 
+        void update();
+        void updateAnim();
+
+        void setBoundingBoxes(int value);
+        void setSkeleton(int value);
+        void updateMaterial();
+
+        void addObject(Ogre::String name);
+
+        //Entity
+        Ogre::SceneNode* mainNode;
+        Ogre::Entity        *mainEnt;
+        Ogre::SubEntity* mainSubEnt;
+        ////////
+
     public slots:
         /** Sets the viewport background */
         //void setBackgroundColour(QColor c);
@@ -105,12 +120,15 @@ namespace Morph
         virtual void paintEvent(QPaintEvent *e);
         virtual void resizeEvent(QResizeEvent *e);
         virtual void keyPressEvent(QKeyEvent *e);
+        virtual void keyReleaseEvent(QKeyEvent* e);
         virtual void moveEvent(QMoveEvent *e);
         virtual void mouseDoubleClickEvent(QMouseEvent *e);
-        virtual void mouseMoveEvent(QMouseEvent *e);
+        virtual void mouseMoveEvent(QMouseEvent *evt);
         virtual void mousePressEvent(QMouseEvent *e);
         virtual void mouseReleaseEvent(QMouseEvent *e);
         virtual void wheelEvent(QWheelEvent *e);
+        virtual void dragEnterEvent(QDragEnterEvent* e);
+        virtual void dropEvent(QDropEvent* e);
 
     protected:
          /** Initialise Ogre Core
@@ -160,14 +178,14 @@ namespace Morph
         void createGrid();
 
     public:
-        //static MSystemManager* smInstance;
+        static MSystemManager* smInstance;
 
-//        /** Get the class address pointer */
-//        static MSystemManager* getSingletonPtr();
+        /** Get the class address pointer */
+        static MSystemManager* getSingletonPtr();
 
-//        static MSystemManager &getSingleton();
+        static MSystemManager &getSingleton();
 
-//        static void releaseSingleton();
+        static void releaseSingleton();
 
     private:
         static const Ogre::Real turboModifier;
@@ -186,9 +204,27 @@ namespace Morph
         Ogre::Camera        *mMainCamera;
         Ogre::Camera        *mCurrCamera;
 
+        Ogre::AnimationState* mainEntAnim;
+
         QPoint oldPos;
         Ogre::SceneNode *selectedNode;
 
+        //Deplacement
+        Ogre::Vector3 mDirection;
+        Ogre::Real mRotate;
+        Ogre::Real mMove;
+        bool isMoving;
+        QPoint mousePressPos;
+        QPoint mousePos;
+        float angleX, angleY;
+        float rotX, rotY;
+
+        bool mouseLeftPressed;
+        bool mouseRightPressed;
+        bool mouseMiddleBtn;
+        bool isLoopOn;
+        bool isAnimEnabled;
+//
         bool		mIsInitialised;
         int			mWindowWidth;
         int			mWindowHeight;
