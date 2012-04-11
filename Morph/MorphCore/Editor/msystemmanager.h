@@ -100,7 +100,25 @@ namespace Morph
 
         void setBoundingBoxes(int value);
         void setSkeleton(int value);
+
+        void setShadow(int fogType);
+        void setAmbientLight(QColor color);
+        QColor getAmbientLight();
+        void setDiffuseColor(QColor color);
+        QColor getDiffuseColor();
+        void setSpecularColor(QColor color);
+        QColor getSpecularColor();
+
         void updateMaterial();
+
+        void createPointLight(String name, String xPos, String yPos, String zPos, String diffuse, String specular);
+        void createDirectionalLight(String name, String xDir, String yDir, String zDir, String diffuse, String specular);
+        void createSpotlight(String name, String xPos, String yPos, String zPos, String xDir, String yDir, String zDir, String diffuse, String specular);
+
+        void updatePointLight(String oldName, String name, String xPos, String yPos, String zPos, String diffuse, String specular);
+        void updateDirectionalLight(String oldName, String name, String xDir, String yDir, String zDir, String diffuse, String specular);
+        void updateSpotlight(String oldName, String name, String xPos, String yPos, String zPos, String xDir, String yDir, String zDir, String diffuse, String specular);
+        void deleteLight(String name);
 
         void addObject(Ogre::String name);
 
@@ -150,6 +168,7 @@ namespace Morph
                 It can be overriden, as it is a pure virtual.
         */
         void createScene();
+        void createLight();
 
         /** Destroys the entire scene */
         void destroyScene();
@@ -196,6 +215,7 @@ namespace Morph
         Ogre::SceneManager  *mSceneManager;
         Ogre::RenderWindow  *mRenderWindow;
         Ogre::Viewport      *mViewport;
+
         Ogre::Overlay       *mDebugOverlay; // TODO: change its name
 
         Ogre::ManualObject  *mFloorGrid;
@@ -218,6 +238,16 @@ namespace Morph
         QPoint mousePos;
         float angleX, angleY;
         float rotX, rotY;
+
+        //Light
+        Ogre::Light* mainLight;
+        Ogre::ColourValue lightDiffuseColor;
+        Ogre::ColourValue lightSpecularColor;
+        Ogre::ColourValue ambientLightColor;
+        QColor ambientOldColor;
+        QColor diffuseOldColor;
+        QColor specularOldColor;
+        ///////
 
         bool mouseLeftPressed;
         bool mouseRightPressed;

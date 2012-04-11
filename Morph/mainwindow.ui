@@ -85,8 +85,9 @@
    </widget>
    <widget class="QMenu" name="menuObjects">
     <property name="title">
-     <string>Objects</string>
+     <string>&amp;Light</string>
     </property>
+    <addaction name="action_Add_Light"/>
    </widget>
    <widget class="QMenu" name="menuView">
     <property name="title">
@@ -108,8 +109,9 @@
     <property name="title">
      <string>&amp;Windows</string>
     </property>
-    <addaction name="actionCanvas"/>
     <addaction name="actionFull_Screen"/>
+    <addaction name="separator"/>
+    <addaction name="actionCanvas"/>
     <addaction name="actionLogging"/>
     <addaction name="actionScene_Explorer"/>
     <addaction name="actionWidgets"/>
@@ -122,7 +124,7 @@
    </widget>
    <widget class="QMenu" name="menuSettings">
     <property name="title">
-     <string>Settings</string>
+     <string>&amp;Settings</string>
     </property>
     <addaction name="actionConfigure_Editor"/>
    </widget>
@@ -509,7 +511,17 @@ p, li { white-space: pre-wrap; }
    <attribute name="dockWidgetArea">
     <number>2</number>
    </attribute>
-   <widget class="QWidget" name="dockWidgetContents_5"/>
+   <widget class="QWidget" name="dockWidgetContents_5">
+    <layout class="QGridLayout" name="gridLayout_8">
+     <item row="0" column="0">
+      <widget class="QTabWidget" name="tabWidget_3">
+       <property name="currentIndex">
+        <number>-1</number>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </widget>
   </widget>
   <action name="actionOpen">
    <property name="icon">
@@ -722,6 +734,14 @@ p, li { white-space: pre-wrap; }
   <action name="actionSet_Background_Color">
    <property name="text">
     <string>Set Background &amp;Color</string>
+   </property>
+  </action>
+  <action name="action_Add_Light">
+   <property name="text">
+    <string>Add &amp;Light</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+L</string>
    </property>
   </action>
  </widget>

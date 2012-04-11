@@ -25,7 +25,9 @@ SOURCES += main.cpp\
     MorphCore/Editor/mattribute.cpp \
     MorphCore/Editor/mattrobject.cpp \
     mOgreEntityViewer/objpropertiesview.cpp \
-    settingsdialog.cpp
+    settingsdialog.cpp \
+    lightwindow.cpp \
+    envproperties.cpp
 
 HEADERS += mainwindow.h \
     button.h \
@@ -45,7 +47,9 @@ HEADERS += mainwindow.h \
     MorphCore/Editor/MNodeManager.h \
     MorphCore/Editor/mattrobject.h \
     mOgreEntityViewer/objpropertiesview.h \
-    settingsdialog.h
+    settingsdialog.h \
+    lightwindow.h \
+    envproperties.h
 
 FORMS    += mainwindow.ui \
     settingsdialog.ui
