@@ -25,6 +25,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     connect(ui->actionAbout_Morph, SIGNAL(triggered()), this, SLOT(about()));
     connect(ui->actionConfigure_Editor, SIGNAL(triggered()), this, SLOT(openSettingsdialog()));
     connect(ui->actionAdd_Ogre_Mesh, SIGNAL(triggered()), this, SLOT(addObj()));
+    connect(ui->actionSet_Background_Color, SIGNAL(triggered()), this, SLOT(setBackgroundColor()));
 }
 
 MainWindow::~MainWindow()
@@ -75,6 +76,36 @@ void MainWindow::loadObj(const QString &meshName)
             MLogManager::getSingleton().logOutput("Has Skeleton : YES", M_EDITOR_MESSAGE);
         else
             MLogManager::getSingleton().logOutput("Has Skeleton : NO", M_EDITOR_MESSAGE);
+
+        // Update object properties
+//		objProperties->renderDetailCombo->setCurrentIndex(0);
+//		objProperties->boundBoxCheckBox->setChecked(false);
+//		objProperties->dispSkeletonCheckBox->setChecked(false);
+//		objProperties->lodSlider->setSliderPosition(objProperties->lodSlider->maximum()/2);
+//		objProperties->listAnimCombo->clear();
+//		objProperties->updateListAnim(ogreView->mainEnt->getAllAnimationStates());
+
+//		if(objProperties->listAnimCombo->itemText(0) != "") { // The mesh has animations
+//			ogreView->setAnimationState(objProperties->listAnimCombo->itemText(0).toStdString());
+//			objProperties->playCheckBox->setChecked(false);
+//			objProperties->loopCheckBox->setChecked(false);
+//			showmeshLog->insertPlainText("Has Animations : YES \n");
+//		}
+//		else
+//			showmeshLog->insertPlainText("Has Animations : NO \n");
+
+//		showmeshLog->insertPlainText("========================= \n"); // End of the log
+    }
+}
+
+void MainWindow::setBackgroundColor()
+{
+    QColor color = QColorDialog::getColor(systemManager->getBackgroundColor(), this);
+
+    if(color.isValid())
+    {
+        systemManager->setBackgroundColor(color);
+        MLogManager::getSingleton().logOutput("Background Color : " + color.name() + '\n');
     }
 }
 

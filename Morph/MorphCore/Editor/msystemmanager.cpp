@@ -626,9 +626,17 @@ void MSystemManager::setSkeleton(int value)
         mainEnt->setDisplaySkeleton(false);
 }
 
+void MSystemManager::setBackgroundColor(QColor color)
+{
+    Ogre::ColourValue ogreColor;
+    ogreColor.setAsARGB(color.rgba());
+    mViewport->setBackgroundColour(ogreColor);
+}
+
 void MSystemManager::updateMaterial()
 {
-    for(unsigned int i=0; i<mainEnt->getNumSubEntities(); ++i){
+    for(unsigned int i=0; i<mainEnt->getNumSubEntities(); ++i)
+    {
         mainSubEnt = mainEnt->getSubEntity(i);
         mainSubEnt->getMaterial()->reload();
     }

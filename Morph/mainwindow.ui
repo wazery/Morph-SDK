@@ -90,9 +90,10 @@
    </widget>
    <widget class="QMenu" name="menuView">
     <property name="title">
-     <string>View</string>
+     <string>&amp;View</string>
     </property>
     <addaction name="actionShow_Bounding_Box"/>
+    <addaction name="actionSet_Background_Color"/>
    </widget>
    <widget class="QMenu" name="menuTools">
     <property name="title">
@@ -705,7 +706,7 @@ p, li { white-space: pre-wrap; }
   </action>
   <action name="actionShow_Bounding_Box">
    <property name="text">
-    <string>Show Bounding Box</string>
+    <string>Show &amp;Bounding Box</string>
    </property>
   </action>
   <action name="actionConfigure_Editor">
@@ -716,6 +717,11 @@ p, li { white-space: pre-wrap; }
   <action name="actionAdd_Ogre_Mesh">
    <property name="text">
     <string>Add Ogre Mesh</string>
+   </property>
+  </action>
+  <action name="actionSet_Background_Color">
+   <property name="text">
+    <string>Set Background &amp;Color</string>
    </property>
   </action>
  </widget>

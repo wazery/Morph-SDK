@@ -92,6 +92,9 @@ namespace Morph
         /** Access the WindowHeight */
         int getWindowHeight(void) const    { /** @return mWindowHeight */ return(mWindowHeight); }
 
+        void setBackgroundColor(QColor);
+        QColor getBackgroundColor() const { return mViewport->getBackgroundColour().getAsARGB(); }
+
         void update();
         void updateAnim();
 
@@ -105,11 +108,8 @@ namespace Morph
         Ogre::SceneNode* mainNode;
         Ogre::Entity        *mainEnt;
         Ogre::SubEntity* mainSubEnt;
-        ////////
 
     public slots:
-        /** Sets the viewport background */
-        //void setBackgroundColour(QColor c);
         /** Sets the current camera position */
         void setCameraPosition(const Ogre::Vector3 &pos);
 
@@ -224,12 +224,10 @@ namespace Morph
         bool mouseMiddleBtn;
         bool isLoopOn;
         bool isAnimEnabled;
-//
+
         bool		mIsInitialised;
         int			mWindowWidth;
         int			mWindowHeight;
     };
-
-    //MSystemManager* MSystemManager::smInstance = NULL;
 }
 #endif // MSYSTEMMANAGER_H

@@ -27,6 +27,7 @@ public slots:
     void openSettingsdialog();
     void addObj();
     void loadObj(const QString &meshName);
+    void setBackgroundColor();
     void fakeSlot();
 
 private:
