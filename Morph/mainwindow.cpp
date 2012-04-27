@@ -10,17 +10,18 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     ui->setupUi(this);
 
     mSettingsFile = QApplication::applicationDirPath() + "editorSettings";
-    settings = new QSettings(mSettingsFile, QSettings::NativeFormat);
+    mSettings = new QSettings(mSettingsFile, QSettings::NativeFormat);
 
     // Pointers to the editor subsystems.
     systemManager = ui->widget;
     lightWin = new LightWindow(this);
 
     loadSettings();
+    ui->grid->setChecked(mSettings->value("grid").toBool());
 
     envProperties = new EnvProperties(this);
     QTabWidget *propertiesTab = ui->tabWidget_3;
-    propertiesTab->addTab(envProperties, tr("Environment"));
+    propertiesTab->addTab(envProperties, ("Environment"));
     //propertiesTab->setMaximumSize(243, 450);
 
     ui->listWidget->addItem(new QListWidgetItem(QIcon("settings.png"), "Toggle Button"));
@@ -30,10 +31,16 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     MLogManager::getSingleton().addListener(ui->textBrowser);
     MLogManager::getSingleton().addListener(ui->textBrowser_2);
 
+    // TODO: add listeners for the subsystems.
+    //MNodeManager::getSingleton().addSelectListener(&m_wndProperties);
+    //MNodeManager::getSingleton().addAttributeListener(&m_wndProperties);
+    //MCommandManager::getSingleton().addCommandListener(this);
+
     // Connect actions to slots.
     connect(ui->actionFakeError, SIGNAL(triggered()), this, SLOT(fakeSlot()));
-    connect(ui->actionAbout_Morph, SIGNAL(triggered()), this, SLOT(about()));
-    connect(ui->actionConfigure_Editor, SIGNAL(triggered()), this, SLOT(openSettingsdialog()));
+    connect(ui->actionAbout_Morph, SIGNAL(triggered()), this, SLOT(openAboutDialog()));
+
+    connect(ui->actionConfigure_Editor, SIGNAL(triggered()), this, SLOT(openSettingsDialog()));
     connect(ui->actionAdd_Ogre_Mesh, SIGNAL(triggered()), this, SLOT(addObj()));
     connect(ui->actionSet_Background_Color, SIGNAL(triggered()), this, SLOT(setBackgroundColor()));
     connect(ui->action_Add_Light, SIGNAL(triggered()), this, SLOT(addLight()));
@@ -50,6 +57,19 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     connect(lightWin->diffuseColorLightBtn, SIGNAL(clicked()), this, SLOT(setDiffuseLightColor()));
     connect(lightWin->specularColorLightBtn, SIGNAL(clicked()), this, SLOT(setSpecularLightColor()));
     connect(lightWin->okBtn, SIGNAL(clicked()), this, SLOT(createNewLight()));
+
+    connect(ui->grid, SIGNAL(clicked()), this, SLOT(gridChanged()));
+
+    // --------------------------------------
+    //              Initialise
+    // --------------------------------------
+    connect(systemManager, SIGNAL(initialised()), this, SLOT(addNodeListener()));
+    connect(systemManager, SIGNAL(initialised()), this, SLOT(initialisePlugins()));
+
+    //Init to white the diffuse and specular colors (NOTE: the initialisation takes effect on the "LightWindow")
+    diffuseLightColor.setRgba(qRgba(255, 255, 255, 255));
+    specularLightColor.setRgba(qRgba(255, 255, 255, 255));
+   // listName.push_back("Main Light");//This is our first light created by hand in LightWindow, so we've to put in the "blacklist" of names
 }
 
 MainWindow::~MainWindow()
@@ -58,10 +78,32 @@ MainWindow::~MainWindow()
     delete ui;
 }
 
+void MainWindow::addNodeListener()
+{
+    qDebug() << "2) widget initialised";
+    MNodeManager::getSingleton().addNodeTreeListener(ui->treeView);
+}
+
+void MainWindow::initialisePlugins()
+{
+    MNodeManager::getSingleton().registerNode(MRootNode::nodeID, MRootNode::creator);
+
+    // first create the root.
+    MNodePtr rootNodePtr = MNodeManager::getSingleton().createNode(MRootNode::nodeID, MRootNode::nodeID);
+    if(!rootNodePtr)
+    {
+        MLogManager::getSingleton().logOutput("Error failed in initilaizePlugin(), setting the root node", M_ERROR);
+        return;
+    }
+    MNodeManager::getSingleton().setRootNodePtr(rootNodePtr);
+    MNodeManager::getSingleton().notifyAddNode("Root.World", rootNodePtr->getName());
+    ui->grid->setEnabled(true);
+}
+
 void MainWindow::loadSettings()
 {
     // Set background color to the last saved setting.
-    QColor color(settings->value("Canvas Background Color").toString());
+    QColor color(mSettings->value("Canvas Background Color").toString());
     if (color.isValid())
     {
         // FIXME, need to set the viewport color with the saved settings color.
@@ -78,22 +120,13 @@ void MainWindow::fakeSlot()
     MLogManager::getSingleton().logOutput("Fake Error!", M_ERROR, true);
 }
 
-void MainWindow::about()
+void MainWindow::openAboutDialog()
 {
-    QString ogreVersion = QString::number(OGRE_VERSION_MAJOR) + "." + QString::number(OGRE_VERSION_MINOR) + "." + QString::number(OGRE_VERSION_PATCH);
-    QMessageBox::about(this, tr("About Morph SDK"),
-                       tr("Morph SDK %1\n").arg("1.0") +
-                       tr("Copyright (C) 2012 Zeology\n\n") +
-                       tr("Licensed under the LGPL\n") +
-                       tr("Using Ogre %1 and Qt %2\n\n").arg(ogreVersion).arg(qVersion()) +
-                       tr("Developers:\n") +
-                       tr("ISlam Wazery <wazery@ubuntu.com>\n") +
-                       tr("Mohammed Yosry <mohammedyosry3000@gmail.com>") +
-                       tr("Ibrahim Hamdy <mohammedyosry3000@gmail.com>") +
-                       tr("Ahmed Adel    <mohammedyosry3000@gmail.com>"));
+    aboutdialog = new AboutDialog();
+    aboutdialog->show();
 }
 
-void MainWindow::openSettingsdialog()
+void MainWindow::openSettingsDialog()
 {
     settingsdialog = new Settingsdialog();
     settingsdialog->show();
@@ -101,8 +134,13 @@ void MainWindow::openSettingsdialog()
 
 void MainWindow::addObj()
 {
-    QString meshName = QFileDialog::getOpenFileName(this, "Add a model", QDir::currentPath() + "/Media/models", "Mesh (*.mesh)");
-    loadObj(meshName);
+    if(systemManager->isVisible())
+    {
+        QString meshName = QFileDialog::getOpenFileName(this, "Add a model", QDir::currentPath() + "/Media/models", "Mesh (*.mesh)");
+        loadObj(meshName);
+    }
+    else
+        QMessageBox::warning(this, "You must open the canvas first!", "You are trying to make an action that couldn't be done without launching the canvas first!");
 }
 
 void MainWindow::loadObj(const QString &meshName)
@@ -140,42 +178,62 @@ void MainWindow::loadObj(const QString &meshName)
 
 void MainWindow::setBackgroundColor()
 {
-    QColor color = QColorDialog::getColor(systemManager->getBackgroundColor(), this);
-
-    if(color.isValid())
+    if(systemManager->isVisible())
     {
-        systemManager->setBackgroundColor(color);
-        MLogManager::getSingleton().logOutput("Background Color : " + color.name(), M_EDITOR_MESSAGE);
-    }
+        QColor color = QColorDialog::getColor(systemManager->getBackgroundColor(), this);
 
-    settings->setValue("canvasBackgroundColor", color.name());
-    settings->sync();
+        if(color.isValid())
+        {
+            systemManager->setBackgroundColor(color);
+            MLogManager::getSingleton().logOutput("Background Color : " + color.name(), M_EDITOR_MESSAGE);
+        }
+
+        mSettings->setValue("canvasBackgroundColor", color.name());
+        mSettings->sync();
+    }
+    else
+        QMessageBox::warning(this, "You must open the canvas first!", "You are trying to make an action that couldn't be done without launching the canvas first!");
+}
+
+void MainWindow::gridChanged()
+{
+    mSettings->setValue("grid", ui->grid->isChecked());
+    mSettings->sync();
+
+    systemManager->mGrid->setEnabled(ui->grid->isChecked());
+    //systemManager->update();
 }
 
 void MainWindow::addLight()
 {
-    //Clean properties
-    lightWin->nameLightEdit->setText("");
-    lightWin->XEditPos->setText("0.0");
-    lightWin->YEditPos->setText("0.0");
-    lightWin->ZEditPos->setText("0.0");
-    lightWin->XEditDir->setText("0.0");
-    lightWin->YEditDir->setText("0.0");
-    lightWin->ZEditDir->setText("0.0");
-    diffuseLightColor.setRgba(qRgba(255, 255, 255, 255));
-    specularLightColor.setRgba(qRgba(255, 255, 255, 255));
-    lightWin->typeLightCombo->setCurrentIndex(0);
-    lightWin->newTypeLight("Point");//update the layout to fit with the Point light (you can only edit the position and not the direction)
+    if(systemManager->isVisible())
+    {
+        //Clean properties
+        lightWin->nameLightEdit->setText("");
+        lightWin->XEditPos->setText("0.0");
+        lightWin->YEditPos->setText("0.0");
+        lightWin->ZEditPos->setText("0.0");
+        lightWin->XEditDir->setText("0.0");
+        lightWin->YEditDir->setText("0.0");
+        lightWin->ZEditDir->setText("0.0");
+        diffuseLightColor.setRgba(qRgba(255, 255, 255, 255));
+        specularLightColor.setRgba(qRgba(255, 255, 255, 255));
+        lightWin->typeLightCombo->setCurrentIndex(0);
+        lightWin->newTypeLight("Point");//update the layout to fit with the Point light (you can only edit the position and not the direction)
 
-    lightWin->setWindowTitle("Create Light");
-    lightWin->move(width()/2, height()/2);
-    lightWin->show();
+        lightWin->setWindowTitle("Create Light");
+        lightWin->move(width()/2, height()/2);
+        lightWin->show();
+    }
+    else
+        QMessageBox::warning(this, "You must open the canvas first!", "You are trying to make an action that couldn't be done without launching the canvas first!");
 }
 
-void MainWindow::modifyLight()//Note : Only modify the LightWin attributes, not the tree. See createLight to see how we're updating the tree with the modifed values
+//Note: Only modify the LightWin attributes, not the tree. See createLight to see how we're updating the tree with the modifed values
+void MainWindow::modifyLight()
 {
-    QTreeWidgetItem* treeWidgetItem = envProperties->treeLights->currentItem(); //get the light
-    treeWidgetItem = envProperties->treeLights->topLevelItem(envProperties->treeLights->indexOfTopLevelItem(envProperties->treeLights->currentItem()));
+    QTreeWidgetItem* treeWidgetItem = envProperties->lightsTree->currentItem(); //get the light
+    treeWidgetItem = envProperties->lightsTree->topLevelItem(envProperties->lightsTree->indexOfTopLevelItem(envProperties->lightsTree->currentItem()));
 
     if(treeWidgetItem != NULL)
     {
@@ -269,19 +327,17 @@ void MainWindow::modifyLight()//Note : Only modify the LightWin attributes, not 
         lightWin->setWindowTitle("Modifiy : " + nameLight);
         lightWin->show();
     }
-    else
-        QMessageBox::information(this, "Click on the name's light", "Please click on the name's light to modify it's properties");
 }
 
 void MainWindow::deleteLight()
 {
-    QTreeWidgetItem* treeWidgetItem = envProperties->treeLights->currentItem();
-    int posToRemove = envProperties->treeLights->indexOfTopLevelItem(treeWidgetItem);
-    QString name = envProperties->treeLights->currentItem()->text(0);
+    QTreeWidgetItem* treeWidgetItem = envProperties->lightsTree->currentItem();
+    int posToRemove = envProperties->lightsTree->indexOfTopLevelItem(treeWidgetItem);
+    QString name = envProperties->lightsTree->currentItem()->text(0);
 
     if(posToRemove != 1)
     {
-        envProperties->treeLights->takeTopLevelItem(posToRemove);
+        envProperties->lightsTree->takeTopLevelItem(posToRemove);
         listName.removeAt(posToRemove);//update our list of names
         systemManager->deleteLight(name.toStdString());
     }
@@ -291,8 +347,10 @@ void MainWindow::deleteLight()
 
 void MainWindow::setDiffuseLightColor()
 {
-    if(lightWin->windowTitle() != "Create Light"){//In case we're updating a light
-        QString diffuseColor = envProperties->treeLights->currentItem()->child(1)->text(0);
+    //In case we're updating a light
+    if(lightWin->windowTitle() != "Create Light")
+    {
+        QString diffuseColor = envProperties->lightsTree->currentItem()->child(1)->text(0);
         diffuseColor = diffuseColor.remove(0, 16);
 
         diffuseLightColor = QColorDialog::getColor(QColor(diffuseColor), this);
@@ -303,14 +361,37 @@ void MainWindow::setDiffuseLightColor()
 
 void MainWindow::setSpecularLightColor()
 {
-    if(lightWin->windowTitle() != "Create Light"){//In case we're updating a light
-        QString specularColor = envProperties->treeLights->currentItem()->child(2)->text(0);
+    //In case we're updating a light
+    if(lightWin->windowTitle() != "Create Light")
+    {
+        QString specularColor = envProperties->lightsTree->currentItem()->child(2)->text(0);
         specularColor = specularColor.remove(0, 17);
 
         specularLightColor = QColorDialog::getColor(QColor(specularColor), this);
     }
     else
         specularLightColor = QColorDialog::getColor(Qt::white, this);
+}
+
+void MainWindow::setAmbientLight()
+{
+    if (lightWin->windowTitle() != "Create Light")
+    {
+//        QString ambientColor = envProperties->lightsTree->currentItem()->child(3)->text(0);
+//        ambientColor = ambientColor.remove()
+    }
+}
+
+void MainWindow::setFog(int)
+{
+}
+
+void MainWindow::setFogColor()
+{
+}
+
+void MainWindow::setShadow()
+{
 }
 
 void MainWindow::createNewLight()
@@ -325,11 +406,15 @@ void MainWindow::createNewLight()
     QString zDir = lightWin->ZEditDir->text();
     QString typeLight = lightWin->typeLightCombo->currentText();
 
-    if(nameLight != ""){//we have to get a name (for Ogre)
-        if(!listName.contains(nameLight) && lightWin->windowTitle() == "Create Light"){//we don't want to have twice the same name (Ogre doesn't like that ;)
+    if(nameLight != "")
+    {
+        //we have to get a name (for Ogre)
+        if(!listName.contains(nameLight) && lightWin->windowTitle() == "Create Light")
+        {
+            //we don't want to have twice the same name (Ogre doesn't like that ;)
             listName.push_back(nameLight);
             //New Light
-            QTreeWidgetItem* newLight = new QTreeWidgetItem(envProperties->treeLights);
+            QTreeWidgetItem* newLight = new QTreeWidgetItem(envProperties->lightsTree);
             newLight->setText(0, nameLight);
             //Light Type
             QTreeWidgetItem* newTypeLight = new QTreeWidgetItem(newLight);
@@ -343,7 +428,8 @@ void MainWindow::createNewLight()
             //systemManager->setSpecularColor(specularLightColor);
 
             //Because Point light, Spotlight and Directional light don't have the same properties, we filtrate
-            if(typeLight == "Point"){
+            if(typeLight == "Point")
+            {
                 //Light Pos
                 QTreeWidgetItem* posLight = new QTreeWidgetItem(newLight);
                 posLight->setText(0, "Position");
@@ -366,7 +452,8 @@ void MainWindow::createNewLight()
                 MLogManager::getSingleton().logOutput("Specular Color : " + specularLightColor.name() , M_EDITOR_MESSAGE);
                 MLogManager::getSingleton().logOutput("==========================", M_EDITOR_MESSAGE);
             }
-            else if(typeLight == "Spotlight"){
+            else if(typeLight == "Spotlight")
+            {
                 //Light Pos
                 QTreeWidgetItem* posLight = new QTreeWidgetItem(newLight);
                 posLight->setText(0, "Position");
@@ -403,7 +490,8 @@ void MainWindow::createNewLight()
                 MLogManager::getSingleton().logOutput("Specular Color : " + specularLightColor.name() , M_EDITOR_MESSAGE);
                 MLogManager::getSingleton().logOutput("==========================", M_EDITOR_MESSAGE);
             }
-            else if(typeLight == "Directional"){
+            else if(typeLight == "Directional")
+            {
                 //Light Dir
                 QTreeWidgetItem* dirLight = new QTreeWidgetItem(newLight);
                 dirLight->setText(0, "Direction");
@@ -441,15 +529,19 @@ void MainWindow::createNewLight()
             lightWin->typeLightCombo->setCurrentIndex(0);
             lightWin->newTypeLight("Point");//update the layout to fit with the Point light (you can only edit the position and not the direction)
         }
-        else if(lightWin->windowTitle() != "Create Light"){//We are updating a light
+        else if(lightWin->windowTitle() != "Create Light")
+        {
+            //We are updating a light
             QString oldName = "none";
-            if(nameLight != envProperties->treeLights->currentItem()->text(0)){//the name has changed so we removed the name which don't exist anymore ant update listName with the new name
-                oldName = envProperties->treeLights->currentItem()->text(0);
-                listName.removeAt(envProperties->treeLights->indexOfTopLevelItem(envProperties->treeLights->currentItem()));
+            if(nameLight != envProperties->lightsTree->currentItem()->text(0))
+            {
+                //the name has changed so we removed the name which don't exist anymore ant update listName with the new name
+                oldName = envProperties->lightsTree->currentItem()->text(0);
+                listName.removeAt(envProperties->lightsTree->indexOfTopLevelItem(envProperties->lightsTree->currentItem()));
                 listName.push_back(nameLight);
             }
 
-            QTreeWidgetItem* treeWidgetItem = envProperties->treeLights->currentItem(); //get the light
+            QTreeWidgetItem* treeWidgetItem = envProperties->lightsTree->currentItem(); //get the light
 
             treeWidgetItem->setText(0, nameLight); //Name of the light
             treeWidgetItem->child(0)->setText(0, "Type : " + typeLight); //type of the light
@@ -480,7 +572,8 @@ void MainWindow::createNewLight()
                 MLogManager::getSingleton().logOutput("Specular Color : " + specularLightColor.name() , M_EDITOR_MESSAGE);
                 MLogManager::getSingleton().logOutput("==========================", M_EDITOR_MESSAGE);
             }
-            else if(typeLight == "Directional"){
+            else if(typeLight == "Directional")
+            {
                 posDirItem->setText(0, "Direction");
 
                 posDirItem->child(0)->setText(0, "X Dir : " + xDir);
@@ -501,7 +594,8 @@ void MainWindow::createNewLight()
                 MLogManager::getSingleton().logOutput("Specular Color : " + specularLightColor.name() , M_EDITOR_MESSAGE);
                 MLogManager::getSingleton().logOutput("==========================", M_EDITOR_MESSAGE);
             }
-            else if(typeLight == "Spotlight"){
+            else if(typeLight == "Spotlight")
+            {
                 posDirItem->setText(0, "Position");
 
                 posDirItem->child(0)->setText(0, "X Pos : " + xPos);
