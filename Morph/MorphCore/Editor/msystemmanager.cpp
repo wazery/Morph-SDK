@@ -26,6 +26,7 @@
 
 #include "MSystemManager.h"
 #include "MLogManager.h"
+#include "MNodeManager.h"
 #include "mOgreEntityViewer/mogrelogproxy.h"
 
 #include "mainwindow.h"
@@ -425,7 +426,11 @@ bool MSystemManager::initialise()
         viewConfig["externalWindowHandle"] = widgetHandle;
         mRenderWindow = mRoot->createRenderWindow("Ogre rendering window",
                                                         width(), height(), false, &viewConfig);
+        mIsInitialised = true;
         initOgreCore(width(), height());
+
+        MNodeManager::getSingleton().initialise();
+        emit initialised();
 
     if (!mRoot)
         return false;
@@ -470,9 +475,12 @@ bool MSystemManager::initOgreCore(Ogre::Real width, Ogre::Real height)
     createScene();
     MLogManager::getSingleton().logOutput("Scene created", M_EDITOR_MESSAGE);
     createGrid();
-    MLogManager::getSingleton().logOutput("Grid is set to: ON", M_EDITOR_MESSAGE);
-    createLight();
-    MLogManager::getSingleton().logOutput("Added light", M_EDITOR_MESSAGE);
+//    createLight();
+//    MLogManager::getSingleton().logOutput("Added light", M_EDITOR_MESSAGE);
+
+    TextureManager::getSingleton().setDefaultNumMipmaps(5);
+    MaterialManager::getSingleton().setDefaultTextureFiltering(Ogre::TFO_ANISOTROPIC);
+    MaterialManager::getSingleton().setDefaultAnisotropy(2);
 
     //FIXME: Implement it for the debug overlay
     //createFrameListener();
@@ -527,16 +535,16 @@ void MSystemManager::initResources()
 
 void MSystemManager::createScene()
 {
-    mSceneManager->setAmbientLight(Ogre::ColourValue(0.5, 0.5, 0.5));
     Ogre::Light* lightSource = mSceneManager->createLight("Main Light Source");
     lightSource->setPosition(Ogre::Vector3(20, 80, 50));
 
-    addObject("jaiqua.mesh");
+    addObject("ogrehead.mesh");
 }
 
 void MSystemManager::createLight()
 {
-    mSceneManager->setAmbientLight(ColourValue(1, 1, 1));
+    mSceneManager->setAmbientLight(ColourValue(1, 0, 0));
+    mSceneManager->setShadowTechnique(Ogre::SHADOWTYPE_STENCIL_ADDITIVE);
     ambientOldColor = QColor(Qt::white);
     mainLight = mSceneManager->createLight("Main Light");
     mainLight->setPosition(0, 100, -500);
@@ -561,50 +569,7 @@ void MSystemManager::doRender()
 
 void MSystemManager::createGrid()
 {
-    try
-    {
-        mFloorGrid = mSceneManager->createManualObject("editingFloorGrid");
-        mFloorGrid->begin("editingFloorGridLines", RenderOperation::OT_LINE_LIST);
-
-        for (int x=(-GRID_LINE_NUM * GRID_LINE_SPACE); x <= GRID_LINE_NUM * GRID_LINE_SPACE; x += GRID_LINE_SPACE)
-        {
-            mFloorGrid->position(Vector3(x, 0, -GRID_LINE_NUM * GRID_LINE_SPACE));
-            mFloorGrid->position(Vector3(x, 0, GRID_LINE_NUM * GRID_LINE_SPACE));
-        }
-
-        for (int z = -GRID_LINE_NUM * GRID_LINE_SPACE; z <= GRID_LINE_NUM * GRID_LINE_SPACE; z += GRID_LINE_SPACE)
-        {
-            mFloorGrid->position(Vector3(-GRID_LINE_NUM * GRID_LINE_SPACE, 0, z));
-            mFloorGrid->position(Vector3(GRID_LINE_NUM * GRID_LINE_SPACE, 0, z));
-        }
-
-        mFloorGrid->end();
-        mFloorGrid->setCastShadows(false);
-        mFloorGrid->setQueryFlags(0);
-
-        mSceneManager->getRootSceneNode()->createChildSceneNode("floorGrid")->attachObject(mFloorGrid);
-
-
-        mCircle = mSceneManager->createManualObject("circle");
-        mCircle->begin("circle_line", RenderOperation::OT_LINE_STRIP);
-
-        const int segs = 200;
-        const float delta = (float)(2 * Ogre::Math::PI / segs);
-
-        for (int i = 0; i < segs; ++i)
-            mCircle->position((float)Ogre::Math::Sin(i * delta), 0, (float)Ogre::Math::Cos(i * delta));
-
-        // TODO: make 3 colored dimensions arrows
-        mCircle->colour(Ogre::Real(1), Ogre::Real(0), Ogre::Real(0));
-
-        mCircle->end();
-        SceneNode * centerNode = mSceneManager->getRootSceneNode()->createChildSceneNode("centerCircle");
-        centerNode->attachObject(mCircle);
-    }
-    catch (Ogre::Exception& e)
-    {
-        MLogManager::getSingletonPtr()->logOutput("Couldn't create the grid!", M_ERROR);
-    }
+    mGrid = new ViewportGrid(mSceneManager, mViewport);
 }
 
 void MSystemManager::setCameraPosition(const Ogre::Vector3 &pos)
@@ -652,7 +617,7 @@ void MSystemManager::setShadow(int fogType)
 
 void MSystemManager::setAmbientLight(QColor color)
 {
-    mSceneManager->setAmbientLight(ColourValue(color.redF(), color.greenF(), color.blueF(), color.alphaF()));
+    mSceneManager->setAmbientLight(Ogre::ColourValue(color.redF(), color.greenF(), color.blueF(), color.alphaF()));
     ambientOldColor = color;
 }
 
@@ -690,10 +655,10 @@ void MSystemManager::updateMaterial()
     }
 }
 
-void MSystemManager::createPointLight(String name, String xPos, String yPos, String zPos, String diffuse, String specular)
+void MSystemManager::createPointLight(Ogre::String name, String xPos, String yPos, String zPos, String diffuse, String specular)
 {
     Light* newLight = mSceneManager->createLight(name);
-    newLight->setPosition(StringConverter::parseReal(xPos), StringConverter::parseReal(yPos), StringConverter::parseReal(zPos));
+    newLight->setPosition(Ogre::StringConverter::parseReal(xPos), StringConverter::parseReal(yPos), StringConverter::parseReal(zPos));
 
     QColor diffuseColor(diffuse.c_str());
     QColor specularColor(specular.c_str());
@@ -705,10 +670,10 @@ void MSystemManager::createPointLight(String name, String xPos, String yPos, Str
     newLight->setSpecularColour(specularColor.redF(), specularColor.greenF(), specularColor.blueF());
 }
 
-void MSystemManager::createDirectionalLight(String name, String xDir, String yDir, String zDir, String diffuse, String specular)
+void MSystemManager::createDirectionalLight(Ogre::String name, String xDir, String yDir, String zDir, String diffuse, String specular)
 {
     Light* newLight = mSceneManager->createLight(name);
-    newLight->setDirection(StringConverter::parseReal(xDir), StringConverter::parseReal(yDir), StringConverter::parseReal(zDir));
+    newLight->setDirection(Ogre::StringConverter::parseReal(xDir), StringConverter::parseReal(yDir), StringConverter::parseReal(zDir));
 
     QColor diffuseColor(diffuse.c_str());
     QColor specularColor(specular.c_str());
@@ -720,11 +685,11 @@ void MSystemManager::createDirectionalLight(String name, String xDir, String yDi
     newLight->setSpecularColour(specularColor.redF(), specularColor.greenF(), specularColor.blueF());
 }
 
-void MSystemManager::createSpotlight(String name, String xPos, String yPos, String zPos, String xDir, String yDir, String zDir, String diffuse, String specular)
+void MSystemManager::createSpotlight(Ogre::String name, String xPos, String yPos, String zPos, String xDir, String yDir, String zDir, String diffuse, String specular)
 {
     Light* newLight = mSceneManager->createLight(name);
-    newLight->setPosition(StringConverter::parseReal(xPos), StringConverter::parseReal(yPos), StringConverter::parseReal(zPos));
-    newLight->setDirection(StringConverter::parseReal(xDir), StringConverter::parseReal(yDir), StringConverter::parseReal(zDir));
+    newLight->setPosition(Ogre::StringConverter::parseReal(xPos), StringConverter::parseReal(yPos), StringConverter::parseReal(zPos));
+    newLight->setDirection(Ogre::StringConverter::parseReal(xDir), StringConverter::parseReal(yDir), StringConverter::parseReal(zDir));
 
     QColor diffuseColor(diffuse.c_str());
     QColor specularColor(specular.c_str());
@@ -736,7 +701,7 @@ void MSystemManager::createSpotlight(String name, String xPos, String yPos, Stri
     newLight->setSpecularColour(specularColor.redF(), specularColor.greenF(), specularColor.blueF());
 }
 
-void MSystemManager::updatePointLight(String oldName, String name, String xPos, String yPos, String zPos, String diffuse, String specular)
+void MSystemManager::updatePointLight(Ogre::String oldName, String name, String xPos, String yPos, String zPos, String diffuse, String specular)
 {
     Light* newLight = NULL;
     if(oldName != "none"){//name has changed
@@ -746,7 +711,7 @@ void MSystemManager::updatePointLight(String oldName, String name, String xPos, 
     else
         newLight = mSceneManager->getLight(name);
 
-    newLight->setPosition(StringConverter::parseReal(xPos), StringConverter::parseReal(yPos), StringConverter::parseReal(zPos));
+    newLight->setPosition(Ogre::StringConverter::parseReal(xPos), StringConverter::parseReal(yPos), StringConverter::parseReal(zPos));
 
     QColor diffuseColor(diffuse.c_str());
     QColor specularColor(specular.c_str());
@@ -758,7 +723,7 @@ void MSystemManager::updatePointLight(String oldName, String name, String xPos, 
     newLight->setSpecularColour(specularColor.redF(), specularColor.greenF(), specularColor.blueF());
 }
 
-void MSystemManager::updateDirectionalLight(String oldName, String name, String xDir, String yDir, String zDir, String diffuse, String specular)
+void MSystemManager::updateDirectionalLight(Ogre::String oldName, String name, String xDir, String yDir, String zDir, String diffuse, String specular)
 {
     Light* newLight = NULL;
     if(oldName != "none"){//name has changed
@@ -768,7 +733,7 @@ void MSystemManager::updateDirectionalLight(String oldName, String name, String 
     else
         newLight = mSceneManager->getLight(name);
 
-    newLight->setDirection(StringConverter::parseReal(xDir), StringConverter::parseReal(yDir), StringConverter::parseReal(zDir));
+    newLight->setDirection(Ogre::StringConverter::parseReal(xDir), StringConverter::parseReal(yDir), StringConverter::parseReal(zDir));
 
     QColor diffuseColor(diffuse.c_str());
     QColor specularColor(specular.c_str());
@@ -780,7 +745,7 @@ void MSystemManager::updateDirectionalLight(String oldName, String name, String 
     newLight->setSpecularColour(specularColor.redF(), specularColor.greenF(), specularColor.blueF());
 }
 
-void MSystemManager::updateSpotlight(String oldName, String name, String xPos, String yPos, String zPos, String xDir, String yDir, String zDir, String diffuse, String specular)
+void MSystemManager::updateSpotlight(Ogre::String oldName, String name, String xPos, String yPos, String zPos, String xDir, String yDir, String zDir, String diffuse, String specular)
 {
     Light* newLight = NULL;
     if(oldName != "none"){//name has changed
@@ -790,8 +755,8 @@ void MSystemManager::updateSpotlight(String oldName, String name, String xPos, S
     else
         newLight = mSceneManager->getLight(name);
 
-    newLight->setPosition(StringConverter::parseReal(xPos), StringConverter::parseReal(yPos), StringConverter::parseReal(zPos));
-    newLight->setDirection(StringConverter::parseReal(xDir), StringConverter::parseReal(yDir), StringConverter::parseReal(zDir));
+    newLight->setPosition(Ogre::StringConverter::parseReal(xPos), StringConverter::parseReal(yPos), StringConverter::parseReal(zPos));
+    newLight->setDirection(Ogre::StringConverter::parseReal(xDir), StringConverter::parseReal(yDir), StringConverter::parseReal(zDir));
 
     QColor diffuseColor(diffuse.c_str());
     QColor specularColor(specular.c_str());
@@ -803,7 +768,7 @@ void MSystemManager::updateSpotlight(String oldName, String name, String xPos, S
     newLight->setSpecularColour(specularColor.redF(), specularColor.greenF(), specularColor.blueF());
 }
 
-void MSystemManager::deleteLight(String name)
+void MSystemManager::deleteLight(Ogre::String name)
 {
     mSceneManager->destroyLight(name);
 }

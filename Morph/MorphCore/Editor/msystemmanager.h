@@ -32,6 +32,8 @@
 //#include <OgreSingleton.h>
 #include <OGRE/Ogre.h>
 
+#include "mOgreEntityViewer/viewgrid.h"
+
 //#include "MSingleton.h" // FIXME: Implement this header file.
 
 using namespace Ogre;
@@ -133,6 +135,7 @@ namespace Morph
 
     signals:
         void cameraPositionChanged(const Ogre::Vector3 &pos);
+        void initialised();
 
     protected:
         virtual void paintEvent(QPaintEvent *e);
@@ -198,6 +201,7 @@ namespace Morph
 
     public:
         static MSystemManager* smInstance;
+        ViewportGrid* mGrid;
 
         /** Get the class address pointer */
         static MSystemManager* getSingletonPtr();
