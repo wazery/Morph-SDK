@@ -3,13 +3,14 @@
 
 #include <QMainWindow>
 
-#include "settingsdialog.h"
+#include "mOgreEntityViewer/settingsdialog.h"
+#include "mOgreEntityViewer/aboutdialog.h"
 #include "Ogre.h"
 
 #include "MorphCore/Editor/msystemmanager.h"
 #include "MorphCore/Editor/mlogmanager.h"
-#include "lightwindow.h"
-#include "envproperties.h"
+#include "mOgreEntityViewer/lightwindow.h"
+#include "mOgreEntityViewer/envproperties.h"
 
 using namespace Morph;
 namespace Ui
@@ -28,24 +29,46 @@ public:
     void saveSettings();
 
 public slots:
-    void about();
-    void openSettingsdialog();
+    void openAboutDialog();
+
+    // Settings dialog slots.
+    void openSettingsDialog();
+    void gridDivisionsChanged(int value);
+    void gridPrespectiveSizeChanged(int size);
+    void gridRenderLayerChanged(int index);
+    void gridColorChanged(QColor color);
+
     void addObj();
     void loadObj(const QString &meshName);
+
     void setBackgroundColor();
+    void gridChanged();
+
     void addLight();
     void modifyLight();
     void deleteLight();
     void createNewLight();
     void setDiffuseLightColor();
     void setSpecularLightColor();
+    void setAmbientLight();
+
+    void setFog(int);
+    void setFogColor();
+
+    void setShadow();
     void fakeSlot();
+
+    void addNodeListener();
+    void initialisePlugins();
 
 private:
     Ui::MainWindow *ui;
-    QSettings *settings;
+    QSettings *mSettings;
     QString mSettingsFile;
+
     Settingsdialog *settingsdialog;
+    AboutDialog    *aboutdialog;
+
     MSystemManager *systemManager;
     MLogManager    *logManager; // FIXME
     LightWindow    *lightWin;

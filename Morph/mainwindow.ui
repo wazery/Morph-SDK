@@ -7,13 +7,13 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1073</width>
-    <height>777</height>
+    <width>1150</width>
+    <height>877</height>
    </rect>
   </property>
   <property name="minimumSize">
    <size>
-    <width>500</width>
+    <width>650</width>
     <height>0</height>
    </size>
   </property>
@@ -45,7 +45,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>1073</width>
+     <width>1150</width>
      <height>20</height>
     </rect>
    </property>
@@ -163,6 +163,7 @@
     <bool>false</bool>
    </attribute>
    <addaction name="actionNew"/>
+   <addaction name="actionAdd_Ogre_Mesh"/>
    <addaction name="actionOpen"/>
    <addaction name="actionSave"/>
    <addaction name="actionSave_as"/>
@@ -237,7 +238,7 @@
         <enum>QTabWidget::Rounded</enum>
        </property>
        <property name="currentIndex">
-        <number>0</number>
+        <number>1</number>
        </property>
        <property name="elideMode">
         <enum>Qt::ElideNone</enum>
@@ -363,6 +364,16 @@
        </widget>
       </widget>
      </item>
+     <item row="1" column="0">
+      <widget class="QCheckBox" name="grid">
+       <property name="enabled">
+        <bool>false</bool>
+       </property>
+       <property name="text">
+        <string>Show Grid</string>
+       </property>
+      </widget>
+     </item>
     </layout>
    </widget>
   </widget>
@@ -389,6 +400,21 @@
        <property name="currentIndex">
         <number>1</number>
        </property>
+       <property name="elideMode">
+        <enum>Qt::ElideLeft</enum>
+       </property>
+       <property name="usesScrollButtons">
+        <bool>true</bool>
+       </property>
+       <property name="documentMode">
+        <bool>false</bool>
+       </property>
+       <property name="tabsClosable">
+        <bool>false</bool>
+       </property>
+       <property name="movable">
+        <bool>true</bool>
+       </property>
        <widget class="QWidget" name="tab">
         <attribute name="title">
          <string>Editor Output</string>
@@ -397,7 +423,7 @@
          <item row="0" column="0">
           <widget class="QPushButton" name="clearLog">
            <property name="text">
-            <string>Clear Log</string>
+            <string>Clear</string>
            </property>
           </widget>
          </item>
@@ -437,7 +463,7 @@ p, li { white-space: pre-wrap; }
          <item row="0" column="0">
           <widget class="QPushButton" name="clearLog_2">
            <property name="text">
-            <string>Clear Log</string>
+            <string>Clear</string>
            </property>
           </widget>
          </item>
@@ -467,7 +493,7 @@ p, li { white-space: pre-wrap; }
    <widget class="QWidget" name="dockWidgetContents_3">
     <layout class="QGridLayout" name="gridLayout_3">
      <item row="0" column="0">
-      <widget class="QTreeView" name="treeView">
+      <widget class="NodeView" name="treeView">
        <property name="sizePolicy">
         <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
          <horstretch>0</horstretch>
@@ -517,6 +543,41 @@ p, li { white-space: pre-wrap; }
       <widget class="QTabWidget" name="tabWidget_3">
        <property name="currentIndex">
         <number>-1</number>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </widget>
+  </widget>
+  <widget class="QDockWidget" name="dockWidget_6">
+   <property name="minimumSize">
+    <size>
+     <width>147</width>
+     <height>133</height>
+    </size>
+   </property>
+   <property name="windowTitle">
+    <string>Commands</string>
+   </property>
+   <attribute name="dockWidgetArea">
+    <number>1</number>
+   </attribute>
+   <widget class="QWidget" name="dockWidgetContents_6">
+    <layout class="QFormLayout" name="formLayout_3">
+     <item row="0" column="0" colspan="2">
+      <widget class="QPlainTextEdit" name="plainTextEdit"/>
+     </item>
+     <item row="1" column="0">
+      <widget class="QPushButton" name="pushButton_2">
+       <property name="text">
+        <string>Execute</string>
+       </property>
+      </widget>
+     </item>
+     <item row="1" column="1">
+      <widget class="QPushButton" name="pushButton_3">
+       <property name="text">
+        <string>Undo</string>
        </property>
       </widget>
      </item>
@@ -722,11 +783,19 @@ p, li { white-space: pre-wrap; }
    </property>
   </action>
   <action name="actionConfigure_Editor">
+   <property name="icon">
+    <iconset>
+     <normaloff>../Release/settings.png</normaloff>../Release/settings.png</iconset>
+   </property>
    <property name="text">
-    <string>Configure Editor</string>
+    <string>&amp;Configure Editor</string>
    </property>
   </action>
   <action name="actionAdd_Ogre_Mesh">
+   <property name="icon">
+    <iconset resource="icons.qrc">
+     <normaloff>:/toolbar/icons/scene.svg</normaloff>:/toolbar/icons/scene.svg</iconset>
+   </property>
    <property name="text">
     <string>Add Ogre Mesh</string>
    </property>
@@ -762,6 +831,11 @@ p, li { white-space: pre-wrap; }
    <class>LogViewOgre</class>
    <extends>QTextBrowser</extends>
    <header>mOgreEntityViewer/logview.h</header>
+  </customwidget>
+  <customwidget>
+   <class>NodeView</class>
+   <extends>QTreeView</extends>
+   <header>mOgreEntityViewer/nodeview.h</header>
   </customwidget>
  </customwidgets>
  <resources>

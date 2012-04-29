@@ -17,7 +17,6 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     lightWin = new LightWindow(this);
 
     loadSettings();
-    ui->grid->setChecked(mSettings->value("grid").toBool());
 
     envProperties = new EnvProperties(this);
     QTabWidget *propertiesTab = ui->tabWidget_3;
@@ -61,7 +60,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     connect(ui->grid, SIGNAL(clicked()), this, SLOT(gridChanged()));
 
     // --------------------------------------
-    //              Initialise
+    //            Initialise Engine
     // --------------------------------------
     connect(systemManager, SIGNAL(initialised()), this, SLOT(addNodeListener()));
     connect(systemManager, SIGNAL(initialised()), this, SLOT(initialisePlugins()));
@@ -70,6 +69,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     diffuseLightColor.setRgba(qRgba(255, 255, 255, 255));
     specularLightColor.setRgba(qRgba(255, 255, 255, 255));
    // listName.push_back("Main Light");//This is our first light created by hand in LightWindow, so we've to put in the "blacklist" of names
+
 }
 
 MainWindow::~MainWindow()
@@ -88,7 +88,7 @@ void MainWindow::initialisePlugins()
 {
     MNodeManager::getSingleton().registerNode(MRootNode::nodeID, MRootNode::creator);
 
-    // first create the root.
+    // firstly create the root.
     MNodePtr rootNodePtr = MNodeManager::getSingleton().createNode(MRootNode::nodeID, MRootNode::nodeID);
     if(!rootNodePtr)
     {
@@ -97,7 +97,18 @@ void MainWindow::initialisePlugins()
     }
     MNodeManager::getSingleton().setRootNodePtr(rootNodePtr);
     MNodeManager::getSingleton().notifyAddNode("Root.World", rootNodePtr->getName());
+
+    // Init Grid.
     ui->grid->setEnabled(true);
+    systemManager->mGrid->setEnabled(ui->grid->isChecked());
+    Ogre::ColourValue ogreColor;
+    ogreColor.setAsARGB(QColor(mSettings->value("gridColor").toString()).rgba());
+    systemManager->mGrid->setColour(ogreColor);
+    systemManager->mGrid->setPerspectiveSize(mSettings->value("gridPrespectiveSize").toInt());
+    if(mSettings->value("gridRenderLayer").toInt() == 0)
+        systemManager->mGrid->setRenderLayer(ViewportGrid::RL_BEHIND);
+    else
+        systemManager->mGrid->setRenderLayer(ViewportGrid::RL_INFRONT);
 }
 
 void MainWindow::loadSettings()
@@ -109,6 +120,9 @@ void MainWindow::loadSettings()
         // FIXME, need to set the viewport color with the saved settings color.
         // systemManager->setBackgroundColor(color);
     }
+
+    //Set grid checkbox
+    ui->grid->setChecked(mSettings->value("grid").toBool());
 }
 
 void MainWindow::saveSettings()
@@ -128,8 +142,40 @@ void MainWindow::openAboutDialog()
 
 void MainWindow::openSettingsDialog()
 {
-    settingsdialog = new Settingsdialog();
+    if(systemManager->isVisible())
+        settingsdialog = new Settingsdialog(this, true);
+    else
+        settingsdialog = new Settingsdialog(this, false);
+    connect(settingsdialog, SIGNAL(signalGridDivisionsChanged(int)), this, SLOT(gridDivisionsChanged(int)));
+    connect(settingsdialog, SIGNAL(signalGridColorChanged(QColor)), this, SLOT(gridColorChanged(QColor)));
+    connect(settingsdialog, SIGNAL(signalGridPrespectiveSizeChanged(int)), this, SLOT(gridPrespectiveSizeChanged(int)));
+    connect(settingsdialog, SIGNAL(signalGridRenderLayerChanged(int)), this, SLOT(gridRenderLayerChanged(int)));
     settingsdialog->show();
+}
+
+void MainWindow::gridColorChanged(QColor color)
+{
+    Ogre::ColourValue ogreColor;
+    ogreColor.setAsARGB(color.rgba());
+    systemManager->mGrid->setColour(ogreColor);
+}
+
+void MainWindow::gridDivisionsChanged(int value)
+{
+    systemManager->mGrid->setDivision(value);
+}
+
+void MainWindow::gridPrespectiveSizeChanged(int size)
+{
+    systemManager->mGrid->setPerspectiveSize(size);
+}
+
+void MainWindow::gridRenderLayerChanged(int index)
+{
+    if(index == 0)
+        systemManager->mGrid->setRenderLayer(ViewportGrid::RL_BEHIND);
+    else
+        systemManager->mGrid->setRenderLayer(ViewportGrid::RL_INFRONT);
 }
 
 void MainWindow::addObj()
@@ -201,7 +247,17 @@ void MainWindow::gridChanged()
     mSettings->sync();
 
     systemManager->mGrid->setEnabled(ui->grid->isChecked());
-    //systemManager->update();
+    //systemManager->mGrid->setColour(settingsdialog->ui);
+    //systemManager->mGrid->setDivision(settingsdialog->ui->mGridSpacingMenu->value());
+    //systemManager->mGrid->setPerspectiveSize();
+    //systemManager->mGrid->setRenderLayer();
+    //systemManager->mGrid->setRenderScale();
+    if(ui->grid->isChecked())
+        MLogManager::getSingleton().logOutput("Grid set to on", M_EDITOR_MESSAGE);
+    else
+        MLogManager::getSingleton().logOutput("Grid set to off", M_EDITOR_MESSAGE);
+
+    systemManager->update();
 }
 
 void MainWindow::addLight()
