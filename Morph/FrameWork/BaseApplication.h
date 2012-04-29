@@ -1,6 +1,8 @@
 #ifndef BASEAPPLICATION_H
 #define BASEAPPLICATION_H
 
+#include "DotSceneLoader.h"
+
 #include <OgreCamera.h>
 #include <OgreEntity.h>
 #include <OgreLogManager.h>
@@ -101,6 +103,7 @@ protected:
     OIS::InputManager* mInputManager;
     OIS::Mouse*    mMouse;
     OIS::Keyboard* mKeyboard;
+    Ogre::DotSceneLoader *loader;
 
     // Added for Mac compatibility
     Ogre::String                 m_ResourcePath;

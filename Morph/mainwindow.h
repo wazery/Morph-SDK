@@ -2,8 +2,10 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
+#include "Ogre.h"
 
-namespace Ui {
+namespace Ui
+{
     class MainWindow;
 }
 
@@ -14,6 +16,10 @@ class MainWindow : public QMainWindow
 public:
     explicit MainWindow(QWidget *parent = 0);
     ~MainWindow();
+
+public slots:
+    void about();
+    void fakeSlot();
 
 private:
     Ui::MainWindow *ui;

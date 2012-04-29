@@ -1,0 +1,9 @@
+<scene formatVersion="">
+    <nodes>
+        <node name="OgreHead" id="3">
+            <position x="10.0" y="5" z="10.5" />
+            <scale x="1" y="1" z="1" />
+            <entity name="OgreHead" meshFile="ogrehead.mesh" static="false" />
+        </node>
+    </nodes>
+</scene>

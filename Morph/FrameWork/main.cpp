@@ -23,12 +23,12 @@ extern "C" {
         // Create application object
         MApplication app;
 
-        MButtonCanvasObject coObject("Unnamed_3");
-        MCheckButtonWidget btn(&coObject);
-        QObject::connect(&btn, SIGNAL(clicked()), &btn, SLOT(printClicked()));
-        QObject::connect(&btn, SIGNAL(enter()), &btn, SLOT(printEnter()));
-        QObject::connect(&btn, SIGNAL(leave()), &btn, SLOT(printLeave()));
-        QObject::connect(&btn, SIGNAL(toggled(bool)), &btn, SLOT(printToggled(bool)));
+//        MButtonCanvasObject coObject("Unnamed_3");
+//        MCheckButtonWidget btn(&coObject);
+//        QObject::connect(&btn, SIGNAL(clicked()), &btn, SLOT(printClicked()));
+//        QObject::connect(&btn, SIGNAL(enter()), &btn, SLOT(printEnter()));
+//        QObject::connect(&btn, SIGNAL(leave()), &btn, SLOT(printLeave()));
+//        QObject::connect(&btn, SIGNAL(toggled(bool)), &btn, SLOT(printToggled(bool)));
 
 
         try {

@@ -1,4 +1,5 @@
 #include "BaseApplication.h"
+
 using namespace Ogre;
 
 #if OGRE_PLATFORM == OGRE_PLATFORM_APPLE
@@ -51,7 +52,7 @@ bool BaseApplication::configure(void)
     {
         // If returned true, user clicked OK so initialise
         // Here we choose to let the system create a default rendering window by passing 'true'
-        mWindow = mRoot->initialise(true, "TutorialApplication Render Window");
+        mWindow = mRoot->initialise(true, "Morph App");
 
         return true;
     }
@@ -114,6 +115,10 @@ void BaseApplication::createScene()
 {
 
     mSceneMgr = mRoot->createSceneManager(ST_GENERIC, "Default SceneManager");
+
+
+    SceneNode *mNode = mSceneMgr->getRootSceneNode()->createChildSceneNode( "mNode1", Vector3( 0, 0, 0 ) );
+    //std::cout << "OUCHHHHHHHHHHH" << std::endl;
     mCamera = mSceneMgr->createCamera("Camera");
     Viewport* vp = mWindow->addViewport(mCamera);
 
@@ -131,10 +136,19 @@ void BaseApplication::createScene()
     // Create a light
     Ogre::Light* l = mSceneMgr->createLight("MainLight");
     l->setPosition(20, 80, 50);
-    Ogre::Entity* ogreHead = mSceneMgr->createEntity("Head", "ogrehead.mesh");
 
-    Ogre::SceneNode* headNode = mSceneMgr->getRootSceneNode()->createChildSceneNode();
-    headNode->attachObject(ogreHead);
+    try{
+            loader = new DotSceneLoader();
+               loader->parseDotScene("meshes/MyScene.scene", "General", mSceneMgr, mNode);
+         //DSL->parseDotScene(,"General",mSceneMgr,mNode);
+        }catch(Ogre::Exception& e){
+            std::cout << "OUCHHHHHHHHHHH" << std::endl;
+        }
+
+//    Ogre::Entity* ogreHead = mSceneMgr->createEntity("Head", "ogrehead.mesh");
+
+//    Ogre::SceneNode* headNode = mSceneMgr->getRootSceneNode()->createChildSceneNode();
+//    headNode->attachObject(ogreHead);
 
 }
 //-------------------------------------------------------------------------------------
@@ -239,7 +253,7 @@ bool BaseApplication::setup(void)
 
 
     return true;
-};
+}
 //-------------------------------------------------------------------------------------
 bool BaseApplication::frameRenderingQueued(const Ogre::FrameEvent& evt)
 {

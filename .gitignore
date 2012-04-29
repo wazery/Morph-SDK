@@ -1,0 +1,21 @@
+# Qt files
+*.pro.user
+
+# Compiled Object files
+*.slo
+*.lo
+*.o
+
+# Compiled Dynamic libraries
+*.so
+
+# Compiled Static libraries
+*.lai
+*.la
+*.a
+
+# Use wildcards as well
+*~
+*.swp
+
+Release/

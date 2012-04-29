@@ -47,7 +47,12 @@ SOURCES += main.cpp \
     MButtonWidget.cpp \
     BaseApplication.cpp \
     MApplication.cpp \
-    MCheckButtonWidget.cpp
+    MCheckButtonWidget.cpp \
+    tinystr.cpp \
+    tinyxml.cpp \
+    tinyxmlerror.cpp \
+    tinyxmlparser.cpp \
+    DotSceneLoader.cpp
 
 HEADERS += \
     MApplication.h \
@@ -56,7 +61,10 @@ HEADERS += \
     MButtonWidget.h \
     BaseApplication.h \
     MApplication.h \
-    MCheckButtonWidget.h
+    MCheckButtonWidget.h \
+    tinystr.h \
+    tinyxml.h \
+    DotSceneLoader.h
 
 
 

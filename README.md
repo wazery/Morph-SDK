@@ -9,6 +9,7 @@ This project provides a 3D virtual applications software development kit, which 
 - User friendly, you can create a whole interactive 3D scene.
 - Loading Ogre scene (.scene) contents (including meshes, animations, textures, ...etc) within scene tree hierarchy names.
 - Real-time scene preview, navigation and manipulation (deleting objects, moving, rotating, scaling). 
+- Visual Editor with command patten, undo/redo support, unicode support, Qt based user interface. 
 - Provide API classes to develop event-driven finite-state machine to define behavior for scene objects.
 - Provide graphical tools for behavioral/logic editing, ex. automatically generate code equivalent to what user express in graphical tools. 
 - Give ability to extend with code.

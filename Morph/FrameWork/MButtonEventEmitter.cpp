@@ -32,6 +32,7 @@ void MButtonEventEmitter::releaseSingleton(){
 }
 
 void MButtonEventEmitter::emitClicked(const std::string &entityName){
+    std::cout << entityName << std::endl;
     if(MButtonWidget::smWidgetsDataBase.contains(entityName)){
     MButtonWidget::smWidgetsDataBase[entityName]->Clicked();
     }

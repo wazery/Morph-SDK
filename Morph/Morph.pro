@@ -5,7 +5,7 @@
 #-------------------------------------------------
 
 QT       += core gui
-QT		 += opengl
+QT       += opengl
 
 TARGET = Morph
 TEMPLATE = app
@@ -13,6 +13,7 @@ TEMPLATE = app
 
 SOURCES += main.cpp\
         mainwindow.cpp \
+<<<<<<< HEAD
     ogrecanvas.cpp \
     MButtonWidget.cpp \
     to-do.cpp \
@@ -25,6 +26,35 @@ HEADERS += mainwindow.h \
     MButtonWidget.h \
     MButtonEventEmitter.h \
     MButtonCanvasObject.h
+=======
+    button.cpp \
+    MEvent.cpp \
+    MorphCore/Editor/msystemmanager.cpp \
+    #MorphCore/Editor/msingleton.cpp
+    MorphCore/Editor/mlogmanager.cpp \
+    mOgreEntityViewer/logview.cpp \
+    mOgreEntityViewer/mogrelogproxy.cpp \
+    MorphCore/Editor/mnodemanager.cpp \
+    MorphCore/Editor/mnode.cpp \
+    MorphCore/Editor/mattribute.cpp
+
+HEADERS += mainwindow.h \
+    button.h \
+    mdatabase.h \
+    MWidget.h \
+    MEvent.h \
+    MorphCore/Editor/msystemmanager.h \
+    #MorphCore/Editor/msingleton.h // FIXME: implement it.
+    MorphCore/Editor/mlogmanager.h \
+    mOgreEntityViewer/logview.h \
+    mOgreEntityViewer/mogrelogproxy.h \
+    MorphCore/Editor/mnodemanager.h \
+    MorphCore/Editor/mnode.h \
+    MorphCore/Editor/MNode.h \
+    MorphCore/Editor/MType.h \
+    MorphCore/Editor/mattribute.h \
+    MorphCore/Editor/MNodeManager.h
+>>>>>>> 4f3226e29c7690b0d08e1f81b3023f10ef0beee7
 
 FORMS    += mainwindow.ui
 
