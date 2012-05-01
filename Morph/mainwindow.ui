@@ -103,6 +103,7 @@
     <addaction name="actionSelect"/>
     <addaction name="actionMove"/>
     <addaction name="actionTranslate"/>
+    <addaction name="actionRemoveMesh"/>
     <addaction name="actionFakeError"/>
    </widget>
    <widget class="QMenu" name="menuWindows">
@@ -811,6 +812,18 @@ p, li { white-space: pre-wrap; }
    </property>
    <property name="shortcut">
     <string>Ctrl+L</string>
+   </property>
+  </action>
+  <action name="actionRemoveMesh">
+   <property name="icon">
+    <iconset resource="icons.qrc">
+     <normaloff>:/toolbar/icons/scissors32.png</normaloff>:/toolbar/icons/scissors32.png</iconset>
+   </property>
+   <property name="text">
+    <string>&amp;Remove Mesh</string>
+   </property>
+   <property name="toolTip">
+    <string>removeMesh</string>
    </property>
   </action>
  </widget>

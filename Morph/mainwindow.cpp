@@ -20,7 +20,9 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
 
     envProperties = new EnvProperties(this);
     QTabWidget *propertiesTab = ui->tabWidget_3;
-    propertiesTab->addTab(envProperties, ("Environment"));
+    propertiesTab->addTab(envProperties, QIcon("settings.png"), ("Environment"));
+    // TODO: Create the object properties tab
+    //propertiesTab->addTab(objProperties, QIcon("settings.png"), ("Object Properties"));
     //propertiesTab->setMaximumSize(243, 450);
 
     ui->listWidget->addItem(new QListWidgetItem(QIcon("settings.png"), "Toggle Button"));
@@ -29,6 +31,8 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
 
     MLogManager::getSingleton().addListener(ui->textBrowser);
     MLogManager::getSingleton().addListener(ui->textBrowser_2);
+
+    connect(ui->pushButton, SIGNAL(clicked()), this, SLOT(changeIndexofCanvas()));
 
     // TODO: add listeners for the subsystems.
     //MNodeManager::getSingleton().addSelectListener(&m_wndProperties);
@@ -43,6 +47,10 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     connect(ui->actionAdd_Ogre_Mesh, SIGNAL(triggered()), this, SLOT(addObj()));
     connect(ui->actionSet_Background_Color, SIGNAL(triggered()), this, SLOT(setBackgroundColor()));
     connect(ui->action_Add_Light, SIGNAL(triggered()), this, SLOT(addLight()));
+
+    // FIXME: A hack on signls and slots, bad way.
+    //connect(ui->actionRemoveMesh, SIGNAL(triggered()), this, SLOT(emitRemoveObj()));
+    //connect(this, SIGNAL(signalRemoveObject(QString)), this, SLOT(removeObj(QString)));
 
     // Environment Properties
     connect(envProperties->fogTypeCombo, SIGNAL(activated(int)), this, SLOT(setFog(int)));
@@ -96,7 +104,7 @@ void MainWindow::initialisePlugins()
         return;
     }
     MNodeManager::getSingleton().setRootNodePtr(rootNodePtr);
-    MNodeManager::getSingleton().notifyAddNode("Root.World", rootNodePtr->getName());
+    MNodeManager::getSingleton().notifyAddNode("Islam.World", rootNodePtr->getName());
 
     // Init Grid.
     ui->grid->setEnabled(true);
@@ -151,6 +159,12 @@ void MainWindow::openSettingsDialog()
     connect(settingsdialog, SIGNAL(signalGridPrespectiveSizeChanged(int)), this, SLOT(gridPrespectiveSizeChanged(int)));
     connect(settingsdialog, SIGNAL(signalGridRenderLayerChanged(int)), this, SLOT(gridRenderLayerChanged(int)));
     settingsdialog->show();
+}
+
+void MainWindow::changeIndexofCanvas()
+{
+    ui->tabWidget->setCurrentIndex(1);
+    ui->tab_2->setEnabled(false);
 }
 
 void MainWindow::gridColorChanged(QColor color)
@@ -222,6 +236,14 @@ void MainWindow::loadObj(const QString &meshName)
     }
 }
 
+// TODO:
+void MainWindow::removeObj(const QString &meshName)
+{
+    RemoveObject* removeObject = new RemoveObject();
+    removeObject->show();
+//    systemManager->removeObject();
+}
+
 void MainWindow::setBackgroundColor()
 {
     if(systemManager->isVisible())
@@ -247,11 +269,6 @@ void MainWindow::gridChanged()
     mSettings->sync();
 
     systemManager->mGrid->setEnabled(ui->grid->isChecked());
-    //systemManager->mGrid->setColour(settingsdialog->ui);
-    //systemManager->mGrid->setDivision(settingsdialog->ui->mGridSpacingMenu->value());
-    //systemManager->mGrid->setPerspectiveSize();
-    //systemManager->mGrid->setRenderLayer();
-    //systemManager->mGrid->setRenderScale();
     if(ui->grid->isChecked())
         MLogManager::getSingleton().logOutput("Grid set to on", M_EDITOR_MESSAGE);
     else

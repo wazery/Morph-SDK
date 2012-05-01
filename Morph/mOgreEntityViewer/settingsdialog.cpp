@@ -52,7 +52,7 @@ void Settingsdialog::gridColorChanged()
 void Settingsdialog::gridPrespectiveSizeChanged(int size)
 {
     mSettings->setValue("gridPrespectiveSize", size);
-    emit signalGridDivisionsChanged(size);
+    emit signalGridPrespectiveSizeChanged(size);
 }
 
 void Settingsdialog::gridRenderLayerChanged(int index)

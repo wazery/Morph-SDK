@@ -40,13 +40,13 @@ void LogView::messageLogged(QString message, logType type)
     switch (type)
     {
     case M_ERROR:
-        resultMessage = errorHtml + message + endHtml;
+        resultMessage = errorHtml + "> " + message + endHtml;
         break;
     case M_WARN:
-        resultMessage = warnHtml + message + endHtml;
+        resultMessage = warnHtml + "> " + message + endHtml;
         break;
     case M_EDITOR_MESSAGE:
-        resultMessage = editorMessageHtml + message + endHtml;
+        resultMessage = editorMessageHtml + "> " + message + endHtml;
         break;
     }
 
@@ -69,7 +69,7 @@ void LogViewOgre::messageLogged(QString message, logType type)
     switch (type)
     {
     case M_OGRE:
-        resultMessage = OgreHtml + message + endHtml;
+        resultMessage = OgreHtml + "> " + message + endHtml;
         break;
     }
 

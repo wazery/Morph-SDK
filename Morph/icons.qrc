@@ -22,4 +22,5 @@
         <file>icons/move.png</file>
         <file>icons/translate.png</file>
     </qresource>
+    <qresource prefix="/dialogs"/>
 </RCC>

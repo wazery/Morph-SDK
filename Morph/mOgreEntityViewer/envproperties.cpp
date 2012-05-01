@@ -63,30 +63,30 @@ EnvProperties::EnvProperties(QWidget *parent) : QWidget(parent)
     //-->Parent
     lightsTree = new QTreeWidget(this);
     lightsTree->setHeaderLabels(QStringList(tr("Lights")));
-    //-->Children Of Parent
-    mainLight = new QTreeWidgetItem(lightsTree);
-    mainLight->setText(0, "Main Light");
-    //-->Sub-Children of Children
-    lightType = new QTreeWidgetItem(mainLight);
-    lightType->setText(0, "Type : Point");
+//    //-->Children Of Parent
+//    mainLight = new QTreeWidgetItem(lightsTree);
+//    mainLight->setText(0, "Main Light");
+//    //-->Sub-Children of Children
+//    lightType = new QTreeWidgetItem(mainLight);
+//    lightType->setText(0, "Type : Point");
 
-    QTreeWidgetItem* lightDiffuse = new QTreeWidgetItem(mainLight);
-    lightDiffuse->setText(0, "Diffuse Color : #ffffff");
+//    QTreeWidgetItem* lightDiffuse = new QTreeWidgetItem(mainLight);
+//    lightDiffuse->setText(0, "Diffuse Color : #ffffff");
 
-    QTreeWidgetItem* lightSpecular = new QTreeWidgetItem(mainLight);
-    lightSpecular->setText(0, "Specular Color: #ffffff");
+//    QTreeWidgetItem* lightSpecular = new QTreeWidgetItem(mainLight);
+//    lightSpecular->setText(0, "Specular Color: #ffffff");
 
-    QTreeWidgetItem* lightPos = new QTreeWidgetItem(mainLight);
-    lightPos->setText(0, "Position");
+//    QTreeWidgetItem* lightPos = new QTreeWidgetItem(mainLight);
+//    lightPos->setText(0, "Position");
 
-    QTreeWidgetItem* lightX = new QTreeWidgetItem(lightPos);
-    lightX->setText(0, "X Pos : 0");
+//    QTreeWidgetItem* lightX = new QTreeWidgetItem(lightPos);
+//    lightX->setText(0, "X Pos : 0");
 
-    QTreeWidgetItem* lightY = new QTreeWidgetItem(lightPos);
-    lightY->setText(0, "Y Pos : 100");
+//    QTreeWidgetItem* lightY = new QTreeWidgetItem(lightPos);
+//    lightY->setText(0, "Y Pos : 100");
 
-    QTreeWidgetItem* lightZ = new QTreeWidgetItem(lightPos);
-    lightZ->setText(0, "Z Pos : -500");
+//    QTreeWidgetItem* lightZ = new QTreeWidgetItem(lightPos);
+//    lightZ->setText(0, "Z Pos : -500");
 
     //Right Click Action
     modifyAction = new QAction(QIcon(":/images/modify.png"), tr("Modify"), lightsTree);

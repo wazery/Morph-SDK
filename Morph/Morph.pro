@@ -10,7 +10,6 @@ QT       += opengl
 TARGET = Morph
 TEMPLATE = app
 
-
 SOURCES += main.cpp\
         mainwindow.cpp \
     button.cpp \
@@ -25,9 +24,16 @@ SOURCES += main.cpp\
     MorphCore/Editor/mattribute.cpp \
     MorphCore/Editor/mattrobject.cpp \
     mOgreEntityViewer/objpropertiesview.cpp \
-    settingsdialog.cpp \
-    lightwindow.cpp \
-    envproperties.cpp
+    mOgreEntityViewer/envproperties.cpp \
+    mOgreEntityViewer/settingsdialog.cpp \
+    mOgreEntityViewer/lightwindow.cpp \
+    MorphCore/Editor/mcommandmanager.cpp \
+    MorphCore/Editor/micommand.cpp \
+    mOgreEntityViewer/nodeview.cpp \
+    MorphCore/Editor/mrootnode.cpp \
+    mOgreEntityViewer/aboutdialog.cpp \
+    mOgreEntityViewer/viewgrid.cpp \
+    mOgreEntityViewer/removeobject.cpp
 
 HEADERS += mainwindow.h \
     button.h \
@@ -47,26 +53,36 @@ HEADERS += mainwindow.h \
     MorphCore/Editor/MNodeManager.h \
     MorphCore/Editor/mattrobject.h \
     mOgreEntityViewer/objpropertiesview.h \
-    settingsdialog.h \
-    lightwindow.h \
-    envproperties.h
+    mOgreEntityViewer/envproperties.h \
+    mOgreEntityViewer/settingsdialog.h \
+    mOgreEntityViewer/lightwindow.h \
+    MorphCore/Editor/mcommandmanager.h \
+    MorphCore/Editor/micommand.h \
+    mOgreEntityViewer/nodeview.h \
+    MorphCore/Editor/mrootnode.h \
+    mOgreEntityViewer/aboutdialog.h \
+    mOgreEntityViewer/viewgrid.h \
+    mOgreEntityViewer/removeobject.h
 
 FORMS    += mainwindow.ui \
-    settingsdialog.ui
+    mOgreEntityViewer/settingsdialog.ui \
+    mOgreEntityViewer/aboutdialog.ui \
+    mOgreEntityViewer/removeobject.ui
 
-#unix {
+#unix
+#{
     # You may need to change this include directory
     INCLUDEPATH += /usr/include/OGRE
     CONFIG += link_pkgconfig
     PKGCONFIG += OGRE
-
 
     INCLUDEPATH += /usr/include/sigc++-2.0
     CONFIG += link_pkgconfig
     PKGCONFIG += sigc++-2.0
 #}
 
-#win32 {
+#win32
+#{
 #    # You may need to change this include directory
 #    OGREHOME = D:\ogrehead\sdk
 #    LIBS += -LC:\boost\boost_1_40\lib
@@ -76,10 +92,12 @@ FORMS    += mainwindow.ui \
 #    INCLUDEPATH += C:\boost\boost_1_40
 #}
 
-CONFIG(debug, debug|release) {
+CONFIG(debug, debug|release)
+{
     TARGET = $$join(TARGET,,,d)
     #LIBS *= -lOgreMain_d
 }
+
 CONFIG(release, debug|release):LIBS *= -lOgreMain
 
 RESOURCES += \

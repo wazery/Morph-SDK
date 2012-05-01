@@ -27,7 +27,6 @@ public slots:
 signals:
    void signalGridDivisionsChanged(int size);
    void signalGridPrespectiveSizeChanged(int size);
-   void gridRenderLayerChanged();
    void signalGridColorChanged(QColor color);
    void signalGridRenderLayerChanged(int index);
 

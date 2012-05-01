@@ -25,7 +25,7 @@
 #define MICOMMAND_H
 
 #include "MType.h"
-#include <vector>
+#include <QVector>
 
 using namespace std;
 
@@ -51,7 +51,7 @@ namespace Morph
         // Access the ResulMString
         const std::vector<MString> &getResulMString(void) const { return(mResulMStringList); }
 
-        //virtual void SetTestArr(vector<int> *testArr) = 0;
+        //virtual void SetTestArr(QVector<int> *testArr) = 0;
         //every command instance have to implement this this create fun, use to create the class itself
         //static void* creator(){}
 

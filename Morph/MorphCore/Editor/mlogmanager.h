@@ -28,7 +28,7 @@
 #define MLOGMANAGER_H
 
 //#include <OgreSingleton.h> // FIXME: Implement a singleton pattern for Morph namespace.
-#include <vector>
+#include <QVector>
 #include <iostream>
 #include <fstream>
 

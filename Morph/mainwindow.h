@@ -5,6 +5,7 @@
 
 #include "mOgreEntityViewer/settingsdialog.h"
 #include "mOgreEntityViewer/aboutdialog.h"
+#include "mOgreEntityViewer/removeobject.h"
 #include "Ogre.h"
 
 #include "MorphCore/Editor/msystemmanager.h"
@@ -40,6 +41,7 @@ public slots:
 
     void addObj();
     void loadObj(const QString &meshName);
+    void removeObj(const QString &meshName);
 
     void setBackgroundColor();
     void gridChanged();

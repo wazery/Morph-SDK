@@ -861,13 +861,13 @@ void MSystemManager::addObject(Ogre::String name)
     meshName.substr(meshName.size()-5, 5);
 
     //Remove old object
-    if(mainEnt != NULL)
-    {
-        mSceneManager->destroyEntity(mainEnt);
-        mainEntAnim = 0;
-    }
-    if(mainNode != NULL)
-        mSceneManager->destroySceneNode(mainNode->getName());
+//    if(mainEnt != NULL)
+//    {
+//        mSceneManager->destroyEntity(mainEnt);
+//        mainEntAnim = 0;
+//    }
+//    if(mainNode != NULL)
+//        mSceneManager->destroySceneNode(mainNode->getName());
 
     //Add New Object
     mainEnt = mSceneManager->createEntity(meshName, name);
@@ -878,6 +878,14 @@ void MSystemManager::addObject(Ogre::String name)
     //Update the camera's pos to fit whith the object size
     mCurrCamera->setPosition(mainNode->getPosition().x, mainNode->getPosition().y, mainNode->getPosition().z - 200);
     mCurrCamera->lookAt(mainNode->getPosition());
+}
+void MSystemManager::removeObject(Ogre::String name)
+{
+    if(mSceneManager)
+    {
+        mSceneManager->destroyEntity(name);
+        mSceneManager->destroySceneNode(name);
+    }
 }
 
 MSystemManager* MSystemManager::getSingletonPtr()

@@ -123,6 +123,7 @@ namespace Morph
         void deleteLight(String name);
 
         void addObject(Ogre::String name);
+        void removeObject(Ogre::String name);
 
         //Entity
         Ogre::SceneNode* mainNode;

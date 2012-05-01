@@ -1,3 +1,26 @@
+/* ============================================================
+ *
+ * This file is a part of Morph project
+ *
+ * Date        : 2011-10-26
+ * @file mattribute.c
+ * @brief The attribute class for all Ogre properties.
+ *
+ * Copyright (C) 2011-2012 by @author Islam Wazery <wazery at ubuntu dot com>
+ *
+ * This program is free software; you can redistribute it
+ * and/or modify it under the terms of the GNU General
+ * Public License as published by the Free Software Foundation;
+ * either version 2, or (at your option)
+ * any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * ============================================================ */
+
 #include "mattribute.h"
 
 using namespace Morph;
@@ -64,7 +87,7 @@ bool MAttribute::_setValueByString(boost::any &dstValue, const MString &valueStr
                 dstValue = false;
             else
             {
-                MLogManager::getSingleton().logOutput(("ERROR: MAttribute::convertMStringToValue ,input syntax error."), M_ERROR);
+                MLogManager::getSingleton().logOutput(("Error: MAttribute::convertMStringToValue ,input syntax Error."), M_ERROR);
                     return false;
             }
             //dstValue = v;
@@ -87,7 +110,7 @@ bool MAttribute::_setValueByString(boost::any &dstValue, const MString &valueStr
             }
             else
             {
-                MLogManager::getSingleton().logOutput(("ERROR: MAttribute::setValueByString input syntax error,not not found the string in the enumList.") + valueString, M_ERROR);
+                MLogManager::getSingleton().logOutput(("Error: MAttribute::setValueByString input syntax Error,not not found the string in the enumList.") + valueString, M_ERROR);
                 return false;
             }
         }
@@ -95,7 +118,7 @@ bool MAttribute::_setValueByString(boost::any &dstValue, const MString &valueStr
         {
 
             MVector2 vec;
-            vector<string> split_str_list ;
+            QVector<string> split_str_list ;
             split_str_list = tokenize(valueString," ,", true, false, "");
 
             if(split_str_list.size()==2)
@@ -107,7 +130,7 @@ bool MAttribute::_setValueByString(boost::any &dstValue, const MString &valueStr
             else
             {
                 //dstValue = MVector2::ZERO;
-                MLogManager::getSingleton().logOutput(("ERROR: MAttribute::setValueByString input syntax error, you should input 2 MVector2 value"), M_ERROR);
+                MLogManager::getSingleton().logOutput(("Error: MAttribute::setValueByString input syntax Error, you should input 2 MVector2 value"), M_ERROR);
                     return false;
             }
         }
@@ -115,7 +138,7 @@ bool MAttribute::_setValueByString(boost::any &dstValue, const MString &valueStr
         {
 
             MVector3 vec;
-            vector<string> split_str_list ;
+            QVector<string> split_str_list ;
             split_str_list = tokenize(valueString," ,", true, false, "");
 
             if(split_str_list.size()==3)
@@ -128,7 +151,7 @@ bool MAttribute::_setValueByString(boost::any &dstValue, const MString &valueStr
             else
             {
                 //dstValue = MVector3::ZERO;
-                MLogManager::getSingleton().logOutput(("ERROR: MAttribute::setValueByString input syntax error, you should input 3 MVector3 value"), M_ERROR);
+                MLogManager::getSingleton().logOutput(("Error: MAttribute::setValueByString input syntax Error, you should input 3 MVector3 value"), M_ERROR);
                     return false;
             }
         }
@@ -136,7 +159,7 @@ bool MAttribute::_setValueByString(boost::any &dstValue, const MString &valueStr
         {
 
             MVector4 vec;
-            vector<string> split_str_list ;
+            QVector<string> split_str_list ;
             split_str_list = tokenize(valueString," ,", true, false, "");
 
             if(split_str_list.size()==4)
@@ -150,7 +173,7 @@ bool MAttribute::_setValueByString(boost::any &dstValue, const MString &valueStr
             else
             {
                 //dstValue = MVector4::ZERO;
-                MLogManager::getSingleton().logOutput(("ERROR: MAttribute::setValueByString input syntax error, you should input 4 MVector4 value"), M_ERROR);
+                MLogManager::getSingleton().logOutput(("Error: MAttribute::setValueByString input syntax Error, you should input 4 MVector4 value"), M_ERROR);
                     return false;
             }
         }
@@ -158,7 +181,7 @@ bool MAttribute::_setValueByString(boost::any &dstValue, const MString &valueStr
         {
 
             MReal m[9];
-            vector<string> split_str_list ;
+            QVector<string> split_str_list ;
             split_str_list = tokenize(valueString," ,", true, false, "");
 
             if(split_str_list.size()==9)
@@ -179,7 +202,7 @@ bool MAttribute::_setValueByString(boost::any &dstValue, const MString &valueStr
             else
             {
                 //dstValue = MMatrix3::IDENTITY;
-                MLogManager::getSingleton().logOutput(("ERROR: MAttribute::setValueByString input syntax error, you should input 3x3 matrix value"), M_ERROR);
+                MLogManager::getSingleton().logOutput(("Error: MAttribute::setValueByString input syntax Error, you should input 3x3 matrix value"), M_ERROR);
                     return false;
             }
         }
@@ -187,7 +210,7 @@ bool MAttribute::_setValueByString(boost::any &dstValue, const MString &valueStr
         {
 
             MReal m[16];
-            vector<string> split_str_list ;
+            QVector<string> split_str_list ;
             split_str_list = tokenize(valueString," ,", true, false, "");
 
             if(split_str_list.size()==16)
@@ -216,7 +239,7 @@ bool MAttribute::_setValueByString(boost::any &dstValue, const MString &valueStr
             else
             {
                 //dstValue = MMatrix4::IDENTITY;
-                MLogManager::getSingleton().logOutput(("ERROR: MAttribute::setValueByString input syntax error, you should input 4x4 matrix value"), M_ERROR);
+                MLogManager::getSingleton().logOutput(("Error: MAttribute::setValueByString input syntax Error, you should input 4x4 matrix value"), M_ERROR);
                     return false;
             }
         }
@@ -224,7 +247,7 @@ bool MAttribute::_setValueByString(boost::any &dstValue, const MString &valueStr
         {
 
             MQuaternion quat;
-            vector<string> split_str_list ;
+            QVector<string> split_str_list ;
             split_str_list = tokenize(valueString," ,", true, false, "");
 
             if(split_str_list.size()==4)
@@ -238,7 +261,7 @@ bool MAttribute::_setValueByString(boost::any &dstValue, const MString &valueStr
             else
             {
                 //dstValue = MVector4::ZERO;
-                MLogManager::getSingleton().logOutput(("ERROR: MAttribute::setValueByString input syntax error, you should input 4 MVector4 value"), M_ERROR);
+                MLogManager::getSingleton().logOutput(("Error: MAttribute::setValueByString input syntax Error, you should input 4 MVector4 value"), M_ERROR);
                     return false;
             }
         }
@@ -246,8 +269,8 @@ bool MAttribute::_setValueByString(boost::any &dstValue, const MString &valueStr
         else if(dstValue.type() == typeid(MComboAttr))
         {
             //string valueString = valueStr.toUtf8().constData());
-            vector<MString> split_str_list ;
-            vector<string> tmp;
+            QVector<MString> split_str_list ;
+            QVector<string> tmp;
             tmp = bracketSplit(trim(valueStr.toUtf8().constData()), ('{'), ('}'));
             string s;
             foreach (s, tmp)
@@ -258,7 +281,7 @@ bool MAttribute::_setValueByString(boost::any &dstValue, const MString &valueStr
             MComboAttr comboAttr = getValue<MComboAttr>();
             if(comboAttr.mValueList.size() != split_str_list.size())
             {
-                MLogManager::getSingleton().logOutput(("ERROR: MAttribute::setValueByString input syntax error, params number for MComboAttr not macth"), M_ERROR);
+                MLogManager::getSingleton().logOutput(("Error: MAttribute::setValueByString input syntax Error, params number for MComboAttr not macth"), M_ERROR);
                 return false;
             }
             std::map<MString, boost::any>::iterator it;
@@ -267,7 +290,7 @@ bool MAttribute::_setValueByString(boost::any &dstValue, const MString &valueStr
             {
                 if(!_setValueByString(it->second, split_str_list[i]))
                 {
-                    MLogManager::getSingleton().logOutput(("ERROR: MAttribute::setValueByString input syntax error, on MComboAttr"), M_ERROR);
+                    MLogManager::getSingleton().logOutput(("Error: MAttribute::setValueByString input syntax Error, on MComboAttr"), M_ERROR);
                     return false;
                 }
                 it++;
@@ -278,7 +301,7 @@ bool MAttribute::_setValueByString(boost::any &dstValue, const MString &valueStr
         else if(dstValue.type() == typeid(MColor))
         {
             MColor bgColor;
-            vector<string> split_str_list ;
+            QVector<string> split_str_list ;
             split_str_list = tokenize(valueString," ,", true, false, "");
 
             if(split_str_list.size()==4)
@@ -297,12 +320,12 @@ bool MAttribute::_setValueByString(boost::any &dstValue, const MString &valueStr
             }
             else
             {
-                MLogManager::getSingleton().logOutput(("ERROR: MAttribute::setValueByString input syntax error, you should input 3 or 4 colour value[0.0 ~ 1.0]"), M_ERROR);
+                MLogManager::getSingleton().logOutput(("Error: MAttribute::setValueByString input syntax Error, you should input 3 or 4 colour value[0.0 ~ 1.0]"), M_ERROR);
                     return false;
             }
             if(bgColor.r > 1.0 || bgColor.r < 0.0 || bgColor.g > 1.0 || bgColor.g < 0.0 || bgColor.b > 1.0 || bgColor.b < 0.0 || bgColor.a > 1.0 || bgColor.a < 0.0)
             {
-                MLogManager::getSingleton().logOutput(("ERROR: MAttribute::setValueByString input syntax error, you should input colour value betMeen[0.0 ~ 1.0]"), M_ERROR);
+                MLogManager::getSingleton().logOutput(("Error: MAttribute::setValueByString input syntax Error, you should input colour value betMeen[0.0 ~ 1.0]"), M_ERROR);
                     return false;
             }
 
@@ -310,23 +333,24 @@ bool MAttribute::_setValueByString(boost::any &dstValue, const MString &valueStr
         }
         else
         {
-            MLogManager::getSingleton().logOutput(("ERROR: MAttribute::convertMStringToValue, input attribute type not suport."), M_ERROR);
+            MLogManager::getSingleton().logOutput(("Error: MAttribute::convertMStringToValue, input attribute type not suport."), M_ERROR);
             return false;
         }
     }
     catch (boost::bad_lexical_cast &e)
     {
-        MLogManager::getSingleton().logOutput("ERROR: MAttribute::convertMStringToValue " + MString::fromUtf8(std::string(e.what()).c_str()), M_ERROR);
+        MLogManager::getSingleton().logOutput("Error: MAttribute::convertMStringToValue " + MString::fromUtf8(std::string(e.what()).c_str()), M_ERROR);
         return false;
     }
     return true;
 }
 
+// TODO: Move it into MUtility.
 typedef basic_string<char>::size_type S_T;
 static const S_T npos = -1;
-vector<string> MAttribute::tokenize(const string& src, string tok, bool trim, bool quote, string null_subst)
+QVector<string> MAttribute::tokenize(const string& src, string tok, bool trim, bool quote, string null_subst)
 {
-    vector<string> v;
+    QVector<string> v;
     if( src.empty() || tok.empty() ) return v;
 
     S_T pre_index = 0, index = 0, len = 0;
@@ -362,11 +386,11 @@ vector<string> MAttribute::tokenize(const string& src, string tok, bool trim, bo
     return v;
 }
 
-vector<string> MAttribute::bracketSplit(const string& src, char beginChar, char endChar)
+QVector<string> MAttribute::bracketSplit(const string& src, char beginChar, char endChar)
 {
-    vector<char> beginCharList;
+    QVector<char> beginCharList;
 
-    vector<string> v;
+    QVector<string> v;
     if( src.empty() || (beginChar == endChar))
         return v;
 
@@ -588,13 +612,13 @@ MString MAttribute::_getValueToString(const boost::any &srcValue) const
         }
         else
         {
-            MLogManager::getSingleton().logOutput("ERROR:  MAttribute::converMStringToValue ,input attribute type not suport.", M_ERROR);
+            MLogManager::getSingleton().logOutput("Error:  MAttribute::converMStringToValue ,input attribute type not suport.", M_ERROR);
             return "";
         }
     }
     catch(boost::bad_lexical_cast& e)
     {
-        MLogManager::getSingleton().logOutput("ERROR:  MAttribute::converMStringToValue " + MString::fromUtf8(std::string(e.what()).c_str()), M_ERROR);
+        MLogManager::getSingleton().logOutput("Error:  MAttribute::converMStringToValue " + MString::fromUtf8(std::string(e.what()).c_str()), M_ERROR);
             return "";
     }
 
@@ -637,7 +661,7 @@ bool MAttribute::setValue(const boost::any &value)
                 input = boost::any_cast<double>(value);
             else
             {
-                MLogManager::getSingleton().logOutput("ERROR: MAttribute::setAnyValue >>MDegreeAngle>> dstValue.type() != typeid(T) ", M_ERROR);
+                MLogManager::getSingleton().logOutput("Error: MAttribute::setAnyValue >>MDegreeAngle>> dstValue.type() != typeid(T) ", M_ERROR);
                 return false;
             }
 
@@ -648,7 +672,7 @@ bool MAttribute::setValue(const boost::any &value)
         }
         else if(getType() != value.type())
         {
-            MLogManager::getSingleton().logOutput("ERROR: MAttribute::setAnyValue >> dstValue.type() != typeid(T) ", M_ERROR);
+            MLogManager::getSingleton().logOutput("Error: MAttribute::setAnyValue >> dstValue.type() != typeid(T) ", M_ERROR);
             return false;
         }
 
@@ -657,7 +681,7 @@ bool MAttribute::setValue(const boost::any &value)
     }
     catch(boost::bad_lexical_cast& e)
     {
-        MLogManager::getSingleton().logOutput("ERROR: MAttribute::setValue " + MString::fromUtf8(std::string(e.what()).c_str()), M_ERROR);
+        MLogManager::getSingleton().logOutput("Error: MAttribute::setValue " + MString::fromUtf8(std::string(e.what()).c_str()), M_ERROR);
             return false;
     }
     return(true);
@@ -699,7 +723,7 @@ bool MAttribute::setDefaultValue(const boost::any &value)
 
         else if(getType() != value.type())
         {
-            MLogManager::getSingleton().logOutput("ERROR: MAttribute::setAnyValue >> dstValue.type() != typeid(T) ", M_ERROR);
+            MLogManager::getSingleton().logOutput("Error: MAttribute::setAnyValue >> dstValue.type() != typeid(T) ", M_ERROR);
             return false;
         }
 
@@ -708,7 +732,7 @@ bool MAttribute::setDefaultValue(const boost::any &value)
     }
     catch(boost::bad_lexical_cast& e)
     {
-        MLogManager::getSingleton().logOutput("ERROR: MAttribute::setValue " + MString::fromUtf8(std::string(e.what()).c_str()), M_ERROR);
+        MLogManager::getSingleton().logOutput("Error: MAttribute::setValue " + MString::fromUtf8(std::string(e.what()).c_str()), M_ERROR);
         return false;
     }
     return(true);

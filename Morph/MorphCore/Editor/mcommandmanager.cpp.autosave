@@ -81,7 +81,7 @@ void MCommandManager::releaseSingleton()
 {
 }
 
-QVector<MString> MCommandManager::getCommandNamesList(void) const
+vector<MString> MCommandManager::getCommandNamesList(void) const
 {
 }
 
@@ -92,4 +92,5 @@ void MCommandManager::addCommandListener(MCommandListener* listener)
 void MCommandManager::removeCommandListener(MCommandListener* listener)
 {
 }
+
 }

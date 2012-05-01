@@ -4,9 +4,10 @@
 #include <map>
 #include <string>
 #include <fstream>
-#include <vector>
+#include <QVector>
 
 #include <QString>
+#include <QStringList>
 
 using namespace std;
 
@@ -17,7 +18,7 @@ typedef unsigned int UINT;
 
 namespace Morph
 {
-    typedef std::vector<QString> MStringList;
+    typedef QStringList MStringList;
     typedef QString MString;
 
     enum eSelectMode
