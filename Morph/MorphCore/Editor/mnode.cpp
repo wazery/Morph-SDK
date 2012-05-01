@@ -26,6 +26,8 @@ bool MNode::addChildNode(const MString &nodeName, MNodePtr &nodePtr)
         }
         else
             parentStr = this->mName;
+        nodePtr->setParentNodeChainName(parentStr);
+        MNodeManager::getSingleton().notifyAddNode(parentStr, nodeName);
     }
     else
         return false;
@@ -84,18 +86,18 @@ bool MNode::findChildNode(const MString &nodeName, MNodePtr &nodePtr)
     return true;
 }
 
-bool MNode::release()
-{
-    if (mNodeChildren.size() > 0)
-    {
-        for (MNodePtrList::iterator it = mNodeChildren.begin(); it!= mNodeChildren.end(); it++)
-        {
-            it->second->release();
-        }
-    }
+//bool MNode::release()
+//{
+//    if (mNodeChildren.size() > 0)
+//    {
+//        for (MNodePtrList::iterator it = mNodeChildren.begin(); it!= mNodeChildren.end(); it++)
+//        {
+//            it->second->release();
+//        }
+//    }
 
-    return true;
-}
+//    return true;
+//}
 
 void MNode::_notifyAttributeChanged(const MString &attrName)
 {

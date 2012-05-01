@@ -26,9 +26,13 @@
 
 #include <Ogre.h>
 
-#include <QSharedPointer>
+#include "boost/shared_ptr.hpp"
 
 #include "MType.h"
+#include "mattribute.h"
+#include "mattrobject.h"
+
+#include <QMap>
 
 using namespace std;
 
@@ -37,13 +41,13 @@ namespace Morph
 
     class MNode;
 
-    typedef QSharedPointer<MNode> MNodePtr;
+    typedef boost::shared_ptr<MNode> MNodePtr;
 
     typedef MNodePtr (*MNodeCreatorFun)(const MString &nodeName);
 
-    typedef map<MString, MNodePtr> MNodePtrList;
+    typedef std::map<MString, MNodePtr> MNodePtrList;
 
-    class MNode // TODO : public MAttrObject
+    class MNode : public MAttrObject
     {
 
     public:
@@ -64,6 +68,8 @@ namespace Morph
         void setName(MString nodeName) {mName = nodeName;}
         MString getName() const {return mName;}
 
+        MNodePtr getParent() const {return mNodeParent;}
+
         virtual bool addChildNode(const MString &nodeName, MNodePtr &nodePtr);
         virtual bool removeChildNode(const MString &nodeName);
 
@@ -71,20 +77,29 @@ namespace Morph
         virtual bool deleteChildNodeByID(const MString &nodeID);
 
         // FIXME:
-        //const MNodePtrList &getChildNodesList() const {return mNodeChild;}
+        const MNodePtrList &getChildNodesList() const {return mNodeChildren;}
+
+        // Access the ParentNodeChainName
+        const MString &getParentNodeChainName(void) const { return (mParentNodeChainName); }
+        void setParentNodeChainName(const MString &parentNodeChainName)	{ mParentNodeChainName = parentNodeChainName; }
 
     protected:
+
+        /// Pointer to parent node
+        MNodePtr mNodeParent;
 
         MString mParentNodeChainName;
 
         // TODO: Implement the MAttribute class
         /** When the user use the setAttribute function to change attribute value, this function
         will be called to fix the Ogre node value. */
-        //virtual void _modifiy(const MAttribute &attr) = 0;
+        virtual void _modifiy(const MAttribute &attr) = 0;
 
         MString mName;
         MString mID;
 
+        // the id name in this list that the node could be add to child node list,esle refuse.
+        // if the this filter list is empty,that mean all kinds of node are accepted .
         std::vector<MString> mChildNodeIDFiltList;
 
         virtual void _notifyAttributeChanged(const MString& attrName);
