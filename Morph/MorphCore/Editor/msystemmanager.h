@@ -208,7 +208,8 @@ namespace Morph
 
     public:
         static MSystemManager* smInstance;
-        ViewportGrid* mGrid;
+        QList<ViewportGrid*> mGridList;
+        QList<MOgreCanvas*> mRenderWindowList;
         Ogre::Viewport* mOgreViewport;
 
         /** Get the class address pointer */
@@ -223,7 +224,6 @@ namespace Morph
         static const Ogre::Real turboModifier;
         static const QPoint invalidMousePoint;
 
-        QList<MOgreCanvas*> mRenderWindowList;
         QVBoxLayout *mVerticalLayout;
         Ogre::ColourValue mBackgroundColor;
 

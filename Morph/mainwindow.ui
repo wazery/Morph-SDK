@@ -373,7 +373,37 @@
           <bool>false</bool>
          </property>
          <property name="text">
-          <string>...</string>
+          <string>One</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QToolButton" name="wireframe">
+         <property name="enabled">
+          <bool>false</bool>
+         </property>
+         <property name="text">
+          <string>Wireframe</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QToolButton" name="points">
+         <property name="enabled">
+          <bool>false</bool>
+         </property>
+         <property name="text">
+          <string>Points</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QToolButton" name="polygons">
+         <property name="enabled">
+          <bool>false</bool>
+         </property>
+         <property name="text">
+          <string>Polygons</string>
          </property>
         </widget>
        </item>
@@ -410,7 +440,7 @@
          </property>
          <property name="sizeHint" stdset="0">
           <size>
-           <width>450</width>
+           <width>150</width>
            <height>20</height>
           </size>
          </property>

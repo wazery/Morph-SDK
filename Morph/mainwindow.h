@@ -38,6 +38,9 @@ public slots:
 
     void setFourViewPorts();
     void setOneViewPort();
+    void setViewPortToWireframe();
+    void setViewPortToPoints();
+    void setViewPortToPolygons();
 
     void gridDivisionsChanged(int value);
     void gridPrespectiveSizeChanged(int size);

@@ -77,6 +77,9 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
 
     connect(ui->fourViews, SIGNAL(clicked()), this, SLOT(setFourViewPorts()));
     connect(ui->oneView, SIGNAL(clicked()), this, SLOT(setOneViewPort()));
+    connect(ui->wireframe, SIGNAL(clicked()), this, SLOT(setViewPortToWireframe()));
+    connect(ui->points, SIGNAL(clicked()), this, SLOT(setViewPortToPoints()));
+    connect(ui->polygons, SIGNAL(clicked()), this, SLOT(setViewPortToPolygons()));
 
 
     //Init to white the diffuse and specular colors (NOTE: the initialisation takes effect on the "LightWindow")
@@ -113,14 +116,20 @@ void MainWindow::initialisePlugins()
     MNodeManager::getSingleton().notifyAddNode("World.", rootNodePtr->getName());
 
     // Enable Canvas Buttons
-    //ui->grid->setEnabled(true);
+    ui->grid->setEnabled(true);
     ui->zommSpinBox->setEnabled(true);
     ui->zoomSlider->setEnabled(true);
     ui->oneView->setEnabled(true);
     ui->fourViews->setEnabled(true);
+    ui->wireframe->setEnabled(true);
+    ui->points->setEnabled(true);
+    ui->polygons->setEnabled(true);
 
     // Init Grid.
-//    systemManager->mGrid->setEnabled(ui->grid->isChecked());
+//    for(int i = 0; i < systemManager->mGridList.count(); i++)
+//    {
+//        systemManager->mGridList[i]->setEnabled(ui->grid->isChecked());
+//    }
 //    Ogre::ColourValue ogreColor;
 //    ogreColor.setAsARGB(QColor(mSettings->value("gridColor").toString()).rgba());
 //    systemManager->mGrid->setColour(ogreColor);
@@ -153,6 +162,54 @@ void MainWindow::setOneViewPort()
     }
 }
 
+void MainWindow::setViewPortToWireframe()
+{
+    //Re-Enable other view options
+    ui->points->setEnabled(true);
+    ui->polygons->setEnabled(true);
+
+    QList<MOgreCanvas*> renderWidnowList = systemManager->getOgreWindows();
+    for(int i = 0; i < renderWidnowList.count(); i++)
+    {
+        renderWidnowList[i]->setPolygonMode(Ogre::PM_WIREFRAME);
+        renderWidnowList[i]->update();
+    }
+    MLogManager::getSingleton().logOutput("Set Viewport mode to Wireframe", M_EDITOR_MESSAGE);
+    ui->wireframe->setEnabled(false);
+}
+
+void MainWindow::setViewPortToPoints()
+{
+    //Re-Enable other view options
+    ui->wireframe->setEnabled(true);
+    ui->polygons->setEnabled(true);
+
+    QList<MOgreCanvas*> renderWidnowList = systemManager->getOgreWindows();
+    for(int i = 0; i < renderWidnowList.count(); i++)
+    {
+        renderWidnowList[i]->setPolygonMode(Ogre::PM_POINTS);
+        renderWidnowList[i]->update();
+    }
+    MLogManager::getSingleton().logOutput("Set Viewport mode to Points", M_EDITOR_MESSAGE);
+    ui->points->setEnabled(false);
+}
+
+void MainWindow::setViewPortToPolygons()
+{
+    //Re-Enable other view options
+    ui->wireframe->setEnabled(true);
+    ui->points->setEnabled(true);
+
+    QList<MOgreCanvas*> renderWidnowList = systemManager->getOgreWindows();
+    for(int i = 0; i < renderWidnowList.count(); i++)
+    {
+        renderWidnowList[i]->setPolygonMode(Ogre::PM_SOLID);
+        renderWidnowList[i]->update();
+    }
+    MLogManager::getSingleton().logOutput("Set Viewport mode to Polygons", M_EDITOR_MESSAGE);
+    ui->polygons->setEnabled(false);
+}
+
 void MainWindow::loadSettings()
 {
     // Set background color to the last saved setting.
@@ -163,6 +220,7 @@ void MainWindow::loadSettings()
         systemManager->setBackgroundColor(color);
     }
 
+    //TODO: check if the grid is enabled if(systemManager->mGridList)
     //Set grid checkbox
     ui->grid->setChecked(mSettings->value("grid").toBool());
 }

@@ -587,7 +587,11 @@ void MSystemManager::doRender()
 
 void MSystemManager::createGrid()
 {
-   // mGrid = new ViewportGrid(mSceneManager, mViewport);
+    for(int i = 0; i < mRenderWindowList.count(); i++)
+    {
+        mGridList[i] = new ViewportGrid(mSceneManager, mRenderWindowList[i]->getViewport());
+        //mRenderWindowList[i]->repaint();
+    }
 }
 
 void MSystemManager::setCameraPosition(const Ogre::Vector3 &pos)
