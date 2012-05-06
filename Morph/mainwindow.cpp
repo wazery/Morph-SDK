@@ -66,6 +66,8 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     connect(lightWin->okBtn, SIGNAL(clicked()), this, SLOT(createNewLight()));
 
     connect(ui->grid, SIGNAL(clicked()), this, SLOT(gridChanged()));
+    connect(ui->zoomSlider, SIGNAL(valueChanged(int)), ui->zommSpinBox, SLOT(setValue(int)));
+    connect(ui->zommSpinBox, SIGNAL(valueChanged(int)), ui->zoomSlider, SLOT(setValue(int)));
 
     // --------------------------------------
     //            Initialise Engine
@@ -73,10 +75,14 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     connect(systemManager, SIGNAL(initialised()), this, SLOT(addNodeListener()));
     connect(systemManager, SIGNAL(initialised()), this, SLOT(initialisePlugins()));
 
+    connect(ui->fourViews, SIGNAL(clicked()), this, SLOT(setFourViewPorts()));
+    connect(ui->oneView, SIGNAL(clicked()), this, SLOT(setOneViewPort()));
+
+
     //Init to white the diffuse and specular colors (NOTE: the initialisation takes effect on the "LightWindow")
     diffuseLightColor.setRgba(qRgba(255, 255, 255, 255));
     specularLightColor.setRgba(qRgba(255, 255, 255, 255));
-   // listName.push_back("Main Light");//This is our first light created by hand in LightWindow, so we've to put in the "blacklist" of names
+    //listName.push_back("Main Light");//This is our first light created by hand in LightWindow, so we've to put in the "blacklist" of names
 
 }
 
@@ -104,19 +110,47 @@ void MainWindow::initialisePlugins()
         return;
     }
     MNodeManager::getSingleton().setRootNodePtr(rootNodePtr);
-    MNodeManager::getSingleton().notifyAddNode("Islam.World", rootNodePtr->getName());
+    MNodeManager::getSingleton().notifyAddNode("World.", rootNodePtr->getName());
+
+    // Enable Canvas Buttons
+    //ui->grid->setEnabled(true);
+    ui->zommSpinBox->setEnabled(true);
+    ui->zoomSlider->setEnabled(true);
+    ui->oneView->setEnabled(true);
+    ui->fourViews->setEnabled(true);
 
     // Init Grid.
-    ui->grid->setEnabled(true);
-    systemManager->mGrid->setEnabled(ui->grid->isChecked());
-    Ogre::ColourValue ogreColor;
-    ogreColor.setAsARGB(QColor(mSettings->value("gridColor").toString()).rgba());
-    systemManager->mGrid->setColour(ogreColor);
-    systemManager->mGrid->setPerspectiveSize(mSettings->value("gridPrespectiveSize").toInt());
-    if(mSettings->value("gridRenderLayer").toInt() == 0)
-        systemManager->mGrid->setRenderLayer(ViewportGrid::RL_BEHIND);
-    else
-        systemManager->mGrid->setRenderLayer(ViewportGrid::RL_INFRONT);
+//    systemManager->mGrid->setEnabled(ui->grid->isChecked());
+//    Ogre::ColourValue ogreColor;
+//    ogreColor.setAsARGB(QColor(mSettings->value("gridColor").toString()).rgba());
+//    systemManager->mGrid->setColour(ogreColor);
+//    systemManager->mGrid->setPerspectiveSize(mSettings->value("gridPrespectiveSize").toInt());
+//    if(mSettings->value("gridRenderLayer").toInt() == 0)
+//        systemManager->mGrid->setRenderLayer(ViewportGrid::RL_BEHIND);
+//    else
+//        systemManager->mGrid->setRenderLayer(ViewportGrid::RL_INFRONT);
+}
+
+void MainWindow::setFourViewPorts()
+{
+    if(systemManager->isVisible())
+    {
+        systemManager->setViewNum(4);
+        ui->oneView->setEnabled(true);
+        ui->fourViews->setEnabled(false);
+        //ui->fourViews->setIcon(); //TODO: Insert a grayish disabled four views icon
+    }
+}
+
+void MainWindow::setOneViewPort()
+{
+    if(systemManager->isVisible())
+    {
+        systemManager->setViewNum(1);
+        ui->fourViews->setEnabled(true);
+        ui->oneView->setEnabled(false);
+        //ui->oneView->setIcon(); //TODO: Insert a grayish disabled one view icon
+    }
 }
 
 void MainWindow::loadSettings()
@@ -126,7 +160,7 @@ void MainWindow::loadSettings()
     if (color.isValid())
     {
         // FIXME, need to set the viewport color with the saved settings color.
-        // systemManager->setBackgroundColor(color);
+        systemManager->setBackgroundColor(color);
     }
 
     //Set grid checkbox
@@ -164,32 +198,32 @@ void MainWindow::openSettingsDialog()
 void MainWindow::changeIndexofCanvas()
 {
     ui->tabWidget->setCurrentIndex(1);
-    ui->tab_2->setEnabled(false);
+    setOneViewPort();
 }
 
 void MainWindow::gridColorChanged(QColor color)
 {
     Ogre::ColourValue ogreColor;
     ogreColor.setAsARGB(color.rgba());
-    systemManager->mGrid->setColour(ogreColor);
+    //systemManager->mGrid->setColour(ogreColor);
 }
 
 void MainWindow::gridDivisionsChanged(int value)
 {
-    systemManager->mGrid->setDivision(value);
+    //systemManager->mGrid->setDivision(value);
 }
 
 void MainWindow::gridPrespectiveSizeChanged(int size)
 {
-    systemManager->mGrid->setPerspectiveSize(size);
+    //systemManager->mGrid->setPerspectiveSize(size);
 }
 
 void MainWindow::gridRenderLayerChanged(int index)
 {
-    if(index == 0)
-        systemManager->mGrid->setRenderLayer(ViewportGrid::RL_BEHIND);
-    else
-        systemManager->mGrid->setRenderLayer(ViewportGrid::RL_INFRONT);
+//    if(index == 0)
+//        systemManager->mGrid->setRenderLayer(ViewportGrid::RL_BEHIND);
+//    else
+//        systemManager->mGrid->setRenderLayer(ViewportGrid::RL_INFRONT);
 }
 
 void MainWindow::addObj()
@@ -268,7 +302,7 @@ void MainWindow::gridChanged()
     mSettings->setValue("grid", ui->grid->isChecked());
     mSettings->sync();
 
-    systemManager->mGrid->setEnabled(ui->grid->isChecked());
+    //systemManager->mGrid->setEnabled(ui->grid->isChecked());
     if(ui->grid->isChecked())
         MLogManager::getSingleton().logOutput("Grid set to on", M_EDITOR_MESSAGE);
     else

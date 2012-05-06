@@ -27,10 +27,9 @@
 
 #include <QtGui>
 
-// FIXME: Use Ogre singleton implementation untill
-// implementing one for the editor core
-//#include <OgreSingleton.h>
 #include <OGRE/Ogre.h>
+
+#include "mogrecanvas.h"
 
 #include "mOgreEntityViewer/viewgrid.h"
 
@@ -38,10 +37,14 @@
 
 using namespace Ogre;
 
+namespace Ui {
+    class MSystemManager;
+}
+
 namespace Morph
 {
     /** @class*/
-    class MSystemManager : public QWidget
+    class MSystemManager : public QWidget, public Ogre::FrameListener
     {
         Q_OBJECT
 
@@ -53,7 +56,7 @@ namespace Morph
         ~MSystemManager();
 
         // Override QWidget::paintEngine to return NULL
-        QPaintEngine* paintEngine() const; // Turn off QTs paint engine for the Ogre widget.
+        QPaintEngine* paintEngine() const { return NULL; } // Turn off QTs paint engine for the Ogre widget.
 
         /** Initialise Ogre System
             @remarks
@@ -95,7 +98,9 @@ namespace Morph
         int getWindowHeight(void) const    { /** @return mWindowHeight */ return(mWindowHeight); }
 
         void setBackgroundColor(QColor);
-        QColor getBackgroundColor() const { return mViewport->getBackgroundColour().getAsARGB(); }
+        QColor getBackgroundColor() const { return QColor(mBackgroundColor.getAsRGBA()); }
+
+        QList<MOgreCanvas*> getOgreWindows() { return mRenderWindowList; }
 
         void update();
         void updateAnim();
@@ -127,30 +132,34 @@ namespace Morph
 
         //Entity
         Ogre::SceneNode* mainNode;
-        Ogre::Entity        *mainEnt;
+        Ogre::Entity*    mainEnt;
         Ogre::SubEntity* mainSubEnt;
 
     public slots:
         /** Sets the current camera position */
         void setCameraPosition(const Ogre::Vector3 &pos);
+        void setViewNum(int num);
 
     signals:
         void cameraPositionChanged(const Ogre::Vector3 &pos);
         void initialised();
 
+    public slots:
+        void keyPress(QKeyEvent* e);
+        void keyRelease(QKeyEvent* e);
+        void mousePress(QMouseEvent* e);
+        void mouseRelease(QMouseEvent* e);
+        void mouseMove(QMouseEvent* e);
+        void mouseDoubleClick(QMouseEvent *e);
+        void wheel(QWheelEvent * e);
+
     protected:
-        virtual void paintEvent(QPaintEvent *e);
-        virtual void resizeEvent(QResizeEvent *e);
-        virtual void keyPressEvent(QKeyEvent *e);
-        virtual void keyReleaseEvent(QKeyEvent* e);
-        virtual void moveEvent(QMoveEvent *e);
-        virtual void mouseDoubleClickEvent(QMouseEvent *e);
-        virtual void mouseMoveEvent(QMouseEvent *evt);
-        virtual void mousePressEvent(QMouseEvent *e);
-        virtual void mouseReleaseEvent(QMouseEvent *e);
-        virtual void wheelEvent(QWheelEvent *e);
-        virtual void dragEnterEvent(QDragEnterEvent* e);
-        virtual void dropEvent(QDropEvent* e);
+        virtual void showEvent(QShowEvent *e);
+        void moveEvent(QMoveEvent *e);
+        void paintEvent(QPaintEvent *e);
+        void resizeEvent(QResizeEvent *e);
+        void dragEnterEvent(QDragEnterEvent* e);
+        void dropEvent(QDropEvent* e);
 
     protected:
          /** Initialise Ogre Core
@@ -194,15 +203,13 @@ namespace Morph
         virtual bool frameStarted(const FrameEvent& evt);
         virtual bool frameEnded(const FrameEvent& evt);
 
-        // TODO: check if this function is logical
-        void addViewport(Ogre::Camera camera);
-
         /** Create the grid for the canvas */
         void createGrid();
 
     public:
         static MSystemManager* smInstance;
         ViewportGrid* mGrid;
+        Ogre::Viewport* mOgreViewport;
 
         /** Get the class address pointer */
         static MSystemManager* getSingletonPtr();
@@ -212,8 +219,13 @@ namespace Morph
         static void releaseSingleton();
 
     private:
+        Ui::MSystemManager* ui;
         static const Ogre::Real turboModifier;
         static const QPoint invalidMousePoint;
+
+        QList<MOgreCanvas*> mRenderWindowList;
+        QVBoxLayout *mVerticalLayout;
+        Ogre::ColourValue mBackgroundColor;
 
     protected:
         Ogre::Root          *mRoot;
@@ -222,9 +234,6 @@ namespace Morph
         Ogre::Viewport      *mViewport;
 
         Ogre::Overlay       *mDebugOverlay; // TODO: change its name
-
-        Ogre::ManualObject  *mFloorGrid;
-        Ogre::ManualObject  *mCircle;
 
         Ogre::Camera        *mMainCamera;
         Ogre::Camera        *mCurrCamera;

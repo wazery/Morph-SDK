@@ -24,20 +24,17 @@
 
 #include <QX11Info>
 
-#include "MSystemManager.h"
+#include "msystemmanager.h"
+#include "ui_msystemmanager.h"
+
 #include "MLogManager.h"
 #include "MNodeManager.h"
 #include "mOgreEntityViewer/mogrelogproxy.h"
+//#include "mOgreEntityViewer/textrenderer.h"
 
 #include "mainwindow.h"
 
 // TODO: Include all other sub-systems to manage them
-
-// Total number of lines in one dimension will be (GRID_LINE_NUM * 2 + 1)
-#define GRID_LINE_NUM 3
-
-// Units of space between lines
-#define GRID_LINE_SPACE 80
 
 using namespace Morph;
 
@@ -48,6 +45,7 @@ MSystemManager* MSystemManager::smInstance = NULL;
 
 MSystemManager::MSystemManager(QWidget *parent)
     : QWidget(parent),
+      ui(new Ui::MSystemManager),
       mRoot(0),
     mRenderWindow(0),
     mWindowWidth(0),
@@ -60,10 +58,7 @@ MSystemManager::MSystemManager(QWidget *parent)
     mainEntAnim(0),
     mainNode(0),
     mainSubEnt(0),
-    oldPos(invalidMousePoint),
-
-    mFloorGrid(0),
-    mCircle(0)
+    oldPos(invalidMousePoint)
 {
     lightDiffuseColor.setAsRGBA(qRgba(0, 0, 0, 1));
     lightSpecularColor.setAsRGBA(qRgba(0, 0, 0, 1));
@@ -73,7 +68,15 @@ MSystemManager::MSystemManager(QWidget *parent)
     setAttribute(Qt::WA_PaintOnScreen);
     setAttribute(Qt::WA_InputMethodEnabled);
     setMinimumSize(240, 240);
-    setFocusPolicy(Qt::ClickFocus);
+    setFocusPolicy(Qt::WheelFocus);
+
+    mBackgroundColor.setAsRGBA(qRgba(30, 30, 30, 1));
+
+    mRenderWindow = NULL;
+
+    ui->setupUi(this);
+
+    mVerticalLayout = new QVBoxLayout(this);
 }
 
 MSystemManager::~MSystemManager()
@@ -93,52 +96,64 @@ MSystemManager::~MSystemManager()
         }
     }
 
-    //shutDown();
+    Ogre::Root::getSingleton().removeFrameListener(this);
+
+    for(int i = 0;i< mRenderWindowList.count() ;i++)
+    {
+        delete mRenderWindowList.takeAt(i);
+    }
+
+    delete ui;
+
     delete mRoot;
 }
 
-QPaintEngine* MSystemManager::paintEngine() const
+void MSystemManager::showEvent(QShowEvent *evt)
 {
-    // I don't want another paint engine to get in the way for my Ogre based paint engine.
-    // So this return nothing.
-    return NULL;
-}
-
-void MSystemManager::paintEvent(QPaintEvent *e)
-{
-    if(!mRoot)
+    if(!mRenderWindow)
     {
         initialise();
     }
 
-    mRoot->_fireFrameStarted();
-    mRenderWindow->update(true);
-    mRoot->_fireFrameEnded();
+    QWidget::showEvent(evt);
+}
 
-    e->accept();
+void MSystemManager::paintEvent(QPaintEvent *e)
+{
+//    if(!mRoot)
+//    {
+//        initialise();
+//    }
+
+//    mRoot->_fireFrameStarted();
+//    mRenderWindow->update(true);
+//    //TextRenderer::g;
+//    mRoot->_fireFrameEnded();
+
+//    e->accept();
 }
 
 void MSystemManager::resizeEvent(QResizeEvent *e)
 {
     QWidget::resizeEvent(e);
 
-    if(e->isAccepted())
-    {
-        const QSize &newSize = e->size();
-        if(mRenderWindow)
-        {
-            mRenderWindow->resize(newSize.width(), newSize.height());
-            mRenderWindow->windowMovedOrResized();
-        }
-        if(mCurrCamera)
-        {
-            Ogre::Real aspectRatio = Ogre::Real(newSize.width()) / Ogre::Real(newSize.height());
-            mCurrCamera->setAspectRatio(aspectRatio);
-        }
-    }
+//    if(e->isAccepted())
+//    {
+//        const QSize &newSize = e->size();
+//        if(mRenderWindow)
+//        {
+//            mRenderWindow->resize(newSize.width(), newSize.height());
+//            mRenderWindow->windowMovedOrResized();
+//        }
+//        if(mCurrCamera)
+//        {
+//            Ogre::Real aspectRatio = Ogre::Real(newSize.width()) / Ogre::Real(newSize.height());
+//            mCurrCamera->setAspectRatio(aspectRatio);
+//        }
+//    }
 }
 
-void MSystemManager::keyPressEvent(QKeyEvent *e)
+void MSystemManager::keyPress(QKeyEvent* e)
 {
     if(mainEnt != NULL && mainNode != NULL)
     {
@@ -176,7 +191,7 @@ void MSystemManager::keyPressEvent(QKeyEvent *e)
     }
 }
 
-void MSystemManager::keyReleaseEvent(QKeyEvent* e)
+void MSystemManager::keyRelease(QKeyEvent* e)
 {
     if(mainEnt != NULL && mainNode != NULL)
     {
@@ -220,43 +235,48 @@ void MSystemManager::moveEvent(QMoveEvent *e)
     }
 }
 
-void MSystemManager::mouseDoubleClickEvent(QMouseEvent *e)
+void MSystemManager::mouseDoubleClick(QMouseEvent *e)
 {
     if(e->buttons().testFlag(Qt::LeftButton))
     {
         Ogre::Real x = e->pos().x() / (float)width();
         Ogre::Real y = e->pos().y() / (float)height();
+        Ogre::Ray ray;
 
-        Ogre::Ray ray = mCurrCamera->getCameraToViewportRay(x, y);
-        Ogre::RaySceneQuery *query = mSceneManager->createRayQuery(ray);
-        Ogre::RaySceneQueryResult &queryResult = query->execute();
-        Ogre::RaySceneQueryResult::iterator queryResultIterator = queryResult.begin();
-
-        if(queryResultIterator != queryResult.end())
+        for(int i = 0; i < mRenderWindowList.count(); i++)
         {
-            if(queryResultIterator->movable)
-            {
-                // when the object is double clicked..
-                // replace the last line with whatever you want
-                selectedNode = queryResultIterator->movable->getParentSceneNode();
+            ray = mRenderWindowList[i]->getCamera()->getCameraToViewportRay(x, y);
 
-                //button_object_clicked(selectedNode->getAttachedObject(0)->getName() );
+            Ogre::RaySceneQuery *query = mSceneManager->createRayQuery(ray);
+            Ogre::RaySceneQueryResult &queryResult = query->execute();
+            Ogre::RaySceneQueryResult::iterator queryResultIterator = queryResult.begin();
 
-                selectedNode->showBoundingBox(true);
-            }
-        }
-        else
-        {
-            if (selectedNode)
+            if(queryResultIterator != queryResult.end())
             {
-                // when you double click on any other object..
-                selectedNode->showBoundingBox(false);
-                selectedNode = 0;
+                if(queryResultIterator->movable)
+                {
+                    // when the object is double clicked..
+                    // replace the last line with whatever you want
+                    selectedNode = queryResultIterator->movable->getParentSceneNode();
+
+                    //button_object_clicked(selectedNode->getAttachedObject(0)->getName() );
+
+                    selectedNode->showBoundingBox(true);
+                }
             }
+            else
+            {
+                if (selectedNode)
+                {
+                    // when you double click on any other object..
+                    selectedNode->showBoundingBox(false);
+                    selectedNode = 0;
+                }
+            }
+            mSceneManager->destroyQuery(query);
+            update();
+            e->accept();
         }
-        mSceneManager->destroyQuery(query);
-        update();
-        e->accept();
     }
     else
     {
@@ -264,7 +284,7 @@ void MSystemManager::mouseDoubleClickEvent(QMouseEvent *e)
     }
 }
 
-void MSystemManager::mouseMoveEvent(QMouseEvent *e)
+void MSystemManager::mouseMove(QMouseEvent* e)
 {
     if(mouseMiddleBtn || mouseLeftPressed)
     {
@@ -311,44 +331,44 @@ void MSystemManager::mouseMoveEvent(QMouseEvent *e)
         angleX = 0.00;
         angleY = 0.00;
     }
-    //if(mouseLeftPressed){
-    //	QPoint currentPos = e->pos();
+//    if(mouseLeftPressed){
+//        QPoint currentPos = e->pos();
 
-    //	if(mousePos.x() < currentPos.x())
-    //		mDirection.x = -0.01;
-    //	else if(mousePos.x() > currentPos.x())
-    //		mDirection.x = 0.01;
-    //	else
-    //		mDirection.x = 0;
-    //
-    //	update();
-    //	mousePos = currentPos;
-    //	mDirection = Vector3::ZERO;
-    //}
-    //if(mouseRightPressed){
-    //       QPoint currentPos = e->pos();
+//        if(mousePos.x() < currentPos.x())
+//            mDirection.x = -0.01;
+//        else if(mousePos.x() > currentPos.x())
+//            mDirection.x = 0.01;
+//        else
+//            mDirection.x = 0;
 
-    //	if(mousePos.x() < currentPos.x())
-    //		mDirection.x = -0.01;
-    //	else if(mousePos.x() > currentPos.x())
-    //		mDirection.x = 0.01;
-    //	else
-    //		mDirection.x = 0;
+//        update();
+//        mousePos = currentPos;
+//        mDirection = Vector3::ZERO;
+//    }
+//    if(mouseRightPressed){
+//           QPoint currentPos = e->pos();
 
-    //	if(mousePos.y() < currentPos.y())
-    //		mDirection.y = -0.01;
-    //	else if(mousePos.y() > currentPos.y())
-    //		mDirection.y = 0.01;
-    //	else
-    //		mDirection.y = 0;
+//        if(mousePos.x() < currentPos.x())
+//            mDirection.x = -0.01;
+//        else if(mousePos.x() > currentPos.x())
+//            mDirection.x = 0.01;
+//        else
+//            mDirection.x = 0;
 
-    //	mousePos = currentPos;
- //       update();
-    //	mDirection = Vector3::ZERO;
-    //}
+//        if(mousePos.y() < currentPos.y())
+//            mDirection.y = -0.01;
+//        else if(mousePos.y() > currentPos.y())
+//            mDirection.y = 0.01;
+//        else
+//            mDirection.y = 0;
+
+//        mousePos = currentPos;
+//        update();
+//        mDirection = Vector3::ZERO;
+//    }
 }
 
-void MSystemManager::mousePressEvent(QMouseEvent *e)
+void MSystemManager::mousePress(QMouseEvent* e)
 {
     if(e->button() == Qt::LeftButton)
         mouseLeftPressed = true;
@@ -361,7 +381,7 @@ void MSystemManager::mousePressEvent(QMouseEvent *e)
         mouseMiddleBtn = true;
 }
 
-void MSystemManager::mouseReleaseEvent(QMouseEvent *e)
+void MSystemManager::mouseRelease(QMouseEvent* e)
 {
     Q_UNUSED(e);
     mouseLeftPressed = false;
@@ -369,7 +389,7 @@ void MSystemManager::mouseReleaseEvent(QMouseEvent *e)
     mouseMiddleBtn = false;
 }
 
-void MSystemManager::wheelEvent(QWheelEvent *e)
+void MSystemManager::wheel(QWheelEvent * e)
 {
     mDirection.z = -e->delta()/12;
     update();
@@ -380,57 +400,57 @@ void MSystemManager::update()
 {
     if(mRenderWindow != NULL)
     {
-        mRoot->_fireFrameStarted();
-        mRenderWindow->update();
-
-        mCurrCamera->moveRelative(mDirection);
-        mCurrCamera->yaw(Radian(angleX));
-        mCurrCamera->pitch(Radian(angleY));
+        for(int i = 0; i < mRenderWindowList.count(); i++)
+        {
+            mRenderWindowList[i]->getCamera()->moveRelative(mDirection);
+            mRenderWindowList[i]->getCamera()->yaw(Radian(angleX));
+            mRenderWindowList[i]->getCamera()->pitch(Radian(angleY));
+            mRenderWindowList[i]->repaint();
+        }
 
         updateStats();
-        mRoot->_fireFrameEnded();
     }
 }
+
 bool MSystemManager::initialise()
 {      
-        mRoot = OGRE_NEW Ogre::Root();
+    mRoot = OGRE_NEW Ogre::Root();
 
-        // Logging Ogre messages to the editors logging listeners.
-        MOgreLogProxy* log = new MOgreLogProxy();
-        Ogre::LogManager::getSingleton().getDefaultLog()->addListener(log);
+    // Logging Ogre messages to the editors logging listeners.
+    MOgreLogProxy* log = new MOgreLogProxy();
+    Ogre::LogManager::getSingleton().getDefaultLog()->addListener(log);
 
-        Ogre::RenderSystem* renderSystem = mRoot->getRenderSystemByName("OpenGL Rendering Subsystem");
-        mRoot->setRenderSystem(renderSystem);
-        mRoot->getRenderSystem()->setConfigOption("Full Screen", "No");
+    Ogre::RenderSystem* renderSystem = mRoot->getRenderSystemByName("OpenGL Rendering Subsystem");
+    mRoot->setRenderSystem(renderSystem);
+    mRoot->getRenderSystem()->setConfigOption("Full Screen", "No");
 
+    // Initialize the system, but don't create a render window.
+    mRoot->initialise(false);
 
-        // Initialize the system, but don't create a render window.
-        mRoot->initialise(false);
+    mSceneManager = mRoot->createSceneManager(Ogre::ST_GENERIC);
 
-        mSceneManager = mRoot->createSceneManager(Ogre::ST_GENERIC);
+    Ogre::NameValuePairList viewConfig;
+    Ogre::String widgetHandle;
 
-        Ogre::NameValuePairList viewConfig;
-        Ogre::String widgetHandle;
+#ifdef Q_OS_WIN
+    widgetHandle = Ogre::StringConverter::toString((size_t)((HWND)winId()));
+#else
+    QX11Info info = x11Info();
+    widgetHandle  = Ogre::StringConverter::toString((unsigned long)(info.display()));
+    widgetHandle += ":";
+    widgetHandle += Ogre::StringConverter::toString((unsigned int)(info.screen()));
+    widgetHandle += ":";
+    widgetHandle += Ogre::StringConverter::toString((unsigned long)(parentWidget()->winId()));
+#endif
+    viewConfig["parentWindowHandle"] = widgetHandle;
+    mRenderWindow = mRoot->createRenderWindow("ViewHIDDEN", 1, 1, false, &viewConfig);
+    mIsInitialised = true;
+    initOgreCore(width(), height());
 
-    #ifdef Q_WS_WIN
-        widgetHandle = Ogre::StringConverter::toString((size_t)((HWND)winId()));
-    #else
-        //QWidget *q_parent = dynamic_cast <QWidget *> (parent());
-        QX11Info xInfo = x11Info();
+    Ogre::Root::getSingleton().addFrameListener(this);
 
-        widgetHandle =
-                widgetHandle = Ogre::StringConverter::toString((unsigned long)(xInfo.display())) + ":"
-                + Ogre::StringConverter::toString((unsigned int)(xInfo.screen())) + ":"
-                + Ogre::StringConverter::toString((unsigned long)(parentWidget()->winId())) + ":";
-    #endif
-        viewConfig["externalWindowHandle"] = widgetHandle;
-        mRenderWindow = mRoot->createRenderWindow("Ogre rendering window",
-                                                        width(), height(), false, &viewConfig);
-        mIsInitialised = true;
-        initOgreCore(width(), height());
-
-        MNodeManager::getSingleton().initialise();
-        emit initialised();
+    MNodeManager::getSingleton().initialise();
+    emit initialised();
 
     if (!mRoot)
         return false;
@@ -449,21 +469,19 @@ void MSystemManager::shutDown()
 
 bool MSystemManager::initOgreCore(Ogre::Real width, Ogre::Real height)
 {
-    mMainCamera = mSceneManager->createCamera("Main Camera");
-    MLogManager::getSingleton().logOutput("Main camera created", M_EDITOR_MESSAGE);
-    mMainCamera->setPosition(0, 0, 80);
-    mMainCamera->lookAt(0, 0, -300);
-    mMainCamera->setNearClipDistance(5);
-    //mMainCamera->setDebugDisplayEnabled(enabled); TODO: add the debug overlay
+//    mMainCamera = mSceneManager->createCamera("Main Camera");
+//    MLogManager::getSingleton().logOutput("Main camera created", M_EDITOR_MESSAGE);
+//    mMainCamera->setPosition(0, 0, 80);
+//    mMainCamera->lookAt(0, 0, -300);
+//    mMainCamera->setNearClipDistance(5);
+//    mMainCamera->setDebugDisplayEnabled(true); //TODO: add the debug overlay
 
-    // Create one viewport to the entire window
-    mViewport = mRenderWindow->addViewport(mMainCamera);
-    MLogManager::getSingleton().logOutput("Added viewport", M_EDITOR_MESSAGE);
-    mViewport->setBackgroundColour(Ogre::ColourValue(0.117647059, 0.117647059, 0.117647059));
-    mMainCamera->setAspectRatio(Ogre::Real(width) / Ogre::Real(height));
-    mCurrCamera = mMainCamera;
-
-    Ogre::TextureManager::getSingleton().setDefaultNumMipmaps(5);
+//    // Create one viewport to the entire window
+//    mViewport = mRenderWindow->addViewport(mMainCamera);
+//    MLogManager::getSingleton().logOutput("Added viewport", M_EDITOR_MESSAGE);
+//    mViewport->setBackgroundColour(Ogre::ColourValue(0.117647059, 0.117647059, 0.117647059));
+//    mMainCamera->setAspectRatio(Ogre::Real(width) / Ogre::Real(height));
+//    mCurrCamera = mMainCamera;
 
     // Setup animation default
     Ogre::Animation::setDefaultInterpolationMode(Ogre::Animation::IM_LINEAR);
@@ -473,10 +491,10 @@ bool MSystemManager::initOgreCore(Ogre::Real width, Ogre::Real height)
     initResources();
     MLogManager::getSingleton().logOutput("Initialised all resources", M_EDITOR_MESSAGE);
     createScene();
-    MLogManager::getSingleton().logOutput("Scene created", M_EDITOR_MESSAGE);
+    //MLogManager::getSingleton().logOutput("Scene created", M_EDITOR_MESSAGE);
     createGrid();
-//    createLight();
-//    MLogManager::getSingleton().logOutput("Added light", M_EDITOR_MESSAGE);
+    //createLight();
+    //MLogManager::getSingleton().logOutput("Added light", M_EDITOR_MESSAGE);
 
     TextureManager::getSingleton().setDefaultNumMipmaps(5);
     MaterialManager::getSingleton().setDefaultTextureFiltering(Ogre::TFO_ANISOTROPIC);
@@ -569,7 +587,7 @@ void MSystemManager::doRender()
 
 void MSystemManager::createGrid()
 {
-    mGrid = new ViewportGrid(mSceneManager, mViewport);
+   // mGrid = new ViewportGrid(mSceneManager, mViewport);
 }
 
 void MSystemManager::setCameraPosition(const Ogre::Vector3 &pos)
@@ -600,7 +618,12 @@ void MSystemManager::setBackgroundColor(QColor color)
 {
     Ogre::ColourValue ogreColor;
     ogreColor.setAsARGB(color.rgba());
-    mViewport->setBackgroundColour(ogreColor);
+    mBackgroundColor = ogreColor;
+    for(int i = 0; i < mRenderWindowList.count(); i++)
+    {
+        mRenderWindowList[i]->getViewport()->setBackgroundColour(ogreColor);
+        mRenderWindowList[i]->repaint();
+    }
 }
 
 void MSystemManager::setShadow(int fogType)
@@ -773,10 +796,78 @@ void MSystemManager::deleteLight(Ogre::String name)
     mSceneManager->destroyLight(name);
 }
 
-void MSystemManager::addViewport(Ogre::Camera camera)
+void MSystemManager::setViewNum(int num)
 {
-    if (mRenderWindow)
-        mRenderWindow->addViewport(&camera);
+    for(int i = 0;i<mRenderWindowList.count();i++)
+    {
+        delete mRenderWindowList.takeAt(i);
+        i--;
+    }
+
+    for(int i = 0; i<mVerticalLayout->count();i++)
+    {
+        delete mVerticalLayout->takeAt(i);
+        i--;
+    }
+
+     if(num == 1)
+     {
+         QSplitter *Splitter = new QSplitter(this);
+         Splitter->setStyleSheet("QSplitter  { border-color: rgb(255, 0, 0); color: rgb(0, 255, 0);  height: 1px; background-color: rgb(125,0,0); }");
+         Splitter->setOrientation(Qt::Vertical);
+         mVerticalLayout->addWidget(Splitter);
+
+         MOgreCanvas *orw = new MOgreCanvas(QString("View0"), mSceneManager, Ogre::PT_PERSPECTIVE, MOgreCanvas::CP_FREE, mBackgroundColor, Splitter);
+         // TOOD: orw->setPolygonMode(Ogre::PM_WIREFRAME);
+         mRenderWindowList.append(orw);
+         Splitter->addWidget(orw);
+     }
+
+    if(num == 4)
+    {
+        QSplitter *Splitter = new QSplitter(this);
+        Splitter->setStyleSheet("QSplitter  { border-color: red; color: blue;  height: 1px; background-color: rgb(125,0,0); }");
+        Splitter->setOrientation(Qt::Vertical);
+
+        QSplitter *Splitter2 = new QSplitter(Splitter);
+        Splitter2->setStyleSheet("QSplitter  { border-color: red; color: blue;  height: 1px; background-color: rgb(125,0,0); }");
+        Splitter2->setOrientation(Qt::Horizontal);
+        Splitter->addWidget(Splitter2);
+
+        QSplitter *Splitter3 = new QSplitter(Splitter);
+        Splitter3->setStyleSheet("QSplitter  { border-color: red; color: blue;  height: 1px; background-color: rgb(125,0,0); }");
+        Splitter3->setOrientation(Qt::Horizontal);
+        Splitter->addWidget(Splitter3);
+
+        mVerticalLayout->addWidget(Splitter);
+
+        MOgreCanvas *orw = new MOgreCanvas(QString("View0"), mSceneManager, Ogre::PT_ORTHOGRAPHIC, MOgreCanvas::CP_FRONT, mBackgroundColor, Splitter2);
+        mRenderWindowList.append(orw);
+        Splitter2->addWidget(orw);
+
+        orw = new MOgreCanvas(QString("View1"), mSceneManager, Ogre::PT_ORTHOGRAPHIC, MOgreCanvas::CP_LEFT, mBackgroundColor, Splitter2);
+        mRenderWindowList.append(orw);
+        Splitter2->addWidget(orw);
+
+        orw = new MOgreCanvas(QString("View2"), mSceneManager, Ogre::PT_ORTHOGRAPHIC, MOgreCanvas::CP_TOP, mBackgroundColor, Splitter3);
+        mRenderWindowList.append(orw);
+        Splitter3->addWidget(orw);
+
+        orw = new MOgreCanvas(QString("View3"), mSceneManager, Ogre::PT_PERSPECTIVE, MOgreCanvas::CP_FREE, mBackgroundColor, Splitter3);
+        mRenderWindowList.append(orw);
+        Splitter3->addWidget(orw);
+    }
+
+    for(int i = 0;i<mRenderWindowList.count();i++)
+    {
+        connect(mRenderWindowList[i],SIGNAL(keyPress(QKeyEvent*)),this,SLOT(keyPress(QKeyEvent*)));
+        connect(mRenderWindowList[i],SIGNAL(keyRelease(QKeyEvent*)),this,SLOT(keyRelease(QKeyEvent*)));
+        connect(mRenderWindowList[i],SIGNAL(mousePress(QMouseEvent*)),this,SLOT(mousePress(QMouseEvent*)));
+        connect(mRenderWindowList[i],SIGNAL(mouseRelease(QMouseEvent*)),this,SLOT(mouseRelease(QMouseEvent*)));
+        connect(mRenderWindowList[i],SIGNAL(mouseMove(QMouseEvent*)),this,SLOT(mouseMove(QMouseEvent*)));
+        connect(mRenderWindowList[i],SIGNAL(wheel(QWheelEvent*)),this,SLOT(wheel(QWheelEvent*)));
+        connect(mRenderWindowList[i],SIGNAL(mouseDoubleClick(QMouseEvent*)),this,SLOT(mouseDoubleClick(QMouseEvent*)));
+    }
 }
 
 /*void MSystemManager::createResourceListener()
@@ -872,13 +963,23 @@ void MSystemManager::addObject(Ogre::String name)
     //Add New Object
     mainEnt = mSceneManager->createEntity(meshName, name);
     mainNode = mSceneManager->getRootSceneNode()->createChildSceneNode(meshName+"node");
+
+    MString parentChainName = "World." + MString(meshName.c_str());
+    MString nodeName = MString(meshName.c_str()) + "node";
+
+//    MString parentChainName = "World." + MString("sometext");
+//    MString nodeName = MString("lklkl") + "node";
+
+    MNodeManager::getSingleton().notifyAddNode(parentChainName, nodeName);
+
     mainNode->attachObject(mainEnt);
     mainNode->setPosition(Vector3(0, 0, 0));
 
     //Update the camera's pos to fit whith the object size
-    mCurrCamera->setPosition(mainNode->getPosition().x, mainNode->getPosition().y, mainNode->getPosition().z - 200);
-    mCurrCamera->lookAt(mainNode->getPosition());
+//    mCurrCamera->setPosition(mainNode->getPosition().x, mainNode->getPosition().y, mainNode->getPosition().z - 200);
+//    mCurrCamera->lookAt(mainNode->getPosition());
 }
+
 void MSystemManager::removeObject(Ogre::String name)
 {
     if(mSceneManager)

@@ -34,6 +34,11 @@ public slots:
 
     // Settings dialog slots.
     void openSettingsDialog();
+    void changeIndexofCanvas();
+
+    void setFourViewPorts();
+    void setOneViewPort();
+
     void gridDivisionsChanged(int value);
     void gridPrespectiveSizeChanged(int size);
     void gridRenderLayerChanged(int index);

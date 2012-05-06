@@ -12,8 +12,6 @@ TEMPLATE = app
 
 SOURCES += main.cpp\
         mainwindow.cpp \
-    button.cpp \
-    MEvent.cpp \
     MorphCore/Editor/msystemmanager.cpp \
     #MorphCore/Editor/msingleton.cpp
     MorphCore/Editor/mlogmanager.cpp \
@@ -33,13 +31,11 @@ SOURCES += main.cpp\
     MorphCore/Editor/mrootnode.cpp \
     mOgreEntityViewer/aboutdialog.cpp \
     mOgreEntityViewer/viewgrid.cpp \
-    mOgreEntityViewer/removeobject.cpp
+    mOgreEntityViewer/removeobject.cpp \
+    #mOgreEntityViewer/textrenderer.cpp
+    MorphCore/Editor/mogrecanvas.cpp
 
 HEADERS += mainwindow.h \
-    button.h \
-    mdatabase.h \
-    MWidget.h \
-    MEvent.h \
     MorphCore/Editor/msystemmanager.h \
     #MorphCore/Editor/msingleton.h // FIXME: implement it.
     MorphCore/Editor/mlogmanager.h \
@@ -62,7 +58,9 @@ HEADERS += mainwindow.h \
     MorphCore/Editor/mrootnode.h \
     mOgreEntityViewer/aboutdialog.h \
     mOgreEntityViewer/viewgrid.h \
-    mOgreEntityViewer/removeobject.h
+    mOgreEntityViewer/removeobject.h \
+    #mOgreEntityViewer/textrenderer.h
+    MorphCore/Editor/mogrecanvas.h
 
 FORMS    += mainwindow.ui \
     mOgreEntityViewer/settingsdialog.ui \
@@ -76,9 +74,9 @@ FORMS    += mainwindow.ui \
     CONFIG += link_pkgconfig
     PKGCONFIG += OGRE
 
-    INCLUDEPATH += /usr/include/sigc++-2.0
+#    INCLUDEPATH += /usr/include/sigc++-2.0
     CONFIG += link_pkgconfig
-    PKGCONFIG += sigc++-2.0
+#    PKGCONFIG += sigc++-2.0
 #}
 
 #win32
@@ -94,7 +92,7 @@ FORMS    += mainwindow.ui \
 
 CONFIG(debug, debug|release)
 {
-    TARGET = $$join(TARGET,,,d)
+    TARGET = $$join(TARGET,,,)
     #LIBS *= -lOgreMain_d
 }
 
