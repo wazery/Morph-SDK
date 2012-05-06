@@ -123,7 +123,6 @@ void MainWindow::initialisePlugins()
     ui->fourViews->setEnabled(true);
     ui->wireframe->setEnabled(true);
     ui->points->setEnabled(true);
-    ui->polygons->setEnabled(true);
 
     // Init Grid.
 //    for(int i = 0; i < systemManager->mGridList.count(); i++)
@@ -213,10 +212,9 @@ void MainWindow::setViewPortToPolygons()
 void MainWindow::loadSettings()
 {
     // Set background color to the last saved setting.
-    QColor color(mSettings->value("Canvas Background Color").toString());
+    QColor color(mSettings->value("canvasBackgroundColor").toString());
     if (color.isValid())
     {
-        // FIXME, need to set the viewport color with the saved settings color.
         systemManager->setBackgroundColor(color);
     }
 
@@ -225,8 +223,18 @@ void MainWindow::loadSettings()
     ui->grid->setChecked(mSettings->value("grid").toBool());
 }
 
+// TODO: I don't know why the save settings not called in the ~MainWindow()
 void MainWindow::saveSettings()
 {
+    // Set the previous viewport option.
+    if(ui->wireframe->isEnabled())
+        mSettings->setValue("canvasViewportCurrentOption", 0);
+
+    else if(ui->points->isEnabled())
+        mSettings->setValue("canvasViewportCurrentOption", 1);
+
+    if(ui->polygons->isEnabled())
+        mSettings->setValue("canvasViewportCurrentOption", 2);
 }
 
 void MainWindow::fakeSlot()
@@ -340,7 +348,7 @@ void MainWindow::setBackgroundColor()
 {
     if(systemManager->isVisible())
     {
-        QColor color = QColorDialog::getColor(systemManager->getBackgroundColor(), this);
+        QColor color = QColorDialog::getColor(QColor(mSettings->value("canvasBackgroundColor").toString()), this);
 
         if(color.isValid())
         {

@@ -39,7 +39,7 @@
 using namespace Morph;
 
 const QPoint     MSystemManager::invalidMousePoint(-1, -1);
-const Ogre::Real MSystemManager::turboModifier(10);
+//const Ogre::Real MSystemManager::turboModifier(10);
 
 MSystemManager* MSystemManager::smInstance = NULL;
 
@@ -51,9 +51,6 @@ MSystemManager::MSystemManager(QWidget *parent)
     mWindowWidth(0),
     mWindowHeight(0),
     mSceneManager(0),
-    mMainCamera(0),
-    mCurrCamera(0),
-    mViewport(0),
     mainEnt(0),
     mainEntAnim(0),
     mainNode(0),
@@ -70,7 +67,7 @@ MSystemManager::MSystemManager(QWidget *parent)
     setMinimumSize(240, 240);
     setFocusPolicy(Qt::WheelFocus);
 
-    mBackgroundColor.setAsRGBA(qRgba(30, 30, 30, 1));
+    mBackgroundColor.setAsARGB(QColor(30, 30, 30, 1).rgba());
 
     mRenderWindow = NULL;
 
@@ -181,10 +178,6 @@ void MSystemManager::keyPress(QKeyEvent* e)
         case Qt::Key_Right:
             rotY = 0.1;
             mainNode->yaw(Radian(rotY));
-            repaint();
-            break;
-        case Qt::Key_R:
-            mCurrCamera->setPosition(0, 50, 0);
             repaint();
             break;
         }
@@ -331,41 +324,6 @@ void MSystemManager::mouseMove(QMouseEvent* e)
         angleX = 0.00;
         angleY = 0.00;
     }
-//    if(mouseLeftPressed){
-//        QPoint currentPos = e->pos();
-
-//        if(mousePos.x() < currentPos.x())
-//            mDirection.x = -0.01;
-//        else if(mousePos.x() > currentPos.x())
-//            mDirection.x = 0.01;
-//        else
-//            mDirection.x = 0;
-
-//        update();
-//        mousePos = currentPos;
-//        mDirection = Vector3::ZERO;
-//    }
-//    if(mouseRightPressed){
-//           QPoint currentPos = e->pos();
-
-//        if(mousePos.x() < currentPos.x())
-//            mDirection.x = -0.01;
-//        else if(mousePos.x() > currentPos.x())
-//            mDirection.x = 0.01;
-//        else
-//            mDirection.x = 0;
-
-//        if(mousePos.y() < currentPos.y())
-//            mDirection.y = -0.01;
-//        else if(mousePos.y() > currentPos.y())
-//            mDirection.y = 0.01;
-//        else
-//            mDirection.y = 0;
-
-//        mousePos = currentPos;
-//        update();
-//        mDirection = Vector3::ZERO;
-//    }
 }
 
 void MSystemManager::mousePress(QMouseEvent* e)
@@ -445,7 +403,7 @@ bool MSystemManager::initialise()
     viewConfig["parentWindowHandle"] = widgetHandle;
     mRenderWindow = mRoot->createRenderWindow("ViewHIDDEN", 1, 1, false, &viewConfig);
     mIsInitialised = true;
-    initOgreCore(width(), height());
+    initOgreCore();
 
     Ogre::Root::getSingleton().addFrameListener(this);
 
@@ -467,21 +425,9 @@ void MSystemManager::shutDown()
     mRoot = 0;
 }
 
-bool MSystemManager::initOgreCore(Ogre::Real width, Ogre::Real height)
+bool MSystemManager::initOgreCore()
 {
-//    mMainCamera = mSceneManager->createCamera("Main Camera");
-//    MLogManager::getSingleton().logOutput("Main camera created", M_EDITOR_MESSAGE);
-//    mMainCamera->setPosition(0, 0, 80);
-//    mMainCamera->lookAt(0, 0, -300);
-//    mMainCamera->setNearClipDistance(5);
-//    mMainCamera->setDebugDisplayEnabled(true); //TODO: add the debug overlay
-
-//    // Create one viewport to the entire window
-//    mViewport = mRenderWindow->addViewport(mMainCamera);
-//    MLogManager::getSingleton().logOutput("Added viewport", M_EDITOR_MESSAGE);
-//    mViewport->setBackgroundColour(Ogre::ColourValue(0.117647059, 0.117647059, 0.117647059));
-//    mMainCamera->setAspectRatio(Ogre::Real(width) / Ogre::Real(height));
-//    mCurrCamera = mMainCamera;
+    // mViewport->setBackgroundColour(Ogre::ColourValue(0.117647059, 0.117647059, 0.117647059));
 
     // Setup animation default
     Ogre::Animation::setDefaultInterpolationMode(Ogre::Animation::IM_LINEAR);
@@ -534,8 +480,7 @@ void MSystemManager::addResourceLocations()
             ResourceGroupManager::getSingleton().addResourceLocation(
                 String(macBundlePath() + "/" + archName), typeName, secName);
 #else
-            ResourceGroupManager::getSingleton().addResourceLocation(
-                archName, typeName, secName);
+            ResourceGroupManager::getSingleton().addResourceLocation(archName, typeName, secName);
 #endif
         }
     }
@@ -592,14 +537,6 @@ void MSystemManager::createGrid()
         mGridList[i] = new ViewportGrid(mSceneManager, mRenderWindowList[i]->getViewport());
         //mRenderWindowList[i]->repaint();
     }
-}
-
-void MSystemManager::setCameraPosition(const Ogre::Vector3 &pos)
-{
-    mCurrCamera->setPosition(pos);
-    mCurrCamera->lookAt(0, 50, 0);
-    update();
-    emit cameraPositionChanged(pos);
 }
 
 void MSystemManager::setBoundingBoxes(int value)

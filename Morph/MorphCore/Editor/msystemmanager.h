@@ -79,12 +79,6 @@ namespace Morph
         /** Access the SceneManager */
         Ogre::SceneManager* getSceneManager(void) const    { /** @return mSceneManager */ return(mSceneManager); }
 
-        /** Access the MainCamera */
-        Ogre::Camera* getMainCamera(void) const    { /** @return mMainCamera */ return(mMainCamera); }
-
-        /** Access the CurrentCamera */
-        Ogre::Camera* getCurrCamera(void) const    { /** @return mCurrCamera */ return(mCurrCamera); }
-
         /** Access the mIsInitialised */
         bool isInitialised(void) const    { /** @return mIsInitialised */ return(mIsInitialised);}
 
@@ -98,8 +92,11 @@ namespace Morph
         int getWindowHeight(void) const    { /** @return mWindowHeight */ return(mWindowHeight); }
 
         void setBackgroundColor(QColor);
+
+        /** Access the background color */
         QColor getBackgroundColor() const { return QColor(mBackgroundColor.getAsRGBA()); }
 
+        /** Access the canvas windows */
         QList<MOgreCanvas*> getOgreWindows() { return mRenderWindowList; }
 
         void update();
@@ -136,12 +133,10 @@ namespace Morph
         Ogre::SubEntity* mainSubEnt;
 
     public slots:
-        /** Sets the current camera position */
-        void setCameraPosition(const Ogre::Vector3 &pos);
+        /** Sets the number of active viewports */
         void setViewNum(int num);
 
     signals:
-        void cameraPositionChanged(const Ogre::Vector3 &pos);
         void initialised();
 
     public slots:
@@ -171,7 +166,7 @@ namespace Morph
             @param height int containing the height of the Ogre Canvas.
             @param params NameValuePairList Name / value parameter pair (first = name, second = value).
         */
-        bool initOgreCore(Ogre::Real width, Ogre::Real height);
+        bool initOgreCore();
 
         /** Shut Down Ogre System */
         void shutDown();
@@ -221,7 +216,7 @@ namespace Morph
 
     private:
         Ui::MSystemManager* ui;
-        static const Ogre::Real turboModifier;
+        //static const Ogre::Real turboModifier;
         static const QPoint invalidMousePoint;
 
         QVBoxLayout *mVerticalLayout;
@@ -231,12 +226,8 @@ namespace Morph
         Ogre::Root          *mRoot;
         Ogre::SceneManager  *mSceneManager;
         Ogre::RenderWindow  *mRenderWindow;
-        Ogre::Viewport      *mViewport;
 
         Ogre::Overlay       *mDebugOverlay; // TODO: change its name
-
-        Ogre::Camera        *mMainCamera;
-        Ogre::Camera        *mCurrCamera;
 
         Ogre::AnimationState* mainEntAnim;
 
@@ -261,7 +252,6 @@ namespace Morph
         QColor ambientOldColor;
         QColor diffuseOldColor;
         QColor specularOldColor;
-        ///////
 
         bool mouseLeftPressed;
         bool mouseRightPressed;
@@ -269,9 +259,9 @@ namespace Morph
         bool isLoopOn;
         bool isAnimEnabled;
 
-        bool		mIsInitialised;
-        int			mWindowWidth;
-        int			mWindowHeight;
+        bool mIsInitialised;
+        int	 mWindowWidth;
+        int	 mWindowHeight;
     };
 }
 #endif // MSYSTEMMANAGER_H
