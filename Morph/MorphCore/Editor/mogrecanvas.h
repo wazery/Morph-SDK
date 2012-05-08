@@ -47,6 +47,10 @@ public:
 
     Ogre::Camera* getCamera() { return mCamera; }
 
+    bool isInitialised() { return mIsInitialised; }
+
+    bool hasGrid;
+
 private:
     QString mWindowName;
     Ogre::SceneManager* mSceneMgr;
@@ -54,6 +58,7 @@ private:
     Ogre::Camera *mCamera;
     Ogre::ColourValue mBackgroundColor;
     Ogre::SceneNode *mCameraPivotNode;
+    bool mIsInitialised;
     Ogre::Viewport* mVp;
     Ogre::Vector2 mousePressStartPoint;
     Ogre::Vector2 mousePressEndPoint;
@@ -87,5 +92,6 @@ signals:
     void mouseMove(QMouseEvent* e);
     void wheel(QWheelEvent* e);
     void mouseDoubleClick(QMouseEvent* e);
+    void initialised();
 };
 #endif // MOGRECANVAS_H

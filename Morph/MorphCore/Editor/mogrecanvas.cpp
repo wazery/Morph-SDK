@@ -11,7 +11,9 @@ MOgreCanvas::MOgreCanvas(QString windowName, Ogre::SceneManager* sceneMgr, Ogre:
     mSceneMgr(sceneMgr),
     mRenderWindow(NULL),
     mCamera(NULL),
+    hasGrid(false),
     mBackgroundColor(backgorundColor),
+    mIsInitialised(false),
     mVp(NULL)
 {
     mProjectionType = projectionType;
@@ -30,6 +32,8 @@ MOgreCanvas::~MOgreCanvas()
 {
     if(mRenderWindow)
     {
+        //mSceneMgr->destroyManualObject(mVp->getTarget()->getName() + "::" + StringConverter::toString(mVp->getZOrder()) + "::ViewportGrid");
+        //mSceneMgr->destroySceneNode();
         mRenderWindow->removeAllViewports();
         mSceneMgr->destroyCamera(mCamera);
         mCamera = 0;
@@ -145,6 +149,8 @@ void MOgreCanvas::init()
     //float cb = ((1.0-0.0)*((float)rand()/RAND_MAX))+0.0;
 
     mVp->setBackgroundColour(mBackgroundColor);
+    mIsInitialised = true;
+    emit initialised();
 }
 
 void MOgreCanvas::createOrbitalCamera()

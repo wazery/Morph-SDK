@@ -217,11 +217,11 @@ void ViewportGrid::postViewportUpdate(const RenderTargetViewportEvent &evt)
 /****************************
 * Other protected functions *
 ****************************/
- 
+#include "stdlib.h"
 void ViewportGrid::createGrid()
 {
 	String name = m_pViewport->getTarget()->getName() + "::";
-	name += StringConverter::toString(m_pViewport->getZOrder()) + "::ViewportGrid";
+    name += StringConverter::toString(m_pViewport->getZOrder()) + "::ViewportGrid";
  
 	// Create the manual object
 	m_pGrid = m_pSceneMgr->createManualObject(name);
