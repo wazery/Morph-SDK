@@ -99,7 +99,6 @@ namespace Morph
         /** Access the canvas windows */
         QList<MOgreCanvas*> getOgreWindows() { return mRenderWindowList; }
 
-        void update();
         void updateAnim();
 
         void setBoundingBoxes(int value);
@@ -133,6 +132,7 @@ namespace Morph
         Ogre::SubEntity* mainSubEnt;
 
     public slots:
+        void update();
         /** Sets the number of active viewports */
         void setViewNum(int num);
 
@@ -147,6 +147,9 @@ namespace Morph
         void mouseMove(QMouseEvent* e);
         void mouseDoubleClick(QMouseEvent *e);
         void wheel(QWheelEvent * e);
+
+        /** Create the grid for the canvas */
+        void createGrid(MOgreCanvas *renderWindowList, int index);
 
     protected:
         virtual void showEvent(QShowEvent *e);
@@ -197,9 +200,6 @@ namespace Morph
         // FrameListener overrides
         virtual bool frameStarted(const FrameEvent& evt);
         virtual bool frameEnded(const FrameEvent& evt);
-
-        /** Create the grid for the canvas */
-        void createGrid();
 
     public:
         static MSystemManager* smInstance;

@@ -21,8 +21,9 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     envProperties = new EnvProperties(this);
     QTabWidget *propertiesTab = ui->tabWidget_3;
     propertiesTab->addTab(envProperties, QIcon("settings.png"), ("Environment"));
-    // TODO: Create the object properties tab
-    //propertiesTab->addTab(objProperties, QIcon("settings.png"), ("Object Properties"));
+
+    objProperties = new ObjProperties(this);
+    propertiesTab->addTab(objProperties, QIcon("settings.png"), ("Object Properties"));
     //propertiesTab->setMaximumSize(243, 450);
 
     ui->listWidget->addItem(new QListWidgetItem(QIcon("settings.png"), "Toggle Button"));
@@ -48,14 +49,14 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     connect(ui->actionSet_Background_Color, SIGNAL(triggered()), this, SLOT(setBackgroundColor()));
     connect(ui->action_Add_Light, SIGNAL(triggered()), this, SLOT(addLight()));
 
-    // FIXME: A hack on signls and slots, bad way.
-    //connect(ui->actionRemoveMesh, SIGNAL(triggered()), this, SLOT(emitRemoveObj()));
-    //connect(this, SIGNAL(signalRemoveObject(QString)), this, SLOT(removeObj(QString)));
+    // FIXME:
+    connect(ui->actionRemoveMesh, SIGNAL(triggered()), this, SLOT(showRemoveObj()));
 
     // Environment Properties
     connect(envProperties->fogTypeCombo, SIGNAL(activated(int)), this, SLOT(setFog(int)));
     connect(envProperties->fogColorBtn, SIGNAL(clicked()), this, SLOT(setFogColor()));
-    connect(envProperties->shadowTypeCombo, SIGNAL(activated(int)), this, SLOT(setShadow(int)));
+    // FIXME:
+    //connect(envProperties->shadowTypeCombo, SIGNAL(activated(int)), this, SLOT(setShadow(int)));
     connect(envProperties->backgroundColorBtn, SIGNAL(clicked()), this, SLOT(setBackgroundColor()));
     connect(envProperties->ambientLightColorBtn, SIGNAL(clicked()), this, SLOT(setAmbientLight()));
     connect(envProperties->modifyAction, SIGNAL(triggered()), this, SLOT(modifyLight()));
@@ -125,18 +126,6 @@ void MainWindow::initialisePlugins()
     ui->points->setEnabled(true);
 
     // Init Grid.
-//    for(int i = 0; i < systemManager->mGridList.count(); i++)
-//    {
-//        systemManager->mGridList[i]->setEnabled(ui->grid->isChecked());
-//    }
-//    Ogre::ColourValue ogreColor;
-//    ogreColor.setAsARGB(QColor(mSettings->value("gridColor").toString()).rgba());
-//    systemManager->mGrid->setColour(ogreColor);
-//    systemManager->mGrid->setPerspectiveSize(mSettings->value("gridPrespectiveSize").toInt());
-//    if(mSettings->value("gridRenderLayer").toInt() == 0)
-//        systemManager->mGrid->setRenderLayer(ViewportGrid::RL_BEHIND);
-//    else
-//        systemManager->mGrid->setRenderLayer(ViewportGrid::RL_INFRONT);
 }
 
 void MainWindow::setFourViewPorts()
@@ -264,32 +253,58 @@ void MainWindow::openSettingsDialog()
 void MainWindow::changeIndexofCanvas()
 {
     ui->tabWidget->setCurrentIndex(1);
-    setOneViewPort();
+    setFourViewPorts();
 }
 
 void MainWindow::gridColorChanged(QColor color)
 {
     Ogre::ColourValue ogreColor;
     ogreColor.setAsARGB(color.rgba());
-    //systemManager->mGrid->setColour(ogreColor);
+
+    if(!systemManager->mGridList.isEmpty())
+    {
+        for(int i = 0; i < systemManager->mGridList.count(); i++)
+        {
+            systemManager->mGridList[i]->setColour(ogreColor);
+            mSettings->setValue("gridColor", color.name());
+        }
+    }
 }
 
 void MainWindow::gridDivisionsChanged(int value)
 {
-    //systemManager->mGrid->setDivision(value);
+    if(!systemManager->mGridList.isEmpty())
+    {
+        for(int i = 0; i < systemManager->mGridList.count(); i++)
+        {
+            systemManager->mGridList[i]->setDivision(value);
+        }
+    }
 }
 
 void MainWindow::gridPrespectiveSizeChanged(int size)
 {
-    //systemManager->mGrid->setPerspectiveSize(size);
+    if(!systemManager->mGridList.isEmpty())
+    {
+        for(int i = 0; i < systemManager->mGridList.count(); i++)
+        {
+            systemManager->mGridList[i]->setPerspectiveSize(size);
+        }
+    }
 }
 
 void MainWindow::gridRenderLayerChanged(int index)
 {
-//    if(index == 0)
-//        systemManager->mGrid->setRenderLayer(ViewportGrid::RL_BEHIND);
-//    else
-//        systemManager->mGrid->setRenderLayer(ViewportGrid::RL_INFRONT);
+    if(!systemManager->mGridList.isEmpty())
+    {
+        for(int i = 0; i < systemManager->mGridList.count(); i++)
+        {
+            if(index == 0)
+                systemManager->mGridList[i]->setRenderLayer(ViewportGrid::RL_BEHIND);
+            else
+                systemManager->mGridList[i]->setRenderLayer(ViewportGrid::RL_INFRONT);
+        }
+    }
 }
 
 void MainWindow::addObj()
@@ -337,11 +352,18 @@ void MainWindow::loadObj(const QString &meshName)
 }
 
 // TODO:
-void MainWindow::removeObj(const QString &meshName)
+void MainWindow::showRemoveObj()
 {
-    RemoveObject* removeObject = new RemoveObject();
+    RemoveObject* removeObject = new RemoveObject(this);
     removeObject->show();
-//    systemManager->removeObject();
+    //FIXME:
+    //systemManager->removeObject(removeObject->getMeshName().toUtf8().constData());
+}
+
+void MainWindow::commitRemoveObj()
+{
+    RemoveObject* removeObject = qobject_cast<RemoveObject*>(QObject::sender());
+    systemManager->removeObject(removeObject->getMeshName().toUtf8().constData());
 }
 
 void MainWindow::setBackgroundColor()

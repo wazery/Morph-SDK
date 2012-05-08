@@ -15,10 +15,21 @@ public:
     explicit RemoveObject(QWidget *parent = 0);
     ~RemoveObject();
 
-    QString getMeshName(QWidget *parent = 0, const QString &caption = QString());
+    void showEvent(QShowEvent *);
+
+    QString getMeshName() { return mMeshName; }
+
+public slots:
+    void setText();
+    void Clicked();
+
+signals:
+    void clicked();
     
 private:
     Ui::RemoveObject *ui;
+    QString mMeshName;
+    bool initialized;
 };
 
 #endif // REMOVEOBJECT_H

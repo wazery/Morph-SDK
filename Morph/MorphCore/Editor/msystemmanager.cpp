@@ -360,13 +360,17 @@ void MSystemManager::update()
     {
         for(int i = 0; i < mRenderWindowList.count(); i++)
         {
-            mRenderWindowList[i]->getCamera()->moveRelative(mDirection);
-            mRenderWindowList[i]->getCamera()->yaw(Radian(angleX));
-            mRenderWindowList[i]->getCamera()->pitch(Radian(angleY));
+            if(mRenderWindowList[i]->getCamera())
+            {
+                mRenderWindowList[i]->getCamera()->moveRelative(mDirection);
+                mRenderWindowList[i]->getCamera()->yaw(Radian(angleX));
+                mRenderWindowList[i]->getCamera()->pitch(Radian(angleY));
+            }
+            if(mRenderWindowList[i]->isInitialised() && !mRenderWindowList[i]->hasGrid)
+                createGrid(mRenderWindowList[i], i);
             mRenderWindowList[i]->repaint();
         }
-
-        updateStats();
+        //updateStats();
     }
 }
 
@@ -427,8 +431,6 @@ void MSystemManager::shutDown()
 
 bool MSystemManager::initOgreCore()
 {
-    // mViewport->setBackgroundColour(Ogre::ColourValue(0.117647059, 0.117647059, 0.117647059));
-
     // Setup animation default
     Ogre::Animation::setDefaultInterpolationMode(Ogre::Animation::IM_LINEAR);
     Ogre::Animation::setDefaultRotationInterpolationMode(Ogre::Animation::RIM_LINEAR);
@@ -438,7 +440,7 @@ bool MSystemManager::initOgreCore()
     MLogManager::getSingleton().logOutput("Initialised all resources", M_EDITOR_MESSAGE);
     createScene();
     //MLogManager::getSingleton().logOutput("Scene created", M_EDITOR_MESSAGE);
-    createGrid();
+    //createGrid();
     //createLight();
     //MLogManager::getSingleton().logOutput("Added light", M_EDITOR_MESSAGE);
 
@@ -530,13 +532,27 @@ void MSystemManager::doRender()
     mRoot->renderOneFrame();
 }
 
-void MSystemManager::createGrid()
+void MSystemManager::createGrid(MOgreCanvas* renderWindowList, int index)
 {
-    for(int i = 0; i < mRenderWindowList.count(); i++)
-    {
-        mGridList[i] = new ViewportGrid(mSceneManager, mRenderWindowList[i]->getViewport());
-        //mRenderWindowList[i]->repaint();
-    }
+    mGridList.append(new ViewportGrid(mSceneManager, renderWindowList->getViewport()));
+
+    QString settingsFile = QApplication::applicationDirPath() + "editorSettings";
+    QSettings* settings = new QSettings(settingsFile, QSettings::NativeFormat);
+
+    Ogre::ColourValue ogreColor;
+    ogreColor.setAsARGB(QColor(settings->value("gridColor").toString()).rgba());
+    mGridList[index]->setColour(ogreColor);
+    mGridList[index]->setPerspectiveSize(settings->value("gridPrespectiveSize").toInt());
+
+    if(settings->value("gridRenderLayer").toInt() == 0)
+        mGridList[index]->setRenderLayer(ViewportGrid::RL_BEHIND);
+    else
+        mGridList[index]->setRenderLayer(ViewportGrid::RL_INFRONT);
+
+    renderWindowList->hasGrid = true;
+    mGridList[index]->setEnabled(true);
+    mGridList[index]->setDivision(30);
+    mGridList[index]->setPerspectiveSize(150);
 }
 
 void MSystemManager::setBoundingBoxes(int value)
@@ -741,6 +757,7 @@ void MSystemManager::setViewNum(int num)
 {
     for(int i = 0;i<mRenderWindowList.count();i++)
     {
+        delete mGridList.takeAt(i);
         delete mRenderWindowList.takeAt(i);
         i--;
     }
@@ -754,12 +771,11 @@ void MSystemManager::setViewNum(int num)
      if(num == 1)
      {
          QSplitter *Splitter = new QSplitter(this);
-         Splitter->setStyleSheet("QSplitter  { border-color: rgb(255, 0, 0); color: rgb(0, 255, 0);  height: 1px; background-color: rgb(125,0,0); }");
+         Splitter->setStyleSheet("QSplitter  { border-color: rgb(77, 77, 77); color: rgb(0, 255, 0);  height: 1px; background-color: rgb(45, 45, 45); }");
          Splitter->setOrientation(Qt::Vertical);
          mVerticalLayout->addWidget(Splitter);
 
          MOgreCanvas *orw = new MOgreCanvas(QString("View0"), mSceneManager, Ogre::PT_PERSPECTIVE, MOgreCanvas::CP_FREE, mBackgroundColor, Splitter);
-         // TOOD: orw->setPolygonMode(Ogre::PM_WIREFRAME);
          mRenderWindowList.append(orw);
          Splitter->addWidget(orw);
      }
@@ -767,34 +783,34 @@ void MSystemManager::setViewNum(int num)
     if(num == 4)
     {
         QSplitter *Splitter = new QSplitter(this);
-        Splitter->setStyleSheet("QSplitter  { border-color: red; color: blue;  height: 1px; background-color: rgb(125,0,0); }");
+        Splitter->setStyleSheet("QSplitter  { border-color: rgb(77, 77, 77); color: blue;  height: 1px; background-color: rgb(45, 45, 45); }");
         Splitter->setOrientation(Qt::Vertical);
 
         QSplitter *Splitter2 = new QSplitter(Splitter);
-        Splitter2->setStyleSheet("QSplitter  { border-color: red; color: blue;  height: 1px; background-color: rgb(125,0,0); }");
+        Splitter2->setStyleSheet("QSplitter  { border-color: rgb(77, 77, 77); color: blue;  height: 1px; background-color: rgb(45, 45, 45); }");
         Splitter2->setOrientation(Qt::Horizontal);
         Splitter->addWidget(Splitter2);
 
         QSplitter *Splitter3 = new QSplitter(Splitter);
-        Splitter3->setStyleSheet("QSplitter  { border-color: red; color: blue;  height: 1px; background-color: rgb(125,0,0); }");
+        Splitter3->setStyleSheet("QSplitter  { border-color: redrgb(77, 77, 77); color: blue;  height: 1px; background-color: rgb(45, 45, 45); }");
         Splitter3->setOrientation(Qt::Horizontal);
         Splitter->addWidget(Splitter3);
 
         mVerticalLayout->addWidget(Splitter);
 
-        MOgreCanvas *orw = new MOgreCanvas(QString("View0"), mSceneManager, Ogre::PT_ORTHOGRAPHIC, MOgreCanvas::CP_FRONT, mBackgroundColor, Splitter2);
+        MOgreCanvas *orw = new MOgreCanvas(QString("View1"), mSceneManager, Ogre::PT_ORTHOGRAPHIC, MOgreCanvas::CP_FRONT, mBackgroundColor, Splitter2);
         mRenderWindowList.append(orw);
         Splitter2->addWidget(orw);
 
-        orw = new MOgreCanvas(QString("View1"), mSceneManager, Ogre::PT_ORTHOGRAPHIC, MOgreCanvas::CP_LEFT, mBackgroundColor, Splitter2);
+        orw = new MOgreCanvas(QString("View2"), mSceneManager, Ogre::PT_ORTHOGRAPHIC, MOgreCanvas::CP_LEFT, mBackgroundColor, Splitter2);
         mRenderWindowList.append(orw);
         Splitter2->addWidget(orw);
 
-        orw = new MOgreCanvas(QString("View2"), mSceneManager, Ogre::PT_ORTHOGRAPHIC, MOgreCanvas::CP_TOP, mBackgroundColor, Splitter3);
+        orw = new MOgreCanvas(QString("View3"), mSceneManager, Ogre::PT_ORTHOGRAPHIC, MOgreCanvas::CP_TOP, mBackgroundColor, Splitter3);
         mRenderWindowList.append(orw);
         Splitter3->addWidget(orw);
 
-        orw = new MOgreCanvas(QString("View3"), mSceneManager, Ogre::PT_PERSPECTIVE, MOgreCanvas::CP_FREE, mBackgroundColor, Splitter3);
+        orw = new MOgreCanvas(QString("View4"), mSceneManager, Ogre::PT_PERSPECTIVE, MOgreCanvas::CP_FREE, mBackgroundColor, Splitter3);
         mRenderWindowList.append(orw);
         Splitter3->addWidget(orw);
     }
@@ -808,6 +824,7 @@ void MSystemManager::setViewNum(int num)
         connect(mRenderWindowList[i],SIGNAL(mouseMove(QMouseEvent*)),this,SLOT(mouseMove(QMouseEvent*)));
         connect(mRenderWindowList[i],SIGNAL(wheel(QWheelEvent*)),this,SLOT(wheel(QWheelEvent*)));
         connect(mRenderWindowList[i],SIGNAL(mouseDoubleClick(QMouseEvent*)),this,SLOT(mouseDoubleClick(QMouseEvent*)));
+        connect(mRenderWindowList[i],SIGNAL(initialised()),this,SLOT(update()));
     }
 }
 
@@ -888,18 +905,18 @@ void MSystemManager::addObject(Ogre::String name)
     Ogre::ResourceGroupManager *rgm = Ogre::ResourceGroupManager::getSingletonPtr();
     rgm->addResourceLocation(name, "FileSystem", "General");
 
-    //Update the name
+    //FIXME: Re implement the naming mechanism.
     String meshName = name;
     meshName.substr(meshName.size()-5, 5);
 
     //Remove old object
-//    if(mainEnt != NULL)
-//    {
-//        mSceneManager->destroyEntity(mainEnt);
-//        mainEntAnim = 0;
-//    }
-//    if(mainNode != NULL)
-//        mSceneManager->destroySceneNode(mainNode->getName());
+    //if(mainEnt != NULL)
+    //{
+    //    mSceneManager->destroyEntity(mainEnt);
+    //    mainEntAnim = 0;
+    //}
+    //if(mainNode != NULL)
+    //    mSceneManager->destroySceneNode(mainNode->getName());
 
     //Add New Object
     mainEnt = mSceneManager->createEntity(meshName, name);
@@ -908,17 +925,18 @@ void MSystemManager::addObject(Ogre::String name)
     MString parentChainName = "World." + MString(meshName.c_str());
     MString nodeName = MString(meshName.c_str()) + "node";
 
-//    MString parentChainName = "World." + MString("sometext");
-//    MString nodeName = MString("lklkl") + "node";
+    //MString parentChainName = "World." + MString("sometext");
+    //MString nodeName = MString("lklkl") + "node";
 
     MNodeManager::getSingleton().notifyAddNode(parentChainName, nodeName);
 
     mainNode->attachObject(mainEnt);
     mainNode->setPosition(Vector3(0, 0, 0));
+    update();
 
     //Update the camera's pos to fit whith the object size
-//    mCurrCamera->setPosition(mainNode->getPosition().x, mainNode->getPosition().y, mainNode->getPosition().z - 200);
-//    mCurrCamera->lookAt(mainNode->getPosition());
+    //mCurrCamera->setPosition(mainNode->getPosition().x, mainNode->getPosition().y, mainNode->getPosition().z - 200);
+    //mCurrCamera->lookAt(mainNode->getPosition());
 }
 
 void MSystemManager::removeObject(Ogre::String name)

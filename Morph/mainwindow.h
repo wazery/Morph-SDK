@@ -12,6 +12,7 @@
 #include "MorphCore/Editor/mlogmanager.h"
 #include "mOgreEntityViewer/lightwindow.h"
 #include "mOgreEntityViewer/envproperties.h"
+#include "mOgreEntityViewer/objproperties.h"
 
 using namespace Morph;
 namespace Ui
@@ -49,7 +50,8 @@ public slots:
 
     void addObj();
     void loadObj(const QString &meshName);
-    void removeObj(const QString &meshName);
+    void showRemoveObj();
+    void commitRemoveObj();
 
     void setBackgroundColor();
     void gridChanged();
@@ -84,6 +86,7 @@ private:
     LightWindow    *lightWin;
 
     EnvProperties* envProperties;//Class EnvProperties.h
+    ObjProperties* objProperties;
 
     QColor diffuseLightColor;
     QColor specularLightColor;
