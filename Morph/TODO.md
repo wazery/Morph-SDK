@@ -6,7 +6,8 @@
 
 - Write MorphCore/README file
 - Implement Node View
-- Implement Properties View
+- Implement Environment Properties View __done__
+- Implement Object Properties View 
 - Implement Ogre scene serializer
 - Implement the command pattern with the following commands
  - Copy
@@ -21,4 +22,5 @@
  - Fix the background color and grid issue __done__
 - Add FPS/debugging overlays with show option
 - Use setPolyMode to implement new Canvas tab __done__
-- Add engine loading progress
+- Add faked engine loading progress
+- Add remove object dialog __done__

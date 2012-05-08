@@ -33,7 +33,9 @@ SOURCES += main.cpp\
     mOgreEntityViewer/viewgrid.cpp \
     mOgreEntityViewer/removeobject.cpp \
     #mOgreEntityViewer/textrenderer.cpp
-    MorphCore/Editor/mogrecanvas.cpp
+    MorphCore/Editor/mogrecanvas.cpp \
+    MorphCore/Editor/loadingbar.cpp \
+    mOgreEntityViewer/objproperties.cpp
 
 HEADERS += mainwindow.h \
     MorphCore/Editor/msystemmanager.h \
@@ -60,7 +62,9 @@ HEADERS += mainwindow.h \
     mOgreEntityViewer/viewgrid.h \
     mOgreEntityViewer/removeobject.h \
     #mOgreEntityViewer/textrenderer.h
-    MorphCore/Editor/mogrecanvas.h
+    MorphCore/Editor/mogrecanvas.h \
+    MorphCore/Editor/loadingbar.h \
+    mOgreEntityViewer/objproperties.h
 
 FORMS    += mainwindow.ui \
     mOgreEntityViewer/settingsdialog.ui \
