@@ -25,14 +25,57 @@
 
 ObjProperties::ObjProperties(QWidget *parent) : QWidget(parent)
 {
-    //DISPLAY OPTION
-    groupDisp = new QGroupBox("Display Options");
+    groupObjName = new QGroupBox("Object");
+    groupObjName->setMaximumHeight(60);
 
-    renderDetail = new QLabel(tr("Render Detail :"));
-    renderDetailCombo = new QComboBox;
-    renderDetailCombo->addItem(tr("Solid"));
-    renderDetailCombo->addItem(tr("Wireframe"));
-    renderDetailCombo->addItem(tr("Points"));
+    name = new QLabel("Name : ");
+    nameText = new QTextEdit();
+    nameText->setFixedHeight(28);
+    nameText->setAcceptRichText(false);
+    nameText->setReadOnly(true);
+    nameText->setMaximumHeight(28);
+
+    gridNameLayout = new QGridLayout;
+
+    gridNameLayout->addWidget(name, 1, 0);
+    gridNameLayout->addWidget(nameText, 1, 1);
+    groupObjName->setLayout(gridNameLayout);
+    ////////////////////////////////////////////
+
+    //POSITION OPTIONS
+    groupPos = new QGroupBox("Position Options");
+    groupPos->setMaximumHeight(120);
+
+    posX = new QLabel("Position X : ");
+    posXText = new QTextEdit();
+    posXText->setFixedHeight(28);
+    posXText->setAcceptRichText(false);
+
+    posY = new QLabel("Position Y : ");
+    posYText = new QTextEdit();
+    posYText->setFixedHeight(28);
+    posYText->setAcceptRichText(false);
+
+    posZ = new QLabel("Position Z : ");
+    posZText = new QTextEdit();
+    posZText->setFixedHeight(28);
+    posZText->setAcceptRichText(false);
+
+    gridPosLayout = new QGridLayout;
+
+    gridPosLayout->addWidget(posX, 0, 0);
+    gridPosLayout->addWidget(posXText, 0, 1);
+
+    gridPosLayout->addWidget(posY, 1, 0);
+    gridPosLayout->addWidget(posYText, 1, 1);
+
+    gridPosLayout->addWidget(posZ, 2, 0);
+    gridPosLayout->addWidget(posZText, 2, 1);
+    groupPos->setLayout(gridPosLayout);
+    ////////////////////////////////////////////
+
+    //DISPLAY OPTIONS
+    groupDisp = new QGroupBox("Display Options");
 
     lod = new QLabel("LOD : ");
     lodSlider = new QSlider(Qt::Horizontal);
@@ -46,8 +89,6 @@ ObjProperties::ObjProperties(QWidget *parent) : QWidget(parent)
     dispSkeletonCheckBox = new QCheckBox;
 
     gridDispLayout = new QGridLayout;
-    gridDispLayout->addWidget(renderDetail, 0, 0);
-    gridDispLayout->addWidget(renderDetailCombo, 0, 1);
 
     gridDispLayout->addWidget(boundingBox, 1, 0);
     gridDispLayout->addWidget(boundBoxCheckBox, 1, 1);
@@ -100,6 +141,8 @@ ObjProperties::ObjProperties(QWidget *parent) : QWidget(parent)
     ////////////////////////////////////////////
 
     regroupLayout = new QVBoxLayout;
+    regroupLayout->addWidget(groupObjName);
+    regroupLayout->addWidget(groupPos);
     regroupLayout->addWidget(groupDisp);
     regroupLayout->addWidget(groupMat);
     regroupLayout->addWidget(groupAnim);
@@ -114,17 +157,19 @@ ObjProperties::~ObjProperties()
 
 void ObjProperties::updateListAnim(Ogre::AnimationStateSet* anims)
 {
-    if(anims != 0){
+    if(anims != 0)
+    {
         Ogre::AnimationStateIterator animNames = anims->getAnimationStateIterator();
-        while(animNames.hasMoreElements()){
+        while(animNames.hasMoreElements())
+        {
             listAnimCombo->addItem(animNames.getNext()->getAnimationName().c_str());
         }
         loopCheckBox->setEnabled(true);
         playCheckBox->setEnabled(true);
     }
-    else{
+    else
+    {
         loopCheckBox->setEnabled(false);
         playCheckBox->setEnabled(false);
-
     }
 }

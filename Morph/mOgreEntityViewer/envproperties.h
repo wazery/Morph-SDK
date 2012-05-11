@@ -11,6 +11,7 @@ public:
     EnvProperties(QWidget *parent = 0);
     ~EnvProperties();
 
+    QComboBox* renderDetailCombo;
     QPushButton* fogColorBtn;
     QPushButton* backgroundColorBtn;
     QPushButton* ambientLightColorBtn;
@@ -21,17 +22,20 @@ public:
     QAction* removeAction;
 
 private:
+    QLabel* renderDetail;
     QLabel* fogType;
     QLabel* fogColor;
     QLabel* shadowType;
     QLabel* backgroundColor;
     QLabel* ambientLight;
 
+    QGroupBox* groupDisp;
     QGroupBox* groupFog;
     QGroupBox* groupShadow;
     QGroupBox* groupBackground;
     QGroupBox* groupLights;
 
+    QGridLayout* gridDispLayout;
     QGridLayout* gridFogLayout;
     QGridLayout* gridShadowLayout;
     QGridLayout* gridBackgroundLayout;

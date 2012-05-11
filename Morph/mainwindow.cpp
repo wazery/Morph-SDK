@@ -5,12 +5,23 @@
 
 using namespace Morph;
 
-MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWindow)
+MainWindow::MainWindow(QWidget *parent) :
+    QMainWindow(parent),
+    ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
 
     mSettingsFile = QApplication::applicationDirPath() + "editorSettings";
     mSettings = new QSettings(mSettingsFile, QSettings::NativeFormat);
+
+    StartingWindow* startingWindow = new StartingWindow(this);
+    startingWindow->show();
+
+    //if(!mSettings->value("startingWindow").toBool())
+    //{
+    //    if(startingWindow)
+    //        startingWindow->hide();
+    //}
 
     // Pointers to the editor subsystems.
     systemManager = ui->widget;
@@ -19,12 +30,12 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     loadSettings();
 
     envProperties = new EnvProperties(this);
-    QTabWidget *propertiesTab = ui->tabWidget_3;
+    propertiesTab = ui->tabWidget_3;
     propertiesTab->addTab(envProperties, QIcon("settings.png"), ("Environment"));
 
     objProperties = new ObjProperties(this);
-    propertiesTab->addTab(objProperties, QIcon("settings.png"), ("Object Properties"));
-    //propertiesTab->setMaximumSize(243, 450);
+    propertiesTab->addTab(objProperties, QIcon("settings.png"), ("Object"));
+    propertiesTab->setEnabled(false);
 
     ui->listWidget->addItem(new QListWidgetItem(QIcon("settings.png"), "Toggle Button"));
     ui->listWidget->addItem(new QListWidgetItem(QIcon("check.png"), "Check Button"));
@@ -40,8 +51,8 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     //MNodeManager::getSingleton().addAttributeListener(&m_wndProperties);
     //MCommandManager::getSingleton().addCommandListener(this);
 
-    // Connect actions to slots.
-    connect(ui->actionFakeError, SIGNAL(triggered()), this, SLOT(fakeSlot()));
+    //  Connect actions to slots.
+    // --------------------------------------
     connect(ui->actionAbout_Morph, SIGNAL(triggered()), this, SLOT(openAboutDialog()));
 
     connect(ui->actionConfigure_Editor, SIGNAL(triggered()), this, SLOT(openSettingsDialog()));
@@ -52,15 +63,24 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     // FIXME:
     connect(ui->actionRemoveMesh, SIGNAL(triggered()), this, SLOT(showRemoveObj()));
 
-    // Environment Properties
+    //  Environment Properties
+    // --------------------------------------
     connect(envProperties->fogTypeCombo, SIGNAL(activated(int)), this, SLOT(setFog(int)));
     connect(envProperties->fogColorBtn, SIGNAL(clicked()), this, SLOT(setFogColor()));
-    // FIXME:
-    //connect(envProperties->shadowTypeCombo, SIGNAL(activated(int)), this, SLOT(setShadow(int)));
+    connect(envProperties->shadowTypeCombo, SIGNAL(activated(int)), this, SLOT(setShadow(int)));
     connect(envProperties->backgroundColorBtn, SIGNAL(clicked()), this, SLOT(setBackgroundColor()));
     connect(envProperties->ambientLightColorBtn, SIGNAL(clicked()), this, SLOT(setAmbientLight()));
     connect(envProperties->modifyAction, SIGNAL(triggered()), this, SLOT(modifyLight()));
     connect(envProperties->removeAction, SIGNAL(triggered()), this, SLOT(deleteLight()));
+    connect(envProperties->renderDetailCombo, SIGNAL(currentIndexChanged(int)), this, SLOT(setRenderDetail(int)));
+
+    //  Object Properties
+    // --------------------------------------
+    connect(systemManager, SIGNAL(selectedNodeChanged(bool)), this, SLOT(getObjName(bool)));
+    connect(systemManager, SIGNAL(selectedNodeChanged(bool)), this, SLOT(enableObjProperties(bool)));
+    connect(objProperties->boundBoxCheckBox, SIGNAL(clicked(bool)), this, SLOT(setObjBoundingBoxes(bool)));
+    connect(systemManager, SIGNAL(selectedNodeChanged(bool)), objProperties->boundBoxCheckBox, SLOT(setChecked(bool)));
+    connect(objProperties->dispSkeletonCheckBox, SIGNAL(clicked(bool)), this, SLOT(setobjSkeleton(bool)));
 
     connect(lightWin->diffuseColorLightBtn, SIGNAL(clicked()), this, SLOT(setDiffuseLightColor()));
     connect(lightWin->specularColorLightBtn, SIGNAL(clicked()), this, SLOT(setSpecularLightColor()));
@@ -70,8 +90,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     connect(ui->zoomSlider, SIGNAL(valueChanged(int)), ui->zommSpinBox, SLOT(setValue(int)));
     connect(ui->zommSpinBox, SIGNAL(valueChanged(int)), ui->zoomSlider, SLOT(setValue(int)));
 
-    // --------------------------------------
-    //            Initialise Engine
+    //  Initialise Engine
     // --------------------------------------
     connect(systemManager, SIGNAL(initialised()), this, SLOT(addNodeListener()));
     connect(systemManager, SIGNAL(initialised()), this, SLOT(initialisePlugins()));
@@ -115,6 +134,9 @@ void MainWindow::initialisePlugins()
     }
     MNodeManager::getSingleton().setRootNodePtr(rootNodePtr);
     MNodeManager::getSingleton().notifyAddNode("World.", rootNodePtr->getName());
+
+    // Init Object Properties
+    objProperties->boundBoxCheckBox->setEnabled(false);
 
     // Enable Canvas Buttons
     ui->grid->setEnabled(true);
@@ -209,7 +231,7 @@ void MainWindow::loadSettings()
 
     //TODO: check if the grid is enabled if(systemManager->mGridList)
     //Set grid checkbox
-    ui->grid->setChecked(mSettings->value("grid").toBool());
+    ui->grid->setChecked(mSettings->value("Grid/grid").toBool());
 }
 
 // TODO: I don't know why the save settings not called in the ~MainWindow()
@@ -217,18 +239,13 @@ void MainWindow::saveSettings()
 {
     // Set the previous viewport option.
     if(ui->wireframe->isEnabled())
-        mSettings->setValue("canvasViewportCurrentOption", 0);
+        mSettings->setValue("Canvas/canvasViewportCurrentOption", 0);
 
     else if(ui->points->isEnabled())
-        mSettings->setValue("canvasViewportCurrentOption", 1);
+        mSettings->setValue("Canvas/canvasViewportCurrentOption", 1);
 
     if(ui->polygons->isEnabled())
-        mSettings->setValue("canvasViewportCurrentOption", 2);
-}
-
-void MainWindow::fakeSlot()
-{
-    MLogManager::getSingleton().logOutput("Fake Error!", M_ERROR, true);
+        mSettings->setValue("Canvas/canvasViewportCurrentOption", 2);
 }
 
 void MainWindow::openAboutDialog()
@@ -247,13 +264,15 @@ void MainWindow::openSettingsDialog()
     connect(settingsdialog, SIGNAL(signalGridColorChanged(QColor)), this, SLOT(gridColorChanged(QColor)));
     connect(settingsdialog, SIGNAL(signalGridPrespectiveSizeChanged(int)), this, SLOT(gridPrespectiveSizeChanged(int)));
     connect(settingsdialog, SIGNAL(signalGridRenderLayerChanged(int)), this, SLOT(gridRenderLayerChanged(int)));
+    connect(settingsdialog, SIGNAL(signalGridRenderScaleChanged(bool)), this, SLOT(gridRenderScaleChanged(bool)));
     settingsdialog->show();
 }
 
 void MainWindow::changeIndexofCanvas()
 {
     ui->tabWidget->setCurrentIndex(1);
-    setFourViewPorts();
+    propertiesTab->setEnabled(true);
+    setOneViewPort();
 }
 
 void MainWindow::gridColorChanged(QColor color)
@@ -266,7 +285,7 @@ void MainWindow::gridColorChanged(QColor color)
         for(int i = 0; i < systemManager->mGridList.count(); i++)
         {
             systemManager->mGridList[i]->setColour(ogreColor);
-            mSettings->setValue("gridColor", color.name());
+            mSettings->setValue("Grid/gridColor", color.name());
         }
     }
 }
@@ -307,6 +326,17 @@ void MainWindow::gridRenderLayerChanged(int index)
     }
 }
 
+void MainWindow::gridRenderScaleChanged(bool value)
+{
+    if(!systemManager->mGridList.isEmpty())
+    {
+        for(int i = 0; i < systemManager->mGridList.count(); i++)
+        {
+            systemManager->mGridList[i]->setRenderScale(value);
+        }
+    }
+}
+
 void MainWindow::addObj()
 {
     if(systemManager->isVisible())
@@ -331,23 +361,22 @@ void MainWindow::loadObj(const QString &meshName)
             MLogManager::getSingleton().logOutput("Has Skeleton : NO", M_EDITOR_MESSAGE);
 
         // Update object properties
-//		objProperties->renderDetailCombo->setCurrentIndex(0);
-//		objProperties->boundBoxCheckBox->setChecked(false);
-//		objProperties->dispSkeletonCheckBox->setChecked(false);
-//		objProperties->lodSlider->setSliderPosition(objProperties->lodSlider->maximum()/2);
-//		objProperties->listAnimCombo->clear();
-//		objProperties->updateListAnim(systemManager->mainEnt->getAllAnimationStates());
+        objProperties->boundBoxCheckBox->setChecked(false);
+        objProperties->dispSkeletonCheckBox->setChecked(false);
+        objProperties->lodSlider->setSliderPosition(objProperties->lodSlider->maximum()/2);
+        objProperties->listAnimCombo->clear();
+        objProperties->updateListAnim(systemManager->mainEnt->getAllAnimationStates());
 
-//		if(objProperties->listAnimCombo->itemText(0) != "") { // The mesh has animations
-//			systemManager->setAnimationState(objProperties->listAnimCombo->itemText(0).toStdString());
-//			objProperties->playCheckBox->setChecked(false);
-//			objProperties->loopCheckBox->setChecked(false);
-//			MLogManager::getSingleton().logOutput("Has Animations : YES", M_EDITOR_MESSAGE);
-//		}
-//		else
-//			MLogManager::getSingleton().logOutput("Has Animations : NO", M_EDITOR_MESSAGE);
+//        if(objProperties->listAnimCombo->itemText(0) != "") { // The mesh has animations
+//            systemManager->setAnimationState(objProperties->listAnimCombo->itemText(0).toStdString());
+//            objProperties->playCheckBox->setChecked(false);
+//            objProperties->loopCheckBox->setChecked(false);
+//            MLogManager::getSingleton().logOutput("Has Animations : YES", M_EDITOR_MESSAGE);
+//        }
+//        else
+//            MLogManager::getSingleton().logOutput("Has Animations : NO", M_EDITOR_MESSAGE);
 
-//		MLogManager::getSingleton().logOutput("=========================", M_EDITOR_MESSAGE); // End of the log
+//        MLogManager::getSingleton().logOutput("=========================", M_EDITOR_MESSAGE); // End of the log
     }
 }
 
@@ -378,7 +407,7 @@ void MainWindow::setBackgroundColor()
             MLogManager::getSingleton().logOutput("Background Color : " + color.name(), M_EDITOR_MESSAGE);
         }
 
-        mSettings->setValue("canvasBackgroundColor", color.name());
+        mSettings->setValue("Canvas/canvasBackgroundColor", color.name());
         mSettings->sync();
     }
     else
@@ -387,7 +416,7 @@ void MainWindow::setBackgroundColor()
 
 void MainWindow::gridChanged()
 {
-    mSettings->setValue("grid", ui->grid->isChecked());
+    mSettings->setValue("Grid/grid", ui->grid->isChecked());
     mSettings->sync();
 
     //systemManager->mGrid->setEnabled(ui->grid->isChecked());
@@ -540,6 +569,49 @@ void MainWindow::deleteLight()
         QMessageBox::warning(this, "Cannot delete light", "Sorry, but you cannot delete this light at this position of the tree (-->Bug)");
 }
 
+void MainWindow::getObjName(bool value)
+{
+    Q_UNUSED(value)
+    if(systemManager->getSelectedNode())
+        objProperties->nameText->setText(QString(systemManager->getSelectedNode()->getName().c_str()));
+    else
+        objProperties->nameText->setText("");
+}
+
+void MainWindow::setRenderDetail(int index)
+{
+    if(index == 0)
+        setViewPortToWireframe();
+    else if(index == 1)
+        setViewPortToPoints();
+    else if(index == 2)
+        setViewPortToPolygons();
+}
+
+void MainWindow::setObjBoundingBoxes(bool value)
+{
+    if(systemManager->getSelectedNode() != NULL)
+    {
+        systemManager->getSelectedNode()->showBoundingBox(value);
+        systemManager->update();
+    }
+    //objProperties->boundBoxCheckBox->setEnabled(false);
+}
+
+void MainWindow::setobjSkeleton(bool value)
+{
+    //if(systemManager->getSelectedNode())
+    //    systemManager->getSceneManager()->getEntity(systemManager->getSelectedNode()->getName())->setDisplaySkeleton(value);
+}
+
+void MainWindow::enableObjProperties(bool value)
+{
+    Q_UNUSED(value)
+
+    objProperties->boundBoxCheckBox->setEnabled(true);
+    objProperties->dispSkeletonCheckBox->setEnabled(true);
+}
+
 void MainWindow::setDiffuseLightColor()
 {
     //In case we're updating a light
@@ -572,21 +644,40 @@ void MainWindow::setAmbientLight()
 {
     if (lightWin->windowTitle() != "Create Light")
     {
-//        QString ambientColor = envProperties->lightsTree->currentItem()->child(3)->text(0);
-//        ambientColor = ambientColor.remove()
+        //QString ambientColor = envProperties->lightsTree->currentItem()->child(3)->text(0);
+        //ambientColor = ambientColor.remove()
     }
 }
 
-void MainWindow::setFog(int)
+void MainWindow::setFog(int fogType)
 {
+    systemManager->setFog(fogType);
+    systemManager->update();
 }
 
 void MainWindow::setFogColor()
 {
+    QColor color = QColorDialog::getColor(systemManager->getFogColor(), this);
+    if(color.isValid())
+    {
+        systemManager->setFogColor(color);
+        MLogManager::getSingleton().logOutput("Fog Color : " + color.name(), M_EDITOR_MESSAGE);
+    }
+    systemManager->update();
 }
 
-void MainWindow::setShadow()
+void MainWindow::setShadow(int fogType)
 {
+    if(fogType == 0)
+        systemManager->getSceneManager()->setShadowTechnique(SHADOWTYPE_NONE);
+    else if(fogType == 1)
+        systemManager->getSceneManager()->setShadowTechnique(SHADOWTYPE_STENCIL_MODULATIVE);
+    else if(fogType == 2)
+        systemManager->getSceneManager()->setShadowTechnique(SHADOWTYPE_STENCIL_ADDITIVE);
+    else if(fogType == 3)
+        systemManager->getSceneManager()->setShadowTechnique(SHADOWTYPE_TEXTURE_MODULATIVE);
+
+    systemManager->update();
 }
 
 void MainWindow::createNewLight()

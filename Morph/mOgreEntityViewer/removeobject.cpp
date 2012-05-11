@@ -7,6 +7,7 @@ RemoveObject::RemoveObject(QWidget *parent) :
     ui(new Ui::RemoveObject)
 {
     ui->setupUi(this);
+    ui->textEdit->setAcceptRichText(false);
     connect(ui->textEdit, SIGNAL(textChanged()), this, SLOT(setText()));
     connect(ui->buttonBox->button(QDialogButtonBox::Ok), SIGNAL(clicked()), this, SLOT(Clicked()));
     connect(this, SIGNAL(clicked()), parent, SLOT(commitRemoveObj()));

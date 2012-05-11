@@ -80,8 +80,9 @@
    </widget>
    <widget class="QMenu" name="menuSelection">
     <property name="title">
-     <string>Selection</string>
+     <string>&amp;Selection</string>
     </property>
+    <addaction name="action_Remove_Selected"/>
    </widget>
    <widget class="QMenu" name="menuObjects">
     <property name="title">
@@ -104,7 +105,6 @@
     <addaction name="actionMove"/>
     <addaction name="actionTranslate"/>
     <addaction name="actionRemoveMesh"/>
-    <addaction name="actionFakeError"/>
    </widget>
    <widget class="QMenu" name="menuWindows">
     <property name="title">
@@ -119,7 +119,7 @@
    </widget>
    <widget class="QMenu" name="menuHelp">
     <property name="title">
-     <string>Help</string>
+     <string>&amp;Help</string>
     </property>
     <addaction name="actionAbout_Morph"/>
    </widget>
@@ -193,6 +193,7 @@
    <addaction name="actionMove"/>
    <addaction name="actionTranslate"/>
    <addaction name="actionRotate"/>
+   <addaction name="separator"/>
   </widget>
   <widget class="QDockWidget" name="dockWidget">
    <property name="sizePolicy">
@@ -217,7 +218,7 @@
     <set>QDockWidget::AllDockWidgetFeatures</set>
    </property>
    <property name="windowTitle">
-    <string>Canvas</string>
+    <string>Morph Main View</string>
    </property>
    <attribute name="dockWidgetArea">
     <number>1</number>
@@ -233,10 +234,10 @@
         <string notr="true"/>
        </property>
        <property name="tabPosition">
-        <enum>QTabWidget::East</enum>
+        <enum>QTabWidget::North</enum>
        </property>
        <property name="tabShape">
-        <enum>QTabWidget::Rounded</enum>
+        <enum>QTabWidget::Triangular</enum>
        </property>
        <property name="currentIndex">
         <number>0</number>
@@ -244,100 +245,196 @@
        <property name="elideMode">
         <enum>Qt::ElideNone</enum>
        </property>
+       <property name="documentMode">
+        <bool>true</bool>
+       </property>
+       <property name="tabsClosable">
+        <bool>true</bool>
+       </property>
+       <property name="movable">
+        <bool>true</bool>
+       </property>
        <widget class="QWidget" name="tab_2">
         <attribute name="title">
-         <string>Wireframe</string>
+         <string>Dashboard</string>
         </attribute>
-        <layout class="QGridLayout" name="gridLayout_6">
-         <item row="1" column="0">
-          <layout class="QGridLayout" name="gridLayout_5">
-           <item row="0" column="1">
-            <widget class="QPushButton" name="pushButton">
-             <property name="accessibleName">
-              <string>Start</string>
-             </property>
-             <property name="text">
-              <string>Start Engine</string>
-             </property>
-             <property name="shortcut">
-              <string>Ctrl+Return</string>
-             </property>
-             <property name="autoDefault">
-              <bool>false</bool>
-             </property>
-             <property name="default">
-              <bool>false</bool>
-             </property>
-             <property name="flat">
-              <bool>false</bool>
-             </property>
-            </widget>
-           </item>
-           <item row="1" column="1">
-            <spacer name="verticalSpacer">
-             <property name="orientation">
-              <enum>Qt::Vertical</enum>
-             </property>
-             <property name="sizeHint" stdset="0">
-              <size>
-               <width>20</width>
-               <height>18</height>
-              </size>
-             </property>
-            </spacer>
-           </item>
-           <item row="0" column="2">
-            <spacer name="horizontalSpacer">
-             <property name="orientation">
-              <enum>Qt::Horizontal</enum>
-             </property>
-             <property name="sizeHint" stdset="0">
-              <size>
-               <width>40</width>
-               <height>20</height>
-              </size>
-             </property>
-            </spacer>
-           </item>
-           <item row="0" column="0">
-            <spacer name="horizontalSpacer_2">
-             <property name="orientation">
-              <enum>Qt::Horizontal</enum>
-             </property>
-             <property name="sizeHint" stdset="0">
-              <size>
-               <width>40</width>
-               <height>20</height>
-              </size>
-             </property>
-            </spacer>
-           </item>
-          </layout>
-         </item>
-         <item row="0" column="0">
-          <spacer name="verticalSpacer_2">
-           <property name="orientation">
-            <enum>Qt::Vertical</enum>
-           </property>
-           <property name="sizeHint" stdset="0">
-            <size>
-             <width>20</width>
-             <height>40</height>
-            </size>
-           </property>
-          </spacer>
-         </item>
-        </layout>
+        <widget class="QTextEdit" name="textEdit_2">
+         <property name="geometry">
+          <rect>
+           <x>370</x>
+           <y>180</y>
+           <width>371</width>
+           <height>91</height>
+          </rect>
+         </property>
+         <property name="frameShape">
+          <enum>QFrame::NoFrame</enum>
+         </property>
+         <property name="frameShadow">
+          <enum>QFrame::Plain</enum>
+         </property>
+         <property name="html">
+          <string>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'Sans Serif'; font-size:9pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; background-color:#cc0508;&quot;&gt;&lt;span style=&quot; font-family:'Verdana,Geneva,Arial,Helvetica,sans-serif'; font-size:13px; font-weight:600; color:#dcdcdc;&quot;&gt;What can it do?&lt;/span&gt;&lt;span style=&quot; font-family:'Verdana,Geneva,Arial,Helvetica,sans-serif'; font-size:13px; color:#dcdcdc;&quot;&gt;&lt;br /&gt;Lots of things! See the features page for an up-to-date list of the current features. Also, take a look at the screenshots page to see for yourself the kinds of eye candy OGRE can pump out.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+         </property>
+        </widget>
+        <widget class="QTextEdit" name="textEdit_3">
+         <property name="geometry">
+          <rect>
+           <x>20</x>
+           <y>260</y>
+           <width>201</width>
+           <height>51</height>
+          </rect>
+         </property>
+         <property name="frameShape">
+          <enum>QFrame::NoFrame</enum>
+         </property>
+         <property name="frameShadow">
+          <enum>QFrame::Plain</enum>
+         </property>
+         <property name="html">
+          <string>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'Sans Serif'; font-size:9pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:12pt; font-weight:600;&quot;&gt;Quick samples for Morph SDK&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+         </property>
+        </widget>
+        <widget class="QTextEdit" name="textEdit_4">
+         <property name="geometry">
+          <rect>
+           <x>370</x>
+           <y>280</y>
+           <width>151</width>
+           <height>61</height>
+          </rect>
+         </property>
+         <property name="frameShape">
+          <enum>QFrame::NoFrame</enum>
+         </property>
+         <property name="frameShadow">
+          <enum>QFrame::Plain</enum>
+         </property>
+         <property name="html">
+          <string>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'Sans Serif'; font-size:9pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:12pt; font-weight:600;&quot;&gt;Learning Documents&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+         </property>
+        </widget>
+        <widget class="QPushButton" name="pushButton_4">
+         <property name="geometry">
+          <rect>
+           <x>20</x>
+           <y>13</y>
+           <width>111</width>
+           <height>23</height>
+          </rect>
+         </property>
+         <property name="text">
+          <string>Open Project</string>
+         </property>
+        </widget>
+        <widget class="QPushButton" name="pushButton_5">
+         <property name="geometry">
+          <rect>
+           <x>140</x>
+           <y>13</y>
+           <width>121</width>
+           <height>23</height>
+          </rect>
+         </property>
+         <property name="text">
+          <string>Create Project</string>
+         </property>
+        </widget>
+        <widget class="QPushButton" name="pushButton_6">
+         <property name="geometry">
+          <rect>
+           <x>640</x>
+           <y>16</y>
+           <width>99</width>
+           <height>23</height>
+          </rect>
+         </property>
+         <property name="text">
+          <string>Feedback</string>
+         </property>
+        </widget>
+        <widget class="QTextEdit" name="textEdit">
+         <property name="geometry">
+          <rect>
+           <x>20</x>
+           <y>40</y>
+           <width>441</width>
+           <height>131</height>
+          </rect>
+         </property>
+         <property name="frameShape">
+          <enum>QFrame::NoFrame</enum>
+         </property>
+         <property name="frameShadow">
+          <enum>QFrame::Plain</enum>
+         </property>
+         <property name="html">
+          <string>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'Sans Serif'; font-size:9pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:12pt; font-weight:600;&quot;&gt;About Ogre 3D Engine&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;What Is OGRE? OGRE (Object-Oriented Graphics Rendering Engine) is a scene-oriented, flexible 3D engine written in C++ designed to make it easier and more intuitive for developers to produce applications utilising hardware-accelerated 3D graphics. The class library abstracts all the details of using the underlying system libraries like Direct3D and OpenGL and provides an interface based on world objects and other intuitive classes.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+         </property>
+        </widget>
+        <widget class="QPushButton" name="pushButton">
+         <property name="geometry">
+          <rect>
+           <x>637</x>
+           <y>360</y>
+           <width>104</width>
+           <height>23</height>
+          </rect>
+         </property>
+         <property name="accessibleName">
+          <string>Start</string>
+         </property>
+         <property name="text">
+          <string>Start Engine</string>
+         </property>
+         <property name="shortcut">
+          <string>Ctrl+Return</string>
+         </property>
+         <property name="autoDefault">
+          <bool>false</bool>
+         </property>
+         <property name="default">
+          <bool>false</bool>
+         </property>
+         <property name="flat">
+          <bool>false</bool>
+         </property>
+        </widget>
        </widget>
        <widget class="QWidget" name="rendered">
+        <attribute name="icon">
+         <iconset resource="icons.qrc">
+          <normaloff>:/dialogs/Media/icons/Work.png</normaloff>:/dialogs/Media/icons/Work.png</iconset>
+        </attribute>
         <attribute name="title">
-         <string>Rendered</string>
+         <string>Canvas</string>
         </attribute>
         <layout class="QGridLayout" name="gridLayout_4">
          <item row="0" column="0">
           <widget class="MSystemManager" name="widget" native="true">
            <property name="acceptDrops">
             <bool>true</bool>
+           </property>
+           <property name="toolTip">
+            <string>Here is the Ogre 3D engine canvas, it accepts drags &amp; drops from .mesh files</string>
            </property>
           </widget>
          </item>
@@ -366,7 +463,7 @@
           <string>...</string>
          </property>
          <property name="icon">
-          <iconset resource="icons.qrc">
+          <iconset>
            <normaloff>:/toolbar/icons/scale.svg</normaloff>:/toolbar/icons/scale.svg</iconset>
          </property>
         </widget>
@@ -382,12 +479,23 @@
         </widget>
        </item>
        <item>
+        <widget class="QToolButton" name="toolButton">
+         <property name="text">
+          <string>1:1</string>
+         </property>
+        </widget>
+       </item>
+       <item>
         <widget class="QToolButton" name="wireframe">
          <property name="enabled">
           <bool>false</bool>
          </property>
          <property name="text">
           <string>Wireframe</string>
+         </property>
+         <property name="icon">
+          <iconset resource="icons.qrc">
+           <normaloff>:/dialogs/Media/icons/Work.png</normaloff>:/dialogs/Media/icons/Work.png</iconset>
          </property>
         </widget>
        </item>
@@ -418,7 +526,7 @@
          </property>
          <property name="icon">
           <iconset resource="icons.qrc">
-           <normaloff>:/toolbar/icons/search32.png</normaloff>:/toolbar/icons/search32.png</iconset>
+           <normaloff>:/dialogs/Media/icons/Search.png</normaloff>:/dialogs/Media/icons/Search.png</iconset>
          </property>
          <property name="popupMode">
           <enum>QToolButton::MenuButtonPopup</enum>
@@ -585,6 +693,10 @@ p, li { white-space: pre-wrap; }
      <verstretch>0</verstretch>
     </sizepolicy>
    </property>
+   <property name="windowIcon">
+    <iconset resource="icons.qrc">
+     <normaloff>:/dialogs/Media/icons/List.png</normaloff>:/dialogs/Media/icons/List.png</iconset>
+   </property>
    <property name="windowTitle">
     <string>Scene Explorer</string>
    </property>
@@ -620,6 +732,12 @@ p, li { white-space: pre-wrap; }
     <layout class="QGridLayout" name="gridLayout_7">
      <item row="0" column="0">
       <widget class="QListWidget" name="listWidget">
+       <property name="dragEnabled">
+        <bool>true</bool>
+       </property>
+       <property name="dragDropMode">
+        <enum>QAbstractItemView::DragOnly</enum>
+       </property>
        <property name="iconSize">
         <size>
          <width>32</width>
@@ -632,6 +750,16 @@ p, li { white-space: pre-wrap; }
    </widget>
   </widget>
   <widget class="QDockWidget" name="dockWidget_5">
+   <property name="maximumSize">
+    <size>
+     <width>500</width>
+     <height>700</height>
+    </size>
+   </property>
+   <property name="windowIcon">
+    <iconset resource="icons.qrc">
+     <normaloff>:/dialogs/Media/icons/Control Panel.png</normaloff>:/dialogs/Media/icons/Control Panel.png</iconset>
+   </property>
    <property name="windowTitle">
     <string>Properties</string>
    </property>
@@ -688,7 +816,7 @@ p, li { white-space: pre-wrap; }
   <action name="actionOpen">
    <property name="icon">
     <iconset resource="icons.qrc">
-     <normaloff>:/toolbar/icons/folder32.png</normaloff>:/toolbar/icons/folder32.png</iconset>
+     <normaloff>:/dialogs/Media/icons/File.png</normaloff>:/dialogs/Media/icons/File.png</iconset>
    </property>
    <property name="text">
     <string>&amp;Open</string>
@@ -698,6 +826,10 @@ p, li { white-space: pre-wrap; }
    </property>
   </action>
   <action name="actionSave">
+   <property name="icon">
+    <iconset resource="icons.qrc">
+     <normaloff>:/dialogs/Media/icons/Sign-Down.png</normaloff>:/dialogs/Media/icons/Sign-Down.png</iconset>
+   </property>
    <property name="text">
     <string>&amp;Save</string>
    </property>
@@ -705,7 +837,7 @@ p, li { white-space: pre-wrap; }
   <action name="actionQuit">
    <property name="icon">
     <iconset resource="icons.qrc">
-     <normaloff>:/toolbar/icons/block32.png</normaloff>:/toolbar/icons/block32.png</iconset>
+     <normaloff>:/dialogs/Media/icons/Power.png</normaloff>:/dialogs/Media/icons/Power.png</iconset>
    </property>
    <property name="text">
     <string>&amp;Quit</string>
@@ -717,7 +849,7 @@ p, li { white-space: pre-wrap; }
   <action name="actionNew">
    <property name="icon">
     <iconset resource="icons.qrc">
-     <normaloff>:/toolbar/icons/ogscene2.png</normaloff>:/toolbar/icons/ogscene2.png</iconset>
+     <normaloff>:/actions/Media/icons/document_alt_stroke_24x32.png</normaloff>:/actions/Media/icons/document_alt_stroke_24x32.png</iconset>
    </property>
    <property name="text">
     <string>&amp;New</string>
@@ -727,6 +859,10 @@ p, li { white-space: pre-wrap; }
    </property>
   </action>
   <action name="actionSave_as">
+   <property name="icon">
+    <iconset resource="icons.qrc">
+     <normaloff>:/dialogs/Media/icons/Floppy.png</normaloff>:/dialogs/Media/icons/Floppy.png</iconset>
+   </property>
    <property name="text">
     <string>Save &amp;As</string>
    </property>
@@ -737,7 +873,7 @@ p, li { white-space: pre-wrap; }
   <action name="actionSelect">
    <property name="icon">
     <iconset resource="icons.qrc">
-     <normaloff>:/toolbar/icons/arrow32.png</normaloff>:/toolbar/icons/arrow32.png</iconset>
+     <normaloff>:/dialogs/Media/icons/Arrow.png</normaloff>:/dialogs/Media/icons/Arrow.png</iconset>
    </property>
    <property name="text">
     <string>&amp;Select</string>
@@ -749,7 +885,7 @@ p, li { white-space: pre-wrap; }
   <action name="actionMove">
    <property name="icon">
     <iconset resource="icons.qrc">
-     <normaloff>:/toolbar/icons/move.png</normaloff>:/toolbar/icons/move.png</iconset>
+     <normaloff>:/actions/Media/icons/move_alt2_32x32.png</normaloff>:/actions/Media/icons/move_alt2_32x32.png</iconset>
    </property>
    <property name="text">
     <string>&amp;Move</string>
@@ -761,7 +897,7 @@ p, li { white-space: pre-wrap; }
   <action name="actionTranslate">
    <property name="icon">
     <iconset resource="icons.qrc">
-     <normaloff>:/toolbar/icons/translate.png</normaloff>:/toolbar/icons/translate.png</iconset>
+     <normaloff>:/actions/Media/icons/move.png</normaloff>:/actions/Media/icons/move.png</iconset>
    </property>
    <property name="text">
     <string>&amp;Translate</string>
@@ -780,7 +916,7 @@ p, li { white-space: pre-wrap; }
   </action>
   <action name="actionPaste">
    <property name="icon">
-    <iconset resource="icons.qrc">
+    <iconset>
      <normaloff>:/toolbar/icons/translate.png</normaloff>:/toolbar/icons/translate.png</iconset>
    </property>
    <property name="text">
@@ -796,7 +932,7 @@ p, li { white-space: pre-wrap; }
   <action name="actionCut">
    <property name="icon">
     <iconset resource="icons.qrc">
-     <normaloff>:/toolbar/icons/scissors32.png</normaloff>:/toolbar/icons/scissors32.png</iconset>
+     <normaloff>:/actions/Media/icons/scissors32.png</normaloff>:/actions/Media/icons/scissors32.png</iconset>
    </property>
    <property name="text">
     <string>&amp;Cut</string>
@@ -830,6 +966,10 @@ p, li { white-space: pre-wrap; }
    </property>
   </action>
   <action name="actionFull_Screen">
+   <property name="icon">
+    <iconset resource="icons.qrc">
+     <normaloff>:/actions/Media/icons/fullscreen_32x32.png</normaloff>:/actions/Media/icons/fullscreen_32x32.png</iconset>
+   </property>
    <property name="text">
     <string>&amp;Full Screen</string>
    </property>
@@ -838,31 +978,51 @@ p, li { white-space: pre-wrap; }
    </property>
   </action>
   <action name="actionShow_3D_Canvas">
+   <property name="icon">
+    <iconset resource="icons.qrc">
+     <normaloff>:/dialogs/Media/icons/Work.png</normaloff>:/dialogs/Media/icons/Work.png</iconset>
+   </property>
    <property name="text">
     <string>&amp;Show 3D Canvas</string>
    </property>
   </action>
   <action name="actionWidgets">
    <property name="text">
-    <string>Widgets</string>
+    <string>&amp;Widgets</string>
    </property>
   </action>
   <action name="actionScene_Explorer">
+   <property name="icon">
+    <iconset resource="icons.qrc">
+     <normaloff>:/dialogs/Media/icons/List.png</normaloff>:/dialogs/Media/icons/List.png</iconset>
+   </property>
    <property name="text">
-    <string>Scene Explorer</string>
+    <string>&amp;Scene Explorer</string>
    </property>
   </action>
   <action name="actionCanvas">
+   <property name="icon">
+    <iconset resource="icons.qrc">
+     <normaloff>:/dialogs/Media/icons/Work.png</normaloff>:/dialogs/Media/icons/Work.png</iconset>
+   </property>
    <property name="text">
-    <string>Canvas</string>
+    <string>&amp;Canvas</string>
    </property>
   </action>
   <action name="actionLogging">
+   <property name="icon">
+    <iconset resource="icons.qrc">
+     <normaloff>:/dialogs/Media/icons/info.png</normaloff>:/dialogs/Media/icons/info.png</iconset>
+   </property>
    <property name="text">
-    <string>Logging</string>
+    <string>&amp;Logging</string>
    </property>
   </action>
   <action name="actionAbout_Morph">
+   <property name="icon">
+    <iconset resource="icons.qrc">
+     <normaloff>:/dialogs/Media/icons/info-2.png</normaloff>:/dialogs/Media/icons/info-2.png</iconset>
+   </property>
    <property name="text">
     <string>About Morph</string>
    </property>
@@ -870,15 +1030,10 @@ p, li { white-space: pre-wrap; }
   <action name="actionRotate">
    <property name="icon">
     <iconset resource="icons.qrc">
-     <normaloff>:/toolbar/icons/leftturnarrow32.png</normaloff>:/toolbar/icons/leftturnarrow32.png</iconset>
+     <normaloff>:/actions/Media/icons/rotate.png</normaloff>:/actions/Media/icons/rotate.png</iconset>
    </property>
    <property name="text">
     <string>Rotate</string>
-   </property>
-  </action>
-  <action name="actionFakeError">
-   <property name="text">
-    <string>fakeError</string>
    </property>
   </action>
   <action name="actionShow_Bounding_Box">
@@ -898,7 +1053,7 @@ p, li { white-space: pre-wrap; }
   <action name="actionAdd_Ogre_Mesh">
    <property name="icon">
     <iconset resource="icons.qrc">
-     <normaloff>:/toolbar/icons/scene.svg</normaloff>:/toolbar/icons/scene.svg</iconset>
+     <normaloff>:/actions/Media/icons/document_alt_stroke_24x32.png</normaloff>:/actions/Media/icons/document_alt_stroke_24x32.png</iconset>
    </property>
    <property name="text">
     <string>Add Ogre Mesh</string>
@@ -910,6 +1065,10 @@ p, li { white-space: pre-wrap; }
    </property>
   </action>
   <action name="action_Add_Light">
+   <property name="icon">
+    <iconset resource="icons.qrc">
+     <normaloff>:/dialogs/Media/icons/Bulb.png</normaloff>:/dialogs/Media/icons/Bulb.png</iconset>
+   </property>
    <property name="text">
     <string>Add &amp;Light</string>
    </property>
@@ -920,13 +1079,18 @@ p, li { white-space: pre-wrap; }
   <action name="actionRemoveMesh">
    <property name="icon">
     <iconset resource="icons.qrc">
-     <normaloff>:/toolbar/icons/scissors32.png</normaloff>:/toolbar/icons/scissors32.png</iconset>
+     <normaloff>:/actions/Media/icons/trash_stroke_32x32.png</normaloff>:/actions/Media/icons/trash_stroke_32x32.png</iconset>
    </property>
    <property name="text">
     <string>&amp;Remove Mesh</string>
    </property>
    <property name="toolTip">
     <string>removeMesh</string>
+   </property>
+  </action>
+  <action name="action_Remove_Selected">
+   <property name="text">
+    <string>&amp;Remove Selected</string>
    </property>
   </action>
  </widget>

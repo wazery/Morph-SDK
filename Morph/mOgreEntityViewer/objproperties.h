@@ -37,6 +37,10 @@ public:
 
     void updateListAnim(Ogre::AnimationStateSet*);
 
+    QTextEdit* nameText;
+    QTextEdit* posXText;
+    QTextEdit* posYText;
+    QTextEdit* posZText;
     QComboBox* renderDetailCombo;
     QComboBox* listAnimCombo;
     QSlider* lodSlider;
@@ -47,6 +51,10 @@ public:
     QPushButton* viewMatBtn;
 
 private:
+    QLabel* name;
+    QLabel* posX;
+    QLabel* posY;
+    QLabel* posZ;
     QLabel* dispSkeleton;
     QLabel* boundingBox;
     QLabel* renderDetail;
@@ -56,9 +64,13 @@ private:
     QLabel* playAnim;
     QLabel* listAnim;
 
+    QGroupBox* groupObjName;
+    QGroupBox* groupPos;
     QGroupBox* groupDisp;
     QGroupBox* groupMat;
     QGroupBox* groupAnim;
+    QGridLayout* gridNameLayout;
+    QGridLayout* gridPosLayout;
     QGridLayout* gridDispLayout;
     QGridLayout* gridMatLayout;
     QGridLayout* gridAnimLayout;

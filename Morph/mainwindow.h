@@ -13,6 +13,7 @@
 #include "mOgreEntityViewer/lightwindow.h"
 #include "mOgreEntityViewer/envproperties.h"
 #include "mOgreEntityViewer/objproperties.h"
+#include "mOgreEntityViewer/startingwindow.h"
 
 using namespace Morph;
 namespace Ui
@@ -47,6 +48,7 @@ public slots:
     void gridPrespectiveSizeChanged(int size);
     void gridRenderLayerChanged(int index);
     void gridColorChanged(QColor color);
+    void gridRenderScaleChanged(bool value);
 
     void addObj();
     void loadObj(const QString &meshName);
@@ -64,11 +66,16 @@ public slots:
     void setSpecularLightColor();
     void setAmbientLight();
 
-    void setFog(int);
+    void getObjName(bool value);
+    void setRenderDetail(int index);
+    void setObjBoundingBoxes(bool value);
+    void enableObjProperties(bool value);
+    void setobjSkeleton(bool value);
+
+    void setFog(int fogType);
     void setFogColor();
 
-    void setShadow();
-    void fakeSlot();
+    void setShadow(int fogType);
 
     void addNodeListener();
     void initialisePlugins();
@@ -80,6 +87,8 @@ private:
 
     Settingsdialog *settingsdialog;
     AboutDialog    *aboutdialog;
+
+    QTabWidget     *propertiesTab;
 
     MSystemManager *systemManager;
     MLogManager    *logManager; // FIXME

@@ -2,8 +2,32 @@
 
 EnvProperties::EnvProperties(QWidget *parent) : QWidget(parent)
 {
+    //DISPLAY OPTIONS
+    groupDisp = new QGroupBox("Display Options");
+
+    renderDetail = new QLabel(tr("Render Detail :"));
+    renderDetailCombo = new QComboBox;
+    renderDetailCombo->addItem(tr("Wireframe"));
+    renderDetailCombo->addItem(tr("Points"));
+    renderDetailCombo->addItem(tr("Polygons"));
+
+    gridDispLayout = new QGridLayout;
+    gridDispLayout->addWidget(renderDetail, 0, 0);
+    gridDispLayout->addWidget(renderDetailCombo, 0, 1);
+
+//    gridDispLayout->addWidget(boundingBox, 1, 0);
+//    gridDispLayout->addWidget(boundBoxCheckBox, 1, 1);
+
+//    gridDispLayout->addWidget(dispSkeleton, 2, 0);
+//    gridDispLayout->addWidget(dispSkeletonCheckBox, 2, 1);
+
+//    gridDispLayout->addWidget(lod, 3, 0);
+//    gridDispLayout->addWidget(lodSlider, 3, 1);
+    groupDisp->setLayout(gridDispLayout);
+    ////////////////////////////////////////////
+
     //FOG
-    groupFog = new QGroupBox("Fog");
+    groupFog = new QGroupBox("Fog Options");
 
     fogType = new QLabel(tr("Fog Type :"));
 
@@ -25,7 +49,7 @@ EnvProperties::EnvProperties(QWidget *parent) : QWidget(parent)
     ////////////////////////////////////////////
 
     //SHADOW
-    groupShadow = new QGroupBox("Shadow");
+    groupShadow = new QGroupBox("Shadow Options");
 
     shadowType = new QLabel(tr("Shadow Type :"));
 
@@ -42,7 +66,7 @@ EnvProperties::EnvProperties(QWidget *parent) : QWidget(parent)
     ////////////////////////////////////////////
 
     //Background (viewport)
-    groupBackground = new QGroupBox("Background");
+    groupBackground = new QGroupBox("Background Options");
 
     backgroundColor = new QLabel(tr("Background Color : "));
     backgroundColorBtn = new QPushButton(tr("Modify"));
@@ -54,7 +78,7 @@ EnvProperties::EnvProperties(QWidget *parent) : QWidget(parent)
     //////////////////////
 
     //LIGHTS
-    groupLights = new QGroupBox("Lights");
+    groupLights = new QGroupBox("Lights Options");
 
     ambientLight = new QLabel(tr("Ambient Light :"));
     ambientLightColorBtn = new QPushButton(tr("Modify"));
@@ -89,6 +113,7 @@ EnvProperties::EnvProperties(QWidget *parent) : QWidget(parent)
 //    lightZ->setText(0, "Z Pos : -500");
 
     //Right Click Action
+    //FIXME: Replace icons.
     modifyAction = new QAction(QIcon(":/images/modify.png"), tr("Modify"), lightsTree);
     removeAction = new QAction(QIcon(":/images/remove.png"), tr("Delete"), lightsTree);
 
@@ -104,6 +129,7 @@ EnvProperties::EnvProperties(QWidget *parent) : QWidget(parent)
     ////////////////////////////////////////////
 
     regroupLayout = new QVBoxLayout;
+    regroupLayout->addWidget(groupDisp);
     regroupLayout->addWidget(groupFog);
     regroupLayout->addWidget(groupShadow);
     regroupLayout->addWidget(groupBackground);

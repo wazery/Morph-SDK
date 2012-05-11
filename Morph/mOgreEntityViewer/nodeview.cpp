@@ -100,7 +100,7 @@ bool NodeView::updateNodeTree()
 void NodeView::createNodeItem(const MNodePtr &nodePtr)
 {
     QTreeWidgetItem* currNodeItem = new QTreeWidgetItem(this);
-    if(nodePtr->getName() == "Root")
+    if(nodePtr->getName() == "World")
     {
         currNodeItem->setFont(0, QFont("ubuntu", -1, 3, true));
         currNodeItem->setData(0, Qt::DecorationRole, QIcon("settings.png"));
@@ -197,14 +197,13 @@ void NodeView::changeSelection(QTreeWidgetItem* item, int column)
 //}
 
 // This function
-QTreeWidgetItem* NodeView::FindNodeItem(const MString &nodeChainName)
+QTreeWidgetItem* NodeView::FindorCreateNodeItem(const MString &nodeChainName)
 {
     QVector<string> namesList = MAttribute::tokenize(nodeChainName.toUtf8().constData(), ".", true, false, "");
 
-    QTreeWidgetItem* currNode = new QTreeWidgetItem(mOgreRoot);
-    int count =  currNode->childCount();
+    QTreeWidgetItem* currNode;
 
-    for(size_t i = 0; i<namesList.size(); i++)
+    for(size_t i = 0; i < namesList.size(); i++)
     {
         MString nodeName = namesList[i].c_str();
 
@@ -222,26 +221,30 @@ QTreeWidgetItem* NodeView::FindNodeItem(const MString &nodeChainName)
         }
         else
         {
-            if(count > 0)
-            {
-                QTreeWidgetItem*  nextItem;
-                QTreeWidgetItem*  childItem = currNode->child(0);
-
-                while(childItem != NULL)
+            QTreeWidgetItemIterator it(this);
+            while (*it) {
+                if ((*it)->text(0) == currNode->text(0))
                 {
-                      if(nodeName == childItem->text(0))
-                      {
+                    QTreeWidgetItem*  nextItem;
+                    QTreeWidgetItem*  childItem = currNode->child(0);
+
+                    while(childItem != NULL)
+                    {
+                        if(nodeName == childItem->text(0))
+                        {
                             currNode = childItem;
                             break;
-                      }
-                      nextItem   =   childItem->child(0);
-                      childItem  =   nextItem;
+                        }
+                        nextItem   = childItem->child(0);
+                        childItem  = nextItem;
+                    }
+                    if(currNode != childItem)
+                        return false;
                 }
-                if(currNode != childItem)
-                    return false;
+                else
+                    return NULL;
+                ++it;
             }
-           //else
-                //return NULL;
         }
     }
     return currNode;
@@ -251,36 +254,32 @@ void NodeView::addNode(const MString &parentNodeChainName, const MString &nodeNa
 {
     qDebug() << "5) addNode";
     updateNodeTree();
-    QTreeWidgetItem* parentItem = FindNodeItem(parentNodeChainName);
+    QTreeWidgetItem* parentItem = FindorCreateNodeItem(parentNodeChainName);
     if(parentItem)
     {
-        if(parentItem->text(0) == "Root" && nodeName == "Root")
-        {}
-        else
-        {
-            QTreeWidgetItem* createdItem = new QTreeWidgetItem(parentItem);
-            createdItem->setText(0, nodeName);
-            qDebug() << "created item text: " << createdItem->text(0);
-        }
-        // TODO: createdItem->setData(0, Qt::DecorationRole, QIcon("settings.png"));
-//        if(createdItem)
-//        {
-//            mSelectedItem = createdItem;
-//            setItemSelected(mSelectedItem, true);
-//        }
-    }
-//    MNodePtr dstNodePtr, parentNodePtr;
-//    MNodeManager::getSingleton().findNodeByChainName(parentNodeChainName + (".") + nodeName, dstNodePtr, parentNodePtr);
-//    //qDebug() << dstNodePtr->getName();
-//    if(dstNodePtr)
+        QTreeWidgetItem* createdItem = new QTreeWidgetItem(parentItem);
+        createdItem->setText(0, nodeName);
+        qDebug() << "created item text: " << createdItem->text(0);
+
+//TODO: createdItem->setData(0, Qt::DecorationRole, QIcon("settings.png"));
+//    if(createdItem)
 //    {
-//        const MNodePtrList nodePtrList = dstNodePtr->getChildNodesList();
-//        if(nodePtrList.size()>0)
-//        {
-//            for(MNodePtrList::const_iterator it = nodePtrList.begin(); it != nodePtrList.end(); it++)
-//                addNode((it->second)->getParentNodeChainName(), (it->second)->getName());
-//        }
+//        mSelectedItem = createdItem;
+//        setItemSelected(mSelectedItem, true);
 //    }
+}
+//MNodePtr dstNodePtr, parentNodePtr;
+//MNodeManager::getSingleton().findNodeByChainName(parentNodeChainName + (".") + nodeName, dstNodePtr, parentNodePtr);
+////qDebug() << dstNodePtr->getName();
+//if(dstNodePtr)
+//{
+//    const MNodePtrList nodePtrList = dstNodePtr->getChildNodesList();
+//    if(nodePtrList.size()>0)
+//    {
+//        for(MNodePtrList::const_iterator it = nodePtrList.begin(); it != nodePtrList.end(); it++)
+//            addNode((it->second)->getParentNodeChainName(), (it->second)->getName());
+//    }
+//}
 }
 
 void NodeView::removeNode(const MString &parentNodeChainName, const MString &nodeName)

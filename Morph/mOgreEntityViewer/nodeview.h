@@ -30,7 +30,7 @@ public:
 //    void objectVisibilityChanged(MNodePtr obj, bool visible);
 
     QTreeWidgetItem* findItem(QTreeWidgetItem* parent, MNodePtr obj);
-    QTreeWidgetItem *FindNodeItem(const MString &nodeChainName);
+    QTreeWidgetItem *FindorCreateNodeItem(const MString &nodeChainName);
 
     // Overriden functions from the MNodeTreeListener.
     virtual void addNode(const MString &parentNodeChainName, const MString &nodeName);

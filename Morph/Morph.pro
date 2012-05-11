@@ -35,7 +35,8 @@ SOURCES += main.cpp\
     #mOgreEntityViewer/textrenderer.cpp
     MorphCore/Editor/mogrecanvas.cpp \
     MorphCore/Editor/loadingbar.cpp \
-    mOgreEntityViewer/objproperties.cpp
+    mOgreEntityViewer/objproperties.cpp \
+    mOgreEntityViewer/startingwindow.cpp
 
 HEADERS += mainwindow.h \
     MorphCore/Editor/msystemmanager.h \
@@ -64,12 +65,14 @@ HEADERS += mainwindow.h \
     #mOgreEntityViewer/textrenderer.h
     MorphCore/Editor/mogrecanvas.h \
     MorphCore/Editor/loadingbar.h \
-    mOgreEntityViewer/objproperties.h
+    mOgreEntityViewer/objproperties.h \
+    mOgreEntityViewer/startingwindow.h
 
 FORMS    += mainwindow.ui \
     mOgreEntityViewer/settingsdialog.ui \
     mOgreEntityViewer/aboutdialog.ui \
-    mOgreEntityViewer/removeobject.ui
+    mOgreEntityViewer/removeobject.ui \
+    mOgreEntityViewer/startingwindow.ui
 
 #unix
 #{
