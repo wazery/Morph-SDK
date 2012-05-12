@@ -14,6 +14,13 @@
         <file>Media/icons/Power.png</file>
         <file>Media/icons/List.png</file>
         <file>Media/icons/Work.png</file>
+        <file>Media/icons/Machine.png</file>
+        <file>Media/icons/Folder.png</file>
+        <file>Media/icons/Forward.png</file>
+        <file>Media/icons/Recycle-Open.png</file>
+        <file>Media/icons/Recycle.png</file>
+        <file>Media/icons/Backward.png</file>
+        <file>Media/icons/ArrowDown.png</file>
     </qresource>
     <qresource prefix="/actions">
         <file>Media/icons/arrow32.png</file>

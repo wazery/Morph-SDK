@@ -459,7 +459,9 @@
    <addaction name="actionSave_as"/>
    <addaction name="actionQuit"/>
    <addaction name="separator"/>
+   <addaction name="actionCopy"/>
    <addaction name="actionCut"/>
+   <addaction name="action_Remove_Selected"/>
   </widget>
   <widget class="QStatusBar" name="statusBar"/>
   <widget class="QToolBar" name="toolBar">
@@ -1230,6 +1232,10 @@ p, li { white-space: pre-wrap; }
    </property>
   </action>
   <action name="actionCopy">
+   <property name="icon">
+    <iconset resource="icons.qrc">
+     <normaloff>:/dialogs/Media/icons/Recycle.png</normaloff>:/dialogs/Media/icons/Recycle.png</iconset>
+   </property>
    <property name="text">
     <string>&amp;Copy</string>
    </property>
@@ -1242,8 +1248,8 @@ p, li { white-space: pre-wrap; }
   </action>
   <action name="actionPaste">
    <property name="icon">
-    <iconset>
-     <normaloff>:/toolbar/icons/translate.png</normaloff>:/toolbar/icons/translate.png</iconset>
+    <iconset resource="icons.qrc">
+     <normaloff>:/dialogs/Media/icons/ArrowDown.png</normaloff>:/dialogs/Media/icons/ArrowDown.png</iconset>
    </property>
    <property name="text">
     <string>&amp;Paste</string>
@@ -1268,6 +1274,10 @@ p, li { white-space: pre-wrap; }
    </property>
   </action>
   <action name="actionDelete">
+   <property name="icon">
+    <iconset resource="icons.qrc">
+     <normaloff>:/dialogs/Media/icons/Recycle-Open.png</normaloff>:/dialogs/Media/icons/Recycle-Open.png</iconset>
+   </property>
    <property name="text">
     <string>&amp;Delete</string>
    </property>
@@ -1276,6 +1286,10 @@ p, li { white-space: pre-wrap; }
    </property>
   </action>
   <action name="actionUndo">
+   <property name="icon">
+    <iconset resource="icons.qrc">
+     <normaloff>:/dialogs/Media/icons/Backward.png</normaloff>:/dialogs/Media/icons/Backward.png</iconset>
+   </property>
    <property name="text">
     <string>&amp;Undo</string>
    </property>
@@ -1284,6 +1298,10 @@ p, li { white-space: pre-wrap; }
    </property>
   </action>
   <action name="actionRedo">
+   <property name="icon">
+    <iconset resource="icons.qrc">
+     <normaloff>:/dialogs/Media/icons/Forward.png</normaloff>:/dialogs/Media/icons/Forward.png</iconset>
+   </property>
    <property name="text">
     <string>&amp;Redo</string>
    </property>
@@ -1363,6 +1381,10 @@ p, li { white-space: pre-wrap; }
    </property>
   </action>
   <action name="actionShow_Bounding_Box">
+   <property name="icon">
+    <iconset resource="icons.qrc">
+     <normaloff>:/dialogs/Media/icons/Folder.png</normaloff>:/dialogs/Media/icons/Folder.png</iconset>
+   </property>
    <property name="text">
     <string>Show &amp;Bounding Box</string>
    </property>
@@ -1415,11 +1437,19 @@ p, li { white-space: pre-wrap; }
    </property>
   </action>
   <action name="action_Remove_Selected">
+   <property name="icon">
+    <iconset resource="icons.qrc">
+     <normaloff>:/dialogs/Media/icons/Recycle-Open.png</normaloff>:/dialogs/Media/icons/Recycle-Open.png</iconset>
+   </property>
    <property name="text">
     <string>&amp;Remove Selected</string>
    </property>
   </action>
   <action name="actionSet_Script_Path">
+   <property name="icon">
+    <iconset resource="icons.qrc">
+     <normaloff>:/dialogs/Media/icons/Machine.png</normaloff>:/dialogs/Media/icons/Machine.png</iconset>
+   </property>
    <property name="text">
     <string>Set &amp;Script Path</string>
    </property>
