@@ -1,0 +1,81 @@
+<scene exported_by="root" formatVersion="1.0.1" previous_export_time="1318308842.703857" export_time="1318309199.604644" >
+	<nodes >
+		<node name="Circle" uuid="e913d37c48532bce6aaa0e6b048f15b7" >
+			<position y="0.878625" x="-0.645742" z="0.062272" />
+			<rotation qy="0.000000" qx="0.707107" qz="-0.000000" qw="0.707107" />
+			<scale y="0.721093" x="0.721093" z="0.721093" />
+			<game >
+				<sensors />
+				<actuators />
+			</game>
+			<entity anisotropic_friction="False" lock_trans_y="False" damping_trans="0.02539999969303608" damping_rot="0.18000000715255737" inertia_tensor="0.4000000059604645" actor="False" velocity_min="0.0" lock_trans_z="False" physics_type="STATIC" lock_trans_x="False" meshFile="Circle.mesh" friction_y="1.0" friction_x="1.0" friction_z="1.0" velocity_max="0.0" ghost="False" name="Circle" mass_radius="1.0" mass="1.0" lock_rot_x="False" lock_rot_y="False" lock_rot_z="False" />
+		</node>
+		<node name="Lamp.002" uuid="d2b5fcb9a7443465546c168385e00d39" >
+			<position y="-3.542043" x="4.976259" z="8.197717" />
+			<rotation qy="0.027307" qx="0.740502" qz="-0.380890" qw="0.553022" />
+			<scale y="1.000000" x="1.000000" z="1.000000" />
+			<game >
+				<sensors />
+				<actuators />
+			</game>
+			<light shadow="true" type="spot" name="Lamp.002" powerScale="1.2428555488586426" >
+				<position y="-3.542043" x="4.976259" z="8.197717" />
+				<lightAttenuation range="5000" quadratic="0.0" constant="1.0" linear="0.05" />
+				<direction y="0.387" x="-0.462" z="-0.798" />
+				<spotLightRange outer="0.7853981573134661" inner="0.6675884290351084" falloff="1.0" />
+				<colourDiffuse r="1.0" b="1.0" g="1.0" />
+				<colourSpecular r="1.0" b="1.0" g="1.0" />
+				<colourShadow r="1.0" b="1.0" g="1.0" />
+			</light>
+		</node>
+		<node name="Lamp.001" uuid="c59977dbbc6f5348773b9e915888cf39" >
+			<position y="-1.428310" x="4.957958" z="8.381628" />
+			<rotation qy="0.256605" qx="0.766320" qz="0.033783" qw="0.588018" />
+			<scale y="1.000000" x="1.000000" z="1.000000" />
+			<game >
+				<sensors />
+				<actuators />
+			</game>
+		</node>
+		<node name="Lamp" uuid="fb362c21e3e4ac1bfb04a922e210da5b" >
+			<position y="8.926496" x="-5.042042" z="8.148317" />
+			<rotation qy="-0.238047" qx="0.522844" qz="0.061062" qw="0.816235" />
+			<scale y="1.000000" x="1.000000" z="1.000000" />
+			<game >
+				<sensors />
+				<actuators />
+			</game>
+			<light shadow="true" type="spot" name="Lamp" powerScale="1.2428555488586426" >
+				<position y="8.926496" x="-5.042042" z="8.148317" />
+				<lightAttenuation range="5000" quadratic="0.0" constant="1.0" linear="0.05" />
+				<direction y="-0.446" x="0.349" z="-0.824" />
+				<spotLightRange outer="0.7853981573134661" inner="0.6675884290351084" falloff="1.0" />
+				<colourDiffuse r="1.0" b="1.0" g="1.0" />
+				<colourSpecular r="1.0" b="1.0" g="1.0" />
+				<colourShadow r="1.0" b="1.0" g="1.0" />
+			</light>
+		</node>
+		<node name="Camera" uuid="80a6ee8f63be427980cc430b4777a98c" >
+			<position y="0.840074" x="-0.634669" z="1.651461" />
+			<rotation qy="0.000000" qx="0.707107" qz="-0.000000" qw="0.707107" />
+			<scale y="1.000000" x="1.000000" z="1.000000" />
+			<game >
+				<sensors />
+				<actuators />
+			</game>
+			<camera projectionType="perspective" fov="49.134342641202636" name="Camera.001" >
+				<clipping nearPlaneDist="0.10000000149011612" farPlaneDist="100.0" />
+			</camera>
+		</node>
+	</nodes>
+	<externals >
+		<item type="material" >
+			<file name="/home/menopia/development/Qt development/MinimalOgre/MinimalOgre/MinimalOgre-build-desktop/meshes/Material.001.material" />
+		</item>
+	</externals>
+	<environment >
+		<colourBackground r="0.05656290054321289" b="0.4000000059604645" g="0.22081542015075684" />
+		<colourAmbient r="0.0" b="0.0" g="0.0" />
+		<colourDiffuse r="0.05656290054321289" b="0.4000000059604645" g="0.22081542015075684" />
+	</environment>
+</scene>

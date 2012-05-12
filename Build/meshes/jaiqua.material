@@ -1,0 +1,16 @@
+material jaiqua
+{
+	// Software blending technique
+	technique
+	{
+		pass
+		{
+			texture_unit
+			{
+				texture blue_jaiqua.jpg
+				tex_address_mode clamp
+			}
+		}
+	}
+	
+}
