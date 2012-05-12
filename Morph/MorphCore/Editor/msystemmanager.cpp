@@ -1035,6 +1035,7 @@ void MSystemManager::removeObject(Ogre::String name)
         mSceneManager->destroyEntity(name);
         mSceneManager->destroySceneNode(name);
     }
+    update();
 }
 
 MSystemManager* MSystemManager::getSingletonPtr()

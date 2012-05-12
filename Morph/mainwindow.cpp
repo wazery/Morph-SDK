@@ -431,26 +431,25 @@ void MainWindow::loadObj(const QString &meshName)
         objProperties->listAnimCombo->clear();
         objProperties->updateListAnim(systemManager->mainEnt->getAllAnimationStates());
 
-//        if(objProperties->listAnimCombo->itemText(0) != "") { // The mesh has animations
-//            systemManager->setAnimationState(objProperties->listAnimCombo->itemText(0).toStdString());
-//            objProperties->playCheckBox->setChecked(false);
-//            objProperties->loopCheckBox->setChecked(false);
-//            MLogManager::getSingleton().logOutput("Has Animations : YES", M_EDITOR_MESSAGE);
-//        }
-//        else
-//            MLogManager::getSingleton().logOutput("Has Animations : NO", M_EDITOR_MESSAGE);
+        if(objProperties->listAnimCombo->itemText(0) != "")
+        {
+            // The mesh has animations
+            systemManager->setAnimationState(objProperties->listAnimCombo->itemText(0).toStdString());
+            objProperties->playCheckBox->setChecked(false);
+            objProperties->loopCheckBox->setChecked(false);
+            MLogManager::getSingleton().logOutput("Has Animations : YES", M_EDITOR_MESSAGE);
+        }
+        else
+            MLogManager::getSingleton().logOutput("Has Animations : NO", M_EDITOR_MESSAGE);
 
-//        MLogManager::getSingleton().logOutput("=========================", M_EDITOR_MESSAGE); // End of the log
+        MLogManager::getSingleton().logOutput("=========================", M_EDITOR_MESSAGE); // End of the log
     }
 }
 
-// TODO:
 void MainWindow::showRemoveObj()
 {
     RemoveObject* removeObject = new RemoveObject(this);
     removeObject->show();
-    //FIXME:
-    //systemManager->removeObject(removeObject->getMeshName().toUtf8().constData());
 }
 
 void MainWindow::commitRemoveObj()
