@@ -1,25 +1,49 @@
 <RCC>
-    <qresource prefix="/toolbar">
-        <file>icons/copy.svg</file>
-        <file>icons/cut.svg</file>
-        <file>icons/fileopen.svg</file>
-        <file>icons/filesave.svg</file>
-        <file>icons/filesaveas.svg</file>
-        <file>icons/ogscene.png</file>
-        <file>icons/scale.svg</file>
-        <file>icons/scene.svg</file>
-        <file>icons/select.svg</file>
-        <file>icons/fileopen2.png</file>
-        <file>icons/ogscene2.png</file>
-        <file>icons/filesave2.png</file>
-        <file>icons/arrow32.png</file>
-        <file>icons/folder32.png</file>
-        <file>icons/leftturnarrow32.png</file>
-        <file>icons/scissors32.png</file>
-        <file>icons/search32.png</file>
-        <file>icons/minus32.png</file>
-        <file>icons/block32.png</file>
-        <file>icons/move.png</file>
-        <file>icons/translate.png</file>
+    <qresource prefix="/dialogs">
+        <file>Media/icons/Blocked.png</file>
+        <file>Media/icons/File.png</file>
+        <file>Media/icons/info.png</file>
+        <file>Media/icons/Arrow.png</file>
+        <file>Media/icons/Bulb.png</file>
+        <file>Media/icons/Circle.png</file>
+        <file>Media/icons/Control Panel.png</file>
+        <file>Media/icons/Floppy.png</file>
+        <file>Media/icons/info-2.png</file>
+        <file>Media/icons/Sign-Down.png</file>
+        <file>Media/icons/Search.png</file>
+        <file>Media/icons/Power.png</file>
+        <file>Media/icons/List.png</file>
+        <file>Media/icons/Work.png</file>
+        <file>Media/icons/Machine.png</file>
+        <file>Media/icons/Folder.png</file>
+        <file>Media/icons/Forward.png</file>
+        <file>Media/icons/Recycle-Open.png</file>
+        <file>Media/icons/Recycle.png</file>
+        <file>Media/icons/Backward.png</file>
+        <file>Media/icons/ArrowDown.png</file>
+    </qresource>
+    <qresource prefix="/actions">
+        <file>Media/icons/arrow32.png</file>
+        <file>Media/icons/block32.png</file>
+        <file>Media/icons/document_alt_fill_24x32.png</file>
+        <file>Media/icons/document_alt_stroke_24x32.png</file>
+        <file>Media/icons/folder32.png</file>
+        <file>Media/icons/fullscreen_32x32.png</file>
+        <file>Media/icons/lightbulb_20x32.png</file>
+        <file>Media/icons/list_nested_32x28.png</file>
+        <file>Media/icons/move.png</file>
+        <file>Media/icons/move_alt2_32x32.png</file>
+        <file>Media/icons/rotate.png</file>
+        <file>Media/icons/scissors32.png</file>
+        <file>Media/icons/trash_stroke_32x32.png</file>
+    </qresource>
+    <qresource prefix="/wellcome">
+        <file>Media/wellcome-images/1.png</file>
+        <file>Media/wellcome-images/2.png</file>
+        <file>Media/wellcome-images/2.psd</file>
+        <file>Media/wellcome-images/3.png</file>
+        <file>Media/wellcome-images/bg.png</file>
+        <file>Media/wellcome-images/Logo.png</file>
+        <file>Media/wellcome-images/wellcome.png</file>
     </qresource>
 </RCC>

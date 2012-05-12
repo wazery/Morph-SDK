@@ -1,3 +1,26 @@
+/* ============================================================
+ *
+ * This file is a part of Morph project
+ *
+ * Date        : 2011-10-26
+ * @file mattribute.h
+ * @brief The attribute class for all Ogre properties.
+ *
+ * Copyright (C) 2011-2012 by @author Islam Wazery <wazery at ubuntu dot com>
+ *
+ * This program is free software; you can redistribute it
+ * and/or modify it under the terms of the GNU General
+ * Public License as published by the Free Software Foundation;
+ * either version 2, or (at your option)
+ * any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * ============================================================ */
+
 #ifndef MATTRIBUTE_H
 #define MATTRIBUTE_H
 
@@ -7,6 +30,7 @@
 // FIXME: Need to be re-examined if we can use something else.
 #include <boost/any.hpp>
 #include <boost/lexical_cast.hpp>
+#include <QVector>
 
 #include "MType.h"
 #include "MLogManager.h"
@@ -35,7 +59,7 @@ namespace Morph
 
     struct MEnumList
     {
-        std::vector<MString> mStringList;
+        QVector<MString> mStringList;
         MString mStrSelected;
     };
 
@@ -71,7 +95,7 @@ namespace Morph
             {
                 if (getType() != typeid(T))
                 {
-                    MLogManager::getSingleton().logOutput("ERROR: MAttribute::getValue >> dstValue.type() != typeid(T)", M_ERROR);
+                    MLogManager::getSingleton().logOutput("Error: MAttribute::getValue >> dstValue.type() != typeid(T)", M_ERROR);
                     return T();
                 }
                 T value = boost::any_cast<T> (mValue);
@@ -81,7 +105,7 @@ namespace Morph
             //FIXME: find a relevant to boost:bad_lexical_cast
             catch (boost::bad_lexical_cast &e)
             {
-                MLogManager::getSingleton().logOutput("ERROR: MAttribute::setValue " + MString::fromUtf8(std::string(e.what()).c_str()), M_ERROR);
+                MLogManager::getSingleton().logOutput("Error: MAttribute::setValue " + MString::fromUtf8(std::string(e.what()).c_str()), M_ERROR);
                 return T();
             }
         }
@@ -93,7 +117,7 @@ namespace Morph
             {
                 if (getType() != typeid(T))
                 {
-                    MLogManager::getSingleton().logOutput("ERROR: MAttribute::getValue >> dstValue.type() != typeid(T) ", M_ERROR);
+                    MLogManager::getSingleton().logOutput("Error: MAttribute::getValue >> dstValue.type() != typeid(T) ", M_ERROR);
                     return T();
                 }
                 T value = boost::any_cast<T> (mDefaultValue);
@@ -101,7 +125,7 @@ namespace Morph
             }
             catch (boost::bad_lexical_cast &e)
             {
-                MLogManager::getSingleton().logOutput("ERROR: MAttribute::setValue " + MString::fromUtf8(std::string(e.what()).c_str()), M_ERROR);
+                MLogManager::getSingleton().logOutput("Error: MAttribute::setValue " + MString::fromUtf8(std::string(e.what()).c_str()), M_ERROR);
                 return T();
             }
         }
@@ -123,8 +147,8 @@ namespace Morph
         const type_info &getType() const {return mValue.type();}
 
         // Some Utility functions,
-        vector<string> tokenize(const string &src, string tok, bool trim, bool quote, string null_subst);
-        vector<string> bracketSplit(const string& src, char beginChar, char endChar);
+        static QVector<string> tokenize(const string &src, string tok, bool trim, bool quote, string null_subst);
+        QVector<string> bracketSplit(const string& src, char beginChar, char endChar);
         static string trim(const string &source, const string &t = " ")
         {
             string str = source;

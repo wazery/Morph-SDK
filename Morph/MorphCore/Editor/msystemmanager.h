@@ -27,19 +27,24 @@
 
 #include <QtGui>
 
-// FIXME: Use Ogre singleton implementation untill
-// implementing one for the editor core
-//#include <OgreSingleton.h>
 #include <OGRE/Ogre.h>
+
+#include "mogrecanvas.h"
+
+#include "mOgreEntityViewer/viewgrid.h"
 
 //#include "MSingleton.h" // FIXME: Implement this header file.
 
 using namespace Ogre;
 
+namespace Ui {
+    class MSystemManager;
+}
+
 namespace Morph
 {
     /** @class*/
-    class MSystemManager : public QWidget
+    class MSystemManager : public QWidget, public Ogre::FrameListener
     {
         Q_OBJECT
 
@@ -51,7 +56,7 @@ namespace Morph
         ~MSystemManager();
 
         // Override QWidget::paintEngine to return NULL
-        QPaintEngine* paintEngine() const; // Turn off QTs paint engine for the Ogre widget.
+        QPaintEngine* paintEngine() const { return NULL; } // Turn off QTs paint engine for the Ogre widget.
 
         /** Initialise Ogre System
             @remarks
@@ -74,12 +79,6 @@ namespace Morph
         /** Access the SceneManager */
         Ogre::SceneManager* getSceneManager(void) const    { /** @return mSceneManager */ return(mSceneManager); }
 
-        /** Access the MainCamera */
-        Ogre::Camera* getMainCamera(void) const    { /** @return mMainCamera */ return(mMainCamera); }
-
-        /** Access the CurrentCamera */
-        Ogre::Camera* getCurrCamera(void) const    { /** @return mCurrCamera */ return(mCurrCamera); }
-
         /** Access the mIsInitialised */
         bool isInitialised(void) const    { /** @return mIsInitialised */ return(mIsInitialised);}
 
@@ -92,25 +91,94 @@ namespace Morph
         /** Access the WindowHeight */
         int getWindowHeight(void) const    { /** @return mWindowHeight */ return(mWindowHeight); }
 
+        void setBackgroundColor(QColor);
+
+        /** Access the background color */
+        QColor getBackgroundColor() const { return QColor(mBackgroundColor.getAsRGBA()); }
+
+        Ogre::SceneNode* getSelectedNode() { return selectedNode; }
+
+        /** Access the canvas windows */
+        QList<MOgreCanvas*> getOgreWindows() { return mRenderWindowList; }
+
+        void updateAnim();
+
+        void changeZoomValue(Ogre::Vector3 pos);
+
+        void setBoundingBoxes(int value);
+        void setSkeleton(int value);
+
+        void setShadow(int fogType);
+        void setAmbientLight(QColor color);
+        QColor getAmbientLight();
+        void setDiffuseColor(QColor color);
+        QColor getDiffuseColor();
+        void setSpecularColor(QColor color);
+        QColor getSpecularColor();
+
+        void setFog(int fogType);
+        void setFogColor(QColor color);
+        QColor getFogColor();
+
+        Ogre::Entity* getMainEntity();
+
+        void updateMaterial();
+        void setAnimationState(Ogre::String name);
+        void setAnimLoop(bool enable);
+        void setAnimEnabled(bool enable);
+
+        void createPointLight(String name, String xPos, String yPos, String zPos, String diffuse, String specular);
+        void createDirectionalLight(String name, String xDir, String yDir, String zDir, String diffuse, String specular);
+        void createSpotlight(String name, String xPos, String yPos, String zPos, String xDir, String yDir, String zDir, String diffuse, String specular);
+
+        void updatePointLight(String oldName, String name, String xPos, String yPos, String zPos, String diffuse, String specular);
+        void updateDirectionalLight(String oldName, String name, String xDir, String yDir, String zDir, String diffuse, String specular);
+        void updateSpotlight(String oldName, String name, String xPos, String yPos, String zPos, String xDir, String yDir, String zDir, String diffuse, String specular);
+        void deleteLight(String name);
+
+        void addObject(Ogre::String name);
+        void removeObject(Ogre::String name);
+
+        //Entity
+        Ogre::SceneNode* mainNode;
+        Ogre::Entity*    mainEnt;
+        Ogre::SubEntity* mainSubEnt;
+
+        //Fog
+        Ogre::ColourValue fogColor;
+        QColor fogOldColor;//to keep the last selected color
+        Ogre::ColourValue backgroundColor;
+        QColor backgroundOldColor;
+
     public slots:
-        /** Sets the viewport background */
-        //void setBackgroundColour(QColor c);
-        /** Sets the current camera position */
-        void setCameraPosition(const Ogre::Vector3 &pos);
+        void update();
+        /** Sets the number of active viewports */
+        void setViewNum(int num);
 
     signals:
-        void cameraPositionChanged(const Ogre::Vector3 &pos);
+        void initialised();
+        void selectedNodeChanged(bool value);
+
+    public slots:
+        void keyPress(QKeyEvent* e);
+        void keyRelease(QKeyEvent* e);
+        void mousePress(QMouseEvent* e);
+        void mouseRelease(QMouseEvent* e);
+        void mouseMove(QMouseEvent* e);
+        void mouseDoubleClick(QMouseEvent *e);
+        void wheel(QWheelEvent * e);
+
+        /** Create the grid for the canvas */
+        void createGrid(MOgreCanvas *renderWindowList, int index);
+        void gridChanged(bool value);
 
     protected:
-        virtual void paintEvent(QPaintEvent *e);
-        virtual void resizeEvent(QResizeEvent *e);
-        virtual void keyPressEvent(QKeyEvent *e);
-        virtual void moveEvent(QMoveEvent *e);
-        virtual void mouseDoubleClickEvent(QMouseEvent *e);
-        virtual void mouseMoveEvent(QMouseEvent *e);
-        virtual void mousePressEvent(QMouseEvent *e);
-        virtual void mouseReleaseEvent(QMouseEvent *e);
-        virtual void wheelEvent(QWheelEvent *e);
+        virtual void showEvent(QShowEvent *e);
+        void moveEvent(QMoveEvent *e);
+        void paintEvent(QPaintEvent *e);
+        void resizeEvent(QResizeEvent *e);
+        void dragEnterEvent(QDragEnterEvent* e);
+        void dropEvent(QDropEvent* e);
 
     protected:
          /** Initialise Ogre Core
@@ -122,7 +190,7 @@ namespace Morph
             @param height int containing the height of the Ogre Canvas.
             @param params NameValuePairList Name / value parameter pair (first = name, second = value).
         */
-        bool initOgreCore(Ogre::Real width, Ogre::Real height);
+        bool initOgreCore();
 
         /** Shut Down Ogre System */
         void shutDown();
@@ -132,6 +200,7 @@ namespace Morph
                 It can be overriden, as it is a pure virtual.
         */
         void createScene();
+        void createLight();
 
         /** Destroys the entire scene */
         void destroyScene();
@@ -153,47 +222,67 @@ namespace Morph
         virtual bool frameStarted(const FrameEvent& evt);
         virtual bool frameEnded(const FrameEvent& evt);
 
-        // TODO: check if this function is logical
-        void addViewport(Ogre::Camera camera);
-
-        /** Create the grid for the canvas */
-        void createGrid();
-
     public:
-        //static MSystemManager* smInstance;
+        static MSystemManager* smInstance;
+        QList<ViewportGrid*> mGridList;
+        QList<MOgreCanvas*> mRenderWindowList;
+        Ogre::Viewport* mOgreViewport;
 
-//        /** Get the class address pointer */
-//        static MSystemManager* getSingletonPtr();
+        /** Get the class address pointer */
+        static MSystemManager* getSingletonPtr();
 
-//        static MSystemManager &getSingleton();
+        static MSystemManager &getSingleton();
 
-//        static void releaseSingleton();
+        static void releaseSingleton();
 
     private:
-        static const Ogre::Real turboModifier;
+        Ui::MSystemManager* ui;
+        //static const Ogre::Real turboModifier;
         static const QPoint invalidMousePoint;
+
+        QVBoxLayout *mVerticalLayout;
+        Ogre::ColourValue mBackgroundColor;
 
     protected:
         Ogre::Root          *mRoot;
         Ogre::SceneManager  *mSceneManager;
         Ogre::RenderWindow  *mRenderWindow;
-        Ogre::Viewport      *mViewport;
+
         Ogre::Overlay       *mDebugOverlay; // TODO: change its name
 
-        Ogre::ManualObject  *mFloorGrid;
-        Ogre::ManualObject  *mCircle;
-
-        Ogre::Camera        *mMainCamera;
-        Ogre::Camera        *mCurrCamera;
+        Ogre::AnimationState* mainEntAnim;
 
         QPoint oldPos;
-        Ogre::SceneNode *selectedNode;
+        Ogre::SceneNode* selectedNode;
 
-        bool		mIsInitialised;
-        int			mWindowWidth;
-        int			mWindowHeight;
+        //Deplacement
+        Ogre::Vector3 mDirection;
+        Ogre::Real mRotate;
+        Ogre::Real mMove;
+        bool isMoving;
+        QPoint mousePressPos;
+        QPoint mousePos;
+        float angleX, angleY;
+        float rotX, rotY;
+
+        //Light
+        Ogre::Light* mainLight;
+        Ogre::ColourValue lightDiffuseColor;
+        Ogre::ColourValue lightSpecularColor;
+        Ogre::ColourValue ambientLightColor;
+        QColor ambientOldColor;
+        QColor diffuseOldColor;
+        QColor specularOldColor;
+
+        bool mouseLeftPressed;
+        bool mouseRightPressed;
+        bool mouseMiddleBtn;
+        bool isLoopOn;
+        bool isAnimEnabled;
+
+        bool mIsInitialised;
+        int	 mWindowWidth;
+        int	 mWindowHeight;
     };
-
-    //MSystemManager* MSystemManager::smInstance = NULL;
 }
 #endif // MSYSTEMMANAGER_H

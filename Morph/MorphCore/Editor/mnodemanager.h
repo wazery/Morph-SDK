@@ -30,6 +30,7 @@
 
 #include "MType.h"
 #include "mnode.h"
+#include "mrootnode.h"
 #include "mattribute.h"
 #include "MLogManager.h"
 
@@ -67,7 +68,7 @@ namespace Morph
     };
 
     // FIXME: Is it better to be qMap?
-    typedef map<MString, MNodeCreatorFun> MNodeRegList;
+    typedef QMap<MString, MNodeCreatorFun> MNodeRegList;
 
     class MNodeManager
     {
@@ -113,11 +114,13 @@ namespace Morph
           @param parentNodePtr MNodePtr pointer of the parent node.
           @return true if it finds the node successfully.
         */
-        virtual bool findNodeByChainName(const MString &nodeChainName, MNodePtr distinationNodePtr, MNodePtr parentNodePtr);
+        virtual bool findNodeByChainName(const MString &nodeChainName, MNodePtr dstNodePtr, MNodePtr parentNodePtr);
 
         /** Gets the selected node list */
         MNodePtrList &getSelectedNodeList(void){ return(mSelectedNodeList); }
         void setSelectedNodeList(MNodePtrList &selectedNodeList);
+
+        MNodePtr getFirstSelectedNode(void);
 
         /** Register a select listener.
           @param listener MSelectListener* A pointer to a select listener class.
@@ -158,10 +161,13 @@ namespace Morph
         void initialise();
 
         virtual MNodePtr createNode(const MString &nodeID, const MString &nodeName = "");
-        virtual void deleteNode(const MString &nodeChainName);
+        virtual bool deleteNode(const MString &nodeChainName);
+
+        MNodePtr &getRootNodePtr(void) { return mRootNodePtr; }
+        void setRootNodePtr(MNodePtr &rootNodePtr) {mRootNodePtr = rootNodePtr; }
 
         virtual void notifyAttributeChanged(const MString &parentNodeChainName, const MString &nodename, const MString &attrName, const MAttribute &attr);
-        virtual void notifyAddNode(const MString &parentNodeChinName,const MString &nodeName);
+        virtual void notifyAddNode(const MString &parentNodeChainName,const MString &nodeName);
         virtual void notifyRemoveNode(const MString &parentNodeChinName,const MString &nodeName);
 
         static MNodeManager* smInstance;

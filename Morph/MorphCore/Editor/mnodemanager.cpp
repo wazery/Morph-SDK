@@ -47,8 +47,8 @@ bool MNodeManager::registerNode(const MString &nodeID, MNodeCreatorFun creatorFu
     // Check if the node id exist
     if (!creatorFun)
     {
-        MString errorString = "ERROR: The function creator is NULL for this node(" + nodeID + ")";
-        MLogManager::getSingletonPtr()->logOutput(errorString);
+        MString ErrorString = "Error: Morph Node Manager, the function creator is NULL for this node(" + nodeID + ")";
+        MLogManager::getSingletonPtr()->logOutput(ErrorString, M_ERROR);
         return false;
     }
     else
@@ -60,7 +60,7 @@ bool MNodeManager::registerNode(const MString &nodeID, MNodeCreatorFun creatorFu
 bool MNodeManager::deregisterNode(const MString &nodeID)
 {
     // Check if the node id exist
-    // FIXME: selectNode();
+    selectNode("", M_SELECT_CLEAR);
     if (mNormalNodeRegList.find(nodeID) != mNormalNodeRegList.end())
     {
         mNormalNodeRegList.erase(mNormalNodeRegList.find(nodeID));
@@ -78,8 +78,8 @@ bool MNodeManager::deregisterNode(const MString &nodeID)
     }
     else
     {
-        MString errorString = "WARN: The node name (" + nodeID + ") that you want to de-register doesn't exist!";
-        MLogManager::getSingleton().logOutput(errorString, M_WARN);
+        MString ErrorString = "Warn: Morph Node Manager, the node name (" + nodeID + ") that you want to de-register doesn't exist!";
+        MLogManager::getSingleton().logOutput(ErrorString, M_WARN);
         return false;
     }
 
@@ -102,26 +102,72 @@ bool MNodeManager::isNodeSelected(const MString &nodeChainName)
     return false;
 }
 
-bool MNodeManager::findNodeByChainName(const MString &nodeChainName, MNodePtr distinationNodePtr, MNodePtr parentNodePtr)
+bool MNodeManager::findNodeByChainName(const MString &nodeChainName, MNodePtr dstNodePtr, MNodePtr parentNodePtr)
 {
     if(!mIsInitialised)
         return false;
 
-//    vector<MString> namesList = nodeChainName.split(".");
+    MStringList namesList = nodeChainName.split('.');
 
-//    MNodePtr nodePtr;
-//    MNodePtr parentPtr;
+    MNodePtr nodePtr;
+    MNodePtr parentPtr;
 
-//    for (size_t i = 0; i < namesList.size(); i++)
-//    {
-//        if (i == 0)
-//        {
-//            if (namesList[i] != getroo)
-//            {
+    for (size_t i = 0; i < namesList.size(); i++)
+    {
+        if (i == 0)
+        {
+            if (namesList[i] != getRootNodePtr()->getName())
+            {
+                return false;
+            }
+            else
+            {
+                nodePtr = getRootNodePtr();
+            }
+        }
+        else
+        {
+            MNodePtr tmpPtr;
+            if(nodePtr && nodePtr->findChildNode(namesList[i], tmpPtr))
+            {
+                parentPtr = nodePtr;
+                nodePtr = tmpPtr;
+            }
+            else
+                return false;
+        }
+    }
 
-//            }
-//        }
-//    }
+    if(!nodePtr)
+        return(false);
+    else
+    {
+        dstNodePtr = nodePtr;
+        parentNodePtr = parentPtr;
+        return true;
+    }
+}
+
+MNodePtr MNodeManager::getFirstSelectedNode(void)
+{
+    MNodePtr nodePtr;
+    mSelectedNodeListIterator = mSelectedNodeList.begin();
+    if(mSelectedNodeListIterator != mSelectedNodeList.end())
+        nodePtr = mSelectedNodeListIterator->second;
+
+    return nodePtr;
+}
+
+void MNodeManager::setSelectedNodeList(MNodePtrList &selectedNodeList)
+{
+    mSelectedNodeList.clear();
+    mSelectedNodeList = selectedNodeList;
+
+    for (std::vector<MSelectListener*>::iterator i = mSelectListenerList.begin();  i != mSelectListenerList.end(); ++i)
+    {
+        assert(*i);
+        (*i)->selectChanged(mSelectedNodeList);
+    }
 }
 
 void MNodeManager::addSelectListener(MSelectListener* listener)
@@ -174,6 +220,7 @@ void MNodeManager::addNodeTreeListener(MNodeTreeListener* listener)
     if (listener)
     {
         mNodeTreeListenerList.push_back(listener);
+        qDebug() << "3) add listener";
     }
 }
 
@@ -185,15 +232,58 @@ void MNodeManager::removeNodeTreeListener(MNodeTreeListener* listener)
 
 void MNodeManager::initialise()
 {
+    qDebug() << "1) initialise";
+    //mRootNodePtr = MRootNode::creator("Root");
     mIsInitialised = true;
 }
 
 MNodePtr MNodeManager::createNode(const MString &nodeID, const MString &nodeName)
 {
+    MNodePtr resultNodePtr;
+
+    if (mNormalNodeRegList.find(nodeID) != mNormalNodeRegList.end())
+    {
+        MNodeCreatorFun creatorFun = mNormalNodeRegList[nodeID];
+        MNodePtr node_ptr = creatorFun(nodeName);
+        if (!node_ptr)
+        {
+            node_ptr.reset();
+        }
+
+        node_ptr->initialise();
+        resultNodePtr = node_ptr;
+    }
+    else
+    {
+        resultNodePtr.reset();
+        MLogManager::getSingleton().logOutput("Error: Morph Node Manager: Created node with ID: " + nodeID + "have not been registered!", M_ERROR);
+        return resultNodePtr;
+    }
+    resultNodePtr->setNodeID(nodeID);
+    return resultNodePtr;
 }
 
-void MNodeManager::deleteNode(const MString &nodeChainName)
+bool MNodeManager::deleteNode(const MString &nodeChainName)
 {
+    MNodePtr dstNodePtr;
+    MNodePtr parentNodePtr;
+
+    if (findNodeByChainName(nodeChainName, dstNodePtr, parentNodePtr))
+    {
+        if(dstNodePtr == mRootNodePtr)
+        {
+            MLogManager::getSingleton().logOutput("Error: Morph Node Manager: you can not delete the root node!", M_ERROR);
+            return false;
+        }
+
+        if (isNodeSelected(nodeChainName))
+            this->selectNode(nodeChainName, M_SELECT_SUBTRACT);
+
+        MString name = dstNodePtr->getName();
+        dstNodePtr->release();
+        parentNodePtr->removeChildNode(name);
+        return true;
+    }
 }
 
 void MNodeManager::notifyAttributeChanged(const MString &parentNodeChainName, const MString &nodeName, const MString &attrName, const MAttribute &attr)
@@ -206,13 +296,14 @@ void MNodeManager::notifyAttributeChanged(const MString &parentNodeChainName, co
     }
 }
 
-void MNodeManager::notifyAddNode(const MString &parentNodeChinName, const MString &nodeName)
+void MNodeManager::notifyAddNode(const MString &parentNodeChainName, const MString &nodeName)
 {
+    qDebug() << "4) notifyAddNode()";
     std::vector<MNodeTreeListener*>::iterator it;
     for (it = mNodeTreeListenerList.begin(); it != mNodeTreeListenerList.end(); ++it)
     {
         assert(*it);
-        (*it)->addNode(parentNodeChinName, nodeName);
+        (*it)->addNode(parentNodeChainName, nodeName);
     }
 }
 

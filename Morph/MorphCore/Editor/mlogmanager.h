@@ -28,10 +28,9 @@
 #define MLOGMANAGER_H
 
 //#include <OgreSingleton.h> // FIXME: Implement a singleton pattern for Morph namespace.
-#include <vector>
+#include <QVector>
 #include <iostream>
 #include <fstream>
-#include <QString>
 
 #include "MType.h"
 
@@ -39,7 +38,9 @@ enum logType
 {
     M_MESSAGE,
     M_ERROR,
-    M_WARN
+    M_WARN,
+    M_EDITOR_MESSAGE, // an editor specific messages, like "Resources Initialised"
+    M_OGRE
 };
 
 // TODO: Implement some log levels.
@@ -68,11 +69,11 @@ public:
     MLogManager();
     ~MLogManager();
 
-    /** Generalized output logging function, logs messages, errors, and even warns.
+    /** Generalized output logging function, logs messages, Errors, and even warns.
     @param message string
         The message to be logged.
     @param type logType
-        Handles the type of output to be logged, i.e message, error or warn.
+        Handles the type of output to be logged, i.e message, Error or warn.
     @param writeToFile bool
         True if the log will be written to a file, set by default to true, set by default to true.
     */
