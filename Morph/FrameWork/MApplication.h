@@ -6,13 +6,19 @@
 #include <CEGUI/CEGUISystem.h>
 #include <CEGUI/CEGUISchemeManager.h>
 #include <CEGUI/RendererModules/Ogre/CEGUIOgreRenderer.h>
+#include <MButtonWidget.h>
+#include <MCheckButtonWidget.h>
+#include <MVSliderWidget.h>
 
 class MApplication : public BaseApplication
 {
 public:
-    MApplication();
+    MApplication(const std::string& SceneFilePath);
     virtual ~MApplication(void);
 
+    static MButtonWidget* getMButtonWidget(const std::string& widgetName);
+    static MCheckButtonWidget* getMCheckButtonWidget(const std::string& widgetName);
+    static MVSliderWidget* getMVSliderWidget(const std::string& widgetName);
 
 protected:
     virtual void createScene(void);
@@ -35,7 +41,8 @@ protected:
     int mCount;						//number of objects created
     float mRotateSpeed;				//the rotation speed for the camera
     bool mMouseOver;
-
+    bool mObjectGrabbed;
+    Ogre::SceneNode *mGrabbedObject;
     bool bRobotMode;				//if true we place robots in the world
 
     CEGUI::OgreRenderer* mRenderer;

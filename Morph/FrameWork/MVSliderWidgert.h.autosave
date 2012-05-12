@@ -1,0 +1,38 @@
+#ifndef MVSLIDERWIDGERT_H
+#define MVSLIDERWIDGERT_H
+#include <QObject>
+#include <string>
+#include <QMap>
+#include "MButtonCanvasObject.h"
+#include "MButtonEventEmitter.h"
+
+class MVSliderWidgert : public QObject
+{
+    Q_OBJECT
+public:
+    explicit MVSliderWidgert(QObject *parent = 0);
+    MVSliderWidgert(const MButtonCanvasObject *canvasObject, QObject *parent = 0);
+    ~MVSliderWidgert();
+protected:
+    const MButtonCanvasObject                  *mCanvasObject;
+    static QMap<std::string, MVSliderWidgert*>    smWidgetsDataBase;
+    friend class MButtonEventEmitter;
+private:
+    void Clicked();
+    void Enter();
+    void Leave();
+    void Grabbed();
+signals:
+    void clicked();
+    void enter();
+    void leave();
+    void grabbed();
+
+public slots:
+    void printClicked();
+    void printEnter();
+    void printLeave();
+};
+};
+
+#endif // MVSLIDERWIDGERT_H

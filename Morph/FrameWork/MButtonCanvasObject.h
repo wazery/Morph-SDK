@@ -3,6 +3,7 @@
 #include <OGRE/OgreEntity.h>
 #include <string>
 
+
 class MButtonCanvasObject
 {
 public:
@@ -13,6 +14,7 @@ private:
     std::string         mName;
     friend class        MButtonWidget;
     friend class        MCheckButtonWidget;
+    friend class        MVSliderWidget;
 };
 
 #endif // MBUTTONCANVASOBJECT_H

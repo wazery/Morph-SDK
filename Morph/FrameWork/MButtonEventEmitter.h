@@ -14,6 +14,7 @@ public:
      void emitClicked(const std::string &entityName);
      void emitEnter(const std::string &entityName);
      void emitLeave(const std::string &entityName);
+     void emitGrab(const std::string &entityName);
 
 private:
      MButtonEventEmitter();

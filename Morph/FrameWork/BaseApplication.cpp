@@ -7,21 +7,22 @@ using namespace Ogre;
 #endif
 
 //-------------------------------------------------------------------------------------
-BaseApplication::BaseApplication()
+BaseApplication::BaseApplication(const std::string &SceneFilePath)
     : mRoot(0),
-    mCamera(0),
-    mSceneMgr(0),
-    mWindow(0),
-    mResourcesCfg(Ogre::StringUtil::BLANK),
-    mPluginsCfg(Ogre::StringUtil::BLANK),
-    mTrayMgr(0),
-    mCameraMan(0),
-    mDetailsPanel(0),
-    mCursorWasVisible(false),
-    mShutDown(false),
-    mInputManager(0),
-    mMouse(0),
-    mKeyboard(0)
+      mCamera(0),
+      mSceneMgr(0),
+      mWindow(0),
+      mResourcesCfg(Ogre::StringUtil::BLANK),
+      mPluginsCfg(Ogre::StringUtil::BLANK),
+      mTrayMgr(0),
+      mCameraMan(0),
+      mDetailsPanel(0),
+      mCursorWasVisible(false),
+      mShutDown(false),
+      mInputManager(0),
+      mMouse(0),
+      mKeyboard(0),
+      mSceneFilePath(SceneFilePath)
 {
 #if OGRE_PLATFORM == OGRE_PLATFORM_APPLE
     m_ResourcePath = Ogre::macBundlePath() + "/Contents/Resources/";
@@ -139,7 +140,7 @@ void BaseApplication::createScene()
 
     try{
             loader = new DotSceneLoader();
-               loader->parseDotScene("meshes/MyScene.scene", "General", mSceneMgr, mNode);
+               loader->parseDotScene(mSceneFilePath, "General", mSceneMgr, mNode);
          //DSL->parseDotScene(,"General",mSceneMgr,mNode);
         }catch(Ogre::Exception& e){
             std::cout << "OUCHHHHHHHHHHH" << std::endl;

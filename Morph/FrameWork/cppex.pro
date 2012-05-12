@@ -52,7 +52,8 @@ SOURCES += main.cpp \
     tinyxml.cpp \
     tinyxmlerror.cpp \
     tinyxmlparser.cpp \
-    DotSceneLoader.cpp
+    DotSceneLoader.cpp \
+    MVSliderWidget.cpp
 
 HEADERS += \
     MApplication.h \
@@ -64,7 +65,8 @@ HEADERS += \
     MCheckButtonWidget.h \
     tinystr.h \
     tinyxml.h \
-    DotSceneLoader.h
+    DotSceneLoader.h \
+    MVSliderWidget.h
 
 
 

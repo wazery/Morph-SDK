@@ -1,0 +1,57 @@
+#include "MVSliderWidgert.h"
+#include <string>
+#include <iostream>
+
+QMap<std::string, MVSliderWidgert*> MVSliderWidgert::smWidgetsDataBase;
+
+MVSliderWidgert::MVSliderWidgert(QObject *parent) :
+    QObject(parent){
+
+}
+
+MVSliderWidgert::MVSliderWidgert(const MButtonCanvasObject *canvasObject, QObject *parent) :
+    QObject(parent), mCanvasObject(canvasObject){
+    smWidgetsDataBase.insert(mCanvasObject->name(), this);
+}
+
+MVSliderWidgert::~MVSliderWidgert(){
+    smWidgetsDataBase.remove( mCanvasObject->name() );
+}
+
+
+void MVSliderWidgert::Clicked(){
+     emit clicked();
+}
+
+void MVSliderWidgert::Pressed(){
+     emit pressed();
+}
+
+void MVSliderWidgert::Released(){
+     emit released();
+}
+
+void MVSliderWidgert::Enter(){
+     emit enter();
+}
+
+void MVSliderWidgert::Leave(){
+    emit leave();
+}
+
+void MVSliderWidgert::Grabbed(){
+    emit grabbed();
+}
+
+void MVSliderWidgert::printClicked(){
+    std::cout << "------------object clicked-------------" << std::endl;
+}
+
+void MVSliderWidgert::printEnter(){
+    std::cout << "------------object Entered-------------" << std::endl;
+}
+
+void MVSliderWidgert::printLeave(){
+    std::cout << "------------object Leaved-------------" << std::endl;
+}
+

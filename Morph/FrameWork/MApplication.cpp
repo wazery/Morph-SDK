@@ -3,15 +3,17 @@
 
 using namespace Ogre;
 //-------------------------------------------------------------------------------------
-MApplication::MApplication():
-    BaseApplication(),
+MApplication::MApplication(const std::string& SceneFilePath):
+    BaseApplication(SceneFilePath),
     mCount(0),
     mCurrentObject(0),
+    mGrabbedObject(0),
     bLMouseDown(false),
     bRMouseDown(false),
     mRotateSpeed(0.1f),
     bRobotMode(true),
-    mMouseOver(false)
+    mMouseOver(false),
+    mObjectGrabbed(false)
 {
 }
 //-------------------------------------------------------------------------------------
@@ -19,6 +21,25 @@ MApplication::~MApplication(void)
 {
     mSceneMgr->destroyQuery(mRayScnQuery);
 }
+
+MButtonWidget* MApplication::getMButtonWidget(const std::string &widgetName){
+    MButtonCanvasObject* canvasObject = new MButtonCanvasObject(widgetName);
+    MButtonWidget* widgetPtr = new MButtonWidget(canvasObject);
+    return widgetPtr;
+}
+
+MCheckButtonWidget* MApplication::getMCheckButtonWidget(const std::string &widgetName){
+    MButtonCanvasObject* canvasObject = new MButtonCanvasObject(widgetName);
+    MCheckButtonWidget* widgetPtr = new MCheckButtonWidget(canvasObject);
+    return widgetPtr;
+}
+
+MVSliderWidget* MApplication::getMVSliderWidget(const std::string &widgetName){
+    MButtonCanvasObject* canvasObject = new MButtonCanvasObject(widgetName);
+    MVSliderWidget* widgetPtr = new MVSliderWidget(canvasObject);
+    return widgetPtr;
+}
+
 
 //-------------------------------------------------------------------------------------
 void MApplication::createScene(void)
@@ -107,6 +128,11 @@ bool MApplication::mouseMoved(const OIS::MouseEvent& arg)
     */
     Ogre::RaySceneQueryResult& result = mRayScnQuery->execute();
     Ogre::RaySceneQueryResult::iterator iter = result.begin();
+    if(mObjectGrabbed){
+        MButtonEventEmitter::getSingleton().emitGrab( mGrabbedObject->getName());
+        std::cout << -(arg.state.Y.rel) << std::endl;
+    }
+
     if(result.size() == 0){mMouseOver = false;}
     if(!mMouseOver){
         if(WasOver){
@@ -123,6 +149,8 @@ bool MApplication::mouseMoved(const OIS::MouseEvent& arg)
                 MButtonEventEmitter::getSingleton().emitEnter(mCurrentObject->getName());
                 WasOver = true;
                 ObjectLastOn = mCurrentObject->getName();
+
+
                 break;
             }
 
@@ -168,6 +196,8 @@ bool MApplication::mousePressed(const OIS::MouseEvent& arg, OIS::MouseButtonID i
             {
                 mCurrentObject = iter->movable->getParentSceneNode();
                 MButtonEventEmitter::getSingleton().emitClicked(mCurrentObject->getName());
+                mObjectGrabbed = true;
+                mGrabbedObject = iter->movable->getParentSceneNode();
                 break;
             }
         }
@@ -178,6 +208,9 @@ bool MApplication::mousePressed(const OIS::MouseEvent& arg, OIS::MouseButtonID i
 
 bool MApplication::mouseReleased(const OIS::MouseEvent& arg, OIS::MouseButtonID id)
 {
+    mObjectGrabbed = false;
+    mGrabbedObject = 0;
+
     if(id  == OIS::MB_Left)
     {
         bLMouseDown = false;
@@ -187,6 +220,7 @@ bool MApplication::mouseReleased(const OIS::MouseEvent& arg, OIS::MouseButtonID 
         CEGUI::MouseCursor::getSingleton().show();
         bRMouseDown = false;
     }
+
     return true;
 }
 

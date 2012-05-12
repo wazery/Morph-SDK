@@ -55,7 +55,7 @@
 class BaseApplication : public Ogre::FrameListener, public Ogre::WindowEventListener, public OIS::KeyListener, public OIS::MouseListener, OgreBites::SdkTrayListener
 {
 public:
-    BaseApplication();
+    BaseApplication(const std::string& SceneFilePath);
     virtual ~BaseApplication(void);
 
     virtual void exec(void);
@@ -107,6 +107,7 @@ protected:
 
     // Added for Mac compatibility
     Ogre::String                 m_ResourcePath;
+    const    std::string mSceneFilePath;
 
 #ifdef OGRE_STATIC_LIB
     Ogre::StaticPluginLoader m_StaticPluginLoader;
