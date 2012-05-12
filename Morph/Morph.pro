@@ -50,7 +50,7 @@ HEADERS += mainwindow.h \
     MorphCore/Editor/MNode.h \
     MorphCore/Editor/MType.h \
     MorphCore/Editor/mattribute.h \
-    MorphCore/Editor/MNodeManager.h
+    MorphCore/Editor/MNodeManager.h \
     MorphCore/Editor/mattrobject.h \
     mOgreEntityViewer/objpropertiesview.h \
     mOgreEntityViewer/envproperties.h \
@@ -83,6 +83,9 @@ FORMS    += mainwindow.ui \
     CONFIG += link_pkgconfig
     PKGCONFIG += OGRE
 
+#    INCLUDEPATH += /usr/include/sigc++-2.0
+    CONFIG += link_pkgconfig
+#    PKGCONFIG += sigc++-2.0
 #}
 
 #win32
