@@ -30,6 +30,7 @@ ObjProperties::ObjProperties(QWidget *parent) : QWidget(parent)
 
     name = new QLabel("Name : ");
     nameText = new QTextEdit();
+    nameText->setToolTip("Object name cannot be changed!");
     nameText->setFixedHeight(28);
     nameText->setAcceptRichText(false);
     nameText->setReadOnly(true);
@@ -44,34 +45,98 @@ ObjProperties::ObjProperties(QWidget *parent) : QWidget(parent)
 
     //POSITION OPTIONS
     groupPos = new QGroupBox("Position Options");
-    groupPos->setMaximumHeight(120);
+    groupPos->setMaximumHeight(150);
 
-    posX = new QLabel("Position X : ");
-    posXText = new QTextEdit();
+    posX = new QLabel("X: ");
+    posXText = new QSpinBox();
     posXText->setFixedHeight(28);
-    posXText->setAcceptRichText(false);
+    posXText->setFixedWidth(60);
 
-    posY = new QLabel("Position Y : ");
-    posYText = new QTextEdit();
+    posY = new QLabel("Y: ");
+    posYText = new QSpinBox();
     posYText->setFixedHeight(28);
-    posYText->setAcceptRichText(false);
+    posYText->setFixedWidth(60);
 
-    posZ = new QLabel("Position Z : ");
-    posZText = new QTextEdit();
+    posZ = new QLabel("Z: ");
+    posZText = new QSpinBox();
     posZText->setFixedHeight(28);
-    posZText->setAcceptRichText(false);
+    posZText->setFixedWidth(60);
 
     gridPosLayout = new QGridLayout;
 
     gridPosLayout->addWidget(posX, 0, 0);
     gridPosLayout->addWidget(posXText, 0, 1);
 
-    gridPosLayout->addWidget(posY, 1, 0);
-    gridPosLayout->addWidget(posYText, 1, 1);
+    gridPosLayout->addWidget(posY, 0, 2);
+    gridPosLayout->addWidget(posYText, 0, 3);
 
-    gridPosLayout->addWidget(posZ, 2, 0);
-    gridPosLayout->addWidget(posZText, 2, 1);
+    gridPosLayout->addWidget(posZ, 0, 4);
+    gridPosLayout->addWidget(posZText, 0, 5);
     groupPos->setLayout(gridPosLayout);
+    ////////////////////////////////////////////
+
+    //ROTATION OPTIONS
+    groupRot = new QGroupBox("Rotation Options");
+    groupRot->setMaximumHeight(150);
+
+    rotX = new QLabel("X: ");
+    rotXText = new QSpinBox();
+    rotXText->setFixedHeight(28);
+    rotXText->setFixedWidth(60);
+
+    rotY = new QLabel("Y: ");
+    rotYText = new QSpinBox();
+    rotYText->setFixedHeight(28);
+    rotYText->setFixedWidth(60);
+
+    rotZ = new QLabel("Z: ");
+    rotZText = new QSpinBox();
+    rotZText->setFixedHeight(28);
+    rotZText->setFixedWidth(60);
+
+    gridRotLayout = new QGridLayout;
+
+    gridRotLayout->addWidget(rotX, 0, 0);
+    gridRotLayout->addWidget(rotXText, 0, 1);
+
+    gridRotLayout->addWidget(rotY, 0, 2);
+    gridRotLayout->addWidget(rotYText, 0, 3);
+
+    gridRotLayout->addWidget(rotZ, 0, 4);
+    gridRotLayout->addWidget(rotZText, 0, 5);
+    groupRot->setLayout(gridRotLayout);
+    ////////////////////////////////////////////
+
+    //SCALE OPTIONS
+    groupScale = new QGroupBox("Scale Options");
+    groupScale->setMaximumHeight(150);
+
+    scaleX = new QLabel("X: ");
+    scaleXText = new QSpinBox();
+    scaleXText->setFixedHeight(28);
+    scaleXText->setFixedWidth(60);
+
+    scaleY = new QLabel("Y: ");
+    scaleYText = new QSpinBox();
+    scaleYText->setFixedHeight(28);
+    scaleYText->setFixedWidth(60);
+
+    scaleZ = new QLabel("Z: ");
+    scaleZText = new QSpinBox();
+    scaleZText->setFixedHeight(28);
+    scaleZText->setFixedWidth(60);
+
+    gridScaleLayout = new QGridLayout;
+
+    gridScaleLayout->addWidget(scaleX, 0, 0);
+    gridScaleLayout->addWidget(scaleXText, 0, 1);
+
+    gridScaleLayout->addWidget(scaleY, 0, 2);
+    gridScaleLayout->addWidget(scaleYText, 0, 3);
+
+    gridScaleLayout->addWidget(scaleZ, 0, 4);
+    gridScaleLayout->addWidget(scaleZText, 0, 5);
+    groupScale->setLayout(gridScaleLayout);
     ////////////////////////////////////////////
 
     //DISPLAY OPTIONS
@@ -143,11 +208,25 @@ ObjProperties::ObjProperties(QWidget *parent) : QWidget(parent)
     regroupLayout = new QVBoxLayout;
     regroupLayout->addWidget(groupObjName);
     regroupLayout->addWidget(groupPos);
+    regroupLayout->addWidget(groupRot);
+    regroupLayout->addWidget(groupScale);
     regroupLayout->addWidget(groupDisp);
     regroupLayout->addWidget(groupMat);
     regroupLayout->addWidget(groupAnim);
     regroupLayout->addItem(new QSpacerItem(0, 0, QSizePolicy::Minimum, QSizePolicy::Expanding));
     setLayout(regroupLayout);
+
+    connect(posXText, SIGNAL(valueChanged(int)), this, SLOT(setObjectPosX(int)));
+    connect(posYText, SIGNAL(valueChanged(int)), this, SLOT(setObjectPosY(int)));
+    connect(posZText, SIGNAL(valueChanged(int)), this, SLOT(setObjectPosZ(int)));
+
+    connect(rotXText, SIGNAL(valueChanged(int)), this, SLOT(setObjectRotX(int)));
+    connect(rotYText, SIGNAL(valueChanged(int)), this, SLOT(setObjectRotY(int)));
+    connect(rotZText, SIGNAL(valueChanged(int)), this, SLOT(setObjectRotZ(int)));
+
+    connect(scaleXText, SIGNAL(valueChanged(int)), this, SLOT(setObjectScaleX(int)));
+    connect(scaleYText, SIGNAL(valueChanged(int)), this, SLOT(setObjectScaleY(int)));
+    connect(scaleZText, SIGNAL(valueChanged(int)), this, SLOT(setObjectScaleZ(int)));
 }
 
 ObjProperties::~ObjProperties()
@@ -172,4 +251,51 @@ void ObjProperties::updateListAnim(Ogre::AnimationStateSet* anims)
         loopCheckBox->setEnabled(false);
         playCheckBox->setEnabled(false);
     }
+}
+
+void ObjProperties::setObjectPosX(int value)
+{
+    emit signalPosXChanged(value);
+}
+
+void ObjProperties::setObjectPosY(int value)
+{
+    emit signalPosYChanged(value);
+}
+
+void ObjProperties::setObjectPosZ(int value)
+{
+    emit signalPosZChanged(value);
+}
+
+// --------------------------------
+void ObjProperties::setObjectRotX(int value)
+{
+    emit signalRotXChanged(value);
+}
+
+void ObjProperties::setObjectRotY(int value)
+{
+    emit signalRotYChanged(value);
+}
+
+void ObjProperties::setObjectRotZ(int value)
+{
+    emit signalRotZChanged(value);
+}
+
+// --------------------------------
+void ObjProperties::setObjectScaleX(int value)
+{
+    emit signalScaleXChanged(value);
+}
+
+void ObjProperties::setObjectScaleY(int value)
+{
+    emit signalScaleYChanged(value);
+}
+
+void ObjProperties::setObjectScaleZ(int value)
+{
+    emit signalScaleZChanged(value);
 }

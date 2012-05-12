@@ -96,10 +96,14 @@ namespace Morph
         /** Access the background color */
         QColor getBackgroundColor() const { return QColor(mBackgroundColor.getAsRGBA()); }
 
+        Ogre::SceneNode* getSelectedNode() { return selectedNode; }
+
         /** Access the canvas windows */
         QList<MOgreCanvas*> getOgreWindows() { return mRenderWindowList; }
 
         void updateAnim();
+
+        void changeZoomValue(Ogre::Vector3 pos);
 
         void setBoundingBoxes(int value);
         void setSkeleton(int value);
@@ -112,7 +116,16 @@ namespace Morph
         void setSpecularColor(QColor color);
         QColor getSpecularColor();
 
+        void setFog(int fogType);
+        void setFogColor(QColor color);
+        QColor getFogColor();
+
+        Ogre::Entity* getMainEntity();
+
         void updateMaterial();
+        void setAnimationState(Ogre::String name);
+        void setAnimLoop(bool enable);
+        void setAnimEnabled(bool enable);
 
         void createPointLight(String name, String xPos, String yPos, String zPos, String diffuse, String specular);
         void createDirectionalLight(String name, String xDir, String yDir, String zDir, String diffuse, String specular);
@@ -131,6 +144,12 @@ namespace Morph
         Ogre::Entity*    mainEnt;
         Ogre::SubEntity* mainSubEnt;
 
+        //Fog
+        Ogre::ColourValue fogColor;
+        QColor fogOldColor;//to keep the last selected color
+        Ogre::ColourValue backgroundColor;
+        QColor backgroundOldColor;
+
     public slots:
         void update();
         /** Sets the number of active viewports */
@@ -138,6 +157,7 @@ namespace Morph
 
     signals:
         void initialised();
+        void selectedNodeChanged(bool value);
 
     public slots:
         void keyPress(QKeyEvent* e);
@@ -150,6 +170,7 @@ namespace Morph
 
         /** Create the grid for the canvas */
         void createGrid(MOgreCanvas *renderWindowList, int index);
+        void gridChanged(bool value);
 
     protected:
         virtual void showEvent(QShowEvent *e);
@@ -232,7 +253,7 @@ namespace Morph
         Ogre::AnimationState* mainEntAnim;
 
         QPoint oldPos;
-        Ogre::SceneNode *selectedNode;
+        Ogre::SceneNode* selectedNode;
 
         //Deplacement
         Ogre::Vector3 mDirection;

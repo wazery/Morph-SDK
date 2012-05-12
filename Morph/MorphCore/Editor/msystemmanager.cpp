@@ -51,12 +51,16 @@ MSystemManager::MSystemManager(QWidget *parent)
     mWindowWidth(0),
     mWindowHeight(0),
     mSceneManager(0),
+    selectedNode(NULL),
     mainEnt(0),
     mainEntAnim(0),
     mainNode(0),
     mainSubEnt(0),
     oldPos(invalidMousePoint)
 {
+    fogColor.setAsRGBA(qRgba(0, 0, 0, 1));
+    mBackgroundColor.setAsARGB(QColor(30, 30, 30, 1).rgba());
+
     lightDiffuseColor.setAsRGBA(qRgba(0, 0, 0, 1));
     lightSpecularColor.setAsRGBA(qRgba(0, 0, 0, 1));
     ambientLightColor.setAsRGBA(qRgba(0, 0, 0, 1));
@@ -66,8 +70,6 @@ MSystemManager::MSystemManager(QWidget *parent)
     setAttribute(Qt::WA_InputMethodEnabled);
     setMinimumSize(240, 240);
     setFocusPolicy(Qt::WheelFocus);
-
-    mBackgroundColor.setAsARGB(QColor(30, 30, 30, 1).rgba());
 
     mRenderWindow = NULL;
 
@@ -236,6 +238,9 @@ void MSystemManager::mouseDoubleClick(QMouseEvent *e)
         Ogre::Real y = e->pos().y() / (float)height();
         Ogre::Ray ray;
 
+        // Reset selected node.
+        selectedNode = NULL;
+
         for(int i = 0; i < mRenderWindowList.count(); i++)
         {
             ray = mRenderWindowList[i]->getCamera()->getCameraToViewportRay(x, y);
@@ -251,20 +256,18 @@ void MSystemManager::mouseDoubleClick(QMouseEvent *e)
                     // when the object is double clicked..
                     // replace the last line with whatever you want
                     selectedNode = queryResultIterator->movable->getParentSceneNode();
-
+                    if(selectedNode->getShowBoundingBox())
+                        emit selectedNodeChanged(true);
+                    else
+                        emit selectedNodeChanged(false);
                     //button_object_clicked(selectedNode->getAttachedObject(0)->getName() );
-
-                    selectedNode->showBoundingBox(true);
                 }
             }
             else
             {
-                if (selectedNode)
-                {
-                    // when you double click on any other object..
-                    selectedNode->showBoundingBox(false);
-                    selectedNode = 0;
-                }
+                // when you double click on any other object..
+                emit selectedNodeChanged(false);
+                selectedNode = 0;
             }
             mSceneManager->destroyQuery(query);
             update();
@@ -439,8 +442,7 @@ bool MSystemManager::initOgreCore()
     initResources();
     MLogManager::getSingleton().logOutput("Initialised all resources", M_EDITOR_MESSAGE);
     createScene();
-    //MLogManager::getSingleton().logOutput("Scene created", M_EDITOR_MESSAGE);
-    //createGrid();
+    MLogManager::getSingleton().logOutput("Scene created", M_EDITOR_MESSAGE);
     //createLight();
     //MLogManager::getSingleton().logOutput("Added light", M_EDITOR_MESSAGE);
 
@@ -540,19 +542,38 @@ void MSystemManager::createGrid(MOgreCanvas* renderWindowList, int index)
     QSettings* settings = new QSettings(settingsFile, QSettings::NativeFormat);
 
     Ogre::ColourValue ogreColor;
-    ogreColor.setAsARGB(QColor(settings->value("gridColor").toString()).rgba());
+    ogreColor.setAsARGB(QColor(settings->value("Grid/gridColor").toString()).rgba());
     mGridList[index]->setColour(ogreColor);
-    mGridList[index]->setPerspectiveSize(settings->value("gridPrespectiveSize").toInt());
+    mGridList[index]->setPerspectiveSize(settings->value("Grid/gridPrespectiveSize").toInt());
 
-    if(settings->value("gridRenderLayer").toInt() == 0)
+    if(settings->value("Grid/gridRenderLayer").toInt() == 0)
         mGridList[index]->setRenderLayer(ViewportGrid::RL_BEHIND);
     else
         mGridList[index]->setRenderLayer(ViewportGrid::RL_INFRONT);
 
     renderWindowList->hasGrid = true;
-    mGridList[index]->setEnabled(true);
+    mGridList[index]->setEnabled(settings->value("Grid/grid").toBool());
     mGridList[index]->setDivision(30);
-    mGridList[index]->setPerspectiveSize(150);
+}
+
+void MSystemManager::gridChanged(bool value)
+{
+    for(int i = 0; i < mGridList.count(); i++)
+    {
+        mGridList[i]->setEnabled(value);
+    }
+    update();
+}
+
+void MSystemManager::changeZoomValue(Ogre::Vector3 pos)
+{
+    Ogre::Vector3 vector;
+    for(int i = 0; i < mRenderWindowList.count(); i++)
+    {
+        vector = mRenderWindowList[i]->getCamera()->getPosition();
+        mRenderWindowList[i]->getCamera()->setPosition(vector.x, vector.y, pos.z);
+        mRenderWindowList[i]->update();
+    }
 }
 
 void MSystemManager::setBoundingBoxes(int value)
@@ -626,6 +647,47 @@ QColor MSystemManager::getSpecularColor()
     return specularOldColor;
 }
 
+void MSystemManager::setFog(int fogType)
+{
+    switch(fogType)
+    {
+        case 0:
+            mSceneManager->setFog(FOG_NONE);
+            break;
+        case 1:
+            mSceneManager->setFog(FOG_LINEAR, fogColor, 0.0, 50, 500);
+            break;
+        case 2:
+            mSceneManager->setFog(FOG_EXP, fogColor, 0.005);
+            break;
+        case 3:
+            mSceneManager->setFog(FOG_EXP2, fogColor, 0.003);
+            break;
+    }
+}
+
+void MSystemManager::setFogColor(QColor color)
+{
+    fogOldColor = color;
+    fogColor.setAsARGB(color.rgba());
+    if(mSceneManager->getFogMode() == FOG_LINEAR)
+        mSceneManager->setFog(FOG_LINEAR, fogColor, mSceneManager->getFogDensity(), mSceneManager->getFogStart(), mSceneManager->getFogEnd());
+    else if(mSceneManager->getFogMode() == FOG_EXP)
+        mSceneManager->setFog(FOG_EXP, fogColor, mSceneManager->getFogDensity());
+    else if(mSceneManager->getFogMode() == FOG_EXP2)
+        mSceneManager->setFog(FOG_EXP2, fogColor, mSceneManager->getFogDensity());
+}
+
+QColor MSystemManager::getFogColor()
+{
+    return fogOldColor;
+}
+
+Ogre::Entity* MSystemManager::getMainEntity()
+{
+    return mainEnt;
+}
+
 void MSystemManager::updateMaterial()
 {
     for(unsigned int i=0; i<mainEnt->getNumSubEntities(); ++i)
@@ -633,6 +695,32 @@ void MSystemManager::updateMaterial()
         mainSubEnt = mainEnt->getSubEntity(i);
         mainSubEnt->getMaterial()->reload();
     }
+}
+
+void MSystemManager::setAnimationState(Ogre::String name)
+{
+    if(mainEntAnim != NULL){
+        mainEntAnim->setLoop(false);
+        mainEntAnim->setEnabled(false);
+    }
+    mainEntAnim = mainEnt->getAnimationState(name);
+    mainEntAnim->setLoop(false);
+    if(isLoopOn)
+        mainEntAnim->setLoop(true);
+    if(isAnimEnabled)
+        mainEntAnim->setEnabled(true);
+}
+
+void MSystemManager::setAnimLoop(bool enable)
+{
+    mainEntAnim->setLoop(enable);
+    isLoopOn = enable;
+}
+
+void MSystemManager::setAnimEnabled(bool enable)
+{
+    mainEntAnim->setEnabled(enable);
+    isAnimEnabled = enable;
 }
 
 void MSystemManager::createPointLight(Ogre::String name, String xPos, String yPos, String zPos, String diffuse, String specular)
@@ -877,6 +965,8 @@ void MSystemManager::dragEnterEvent(QDragEnterEvent* e)
     QRegExp fileMatcher("^file://(/.*\\.mesh)$");
     if( fileMatcher.exactMatch(e->mimeData()->text()) )
         e->acceptProposedAction();
+    else
+        QMessageBox::warning(parentWidget(), "You can't add files with this type", "Please add file of type .mesh");
 #endif
 }
 
@@ -894,7 +984,6 @@ void MSystemManager::dropEvent(QDropEvent* e)
     {
         QString name = fileMatcher.cap(1);
 #endif
-        //FIXME:
         addObject(name.toStdString());
         e->acceptProposedAction();
     }

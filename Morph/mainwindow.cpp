@@ -14,7 +14,7 @@ MainWindow::MainWindow(QWidget *parent) :
     mSettingsFile = QApplication::applicationDirPath() + "editorSettings";
     mSettings = new QSettings(mSettingsFile, QSettings::NativeFormat);
 
-    StartingWindow* startingWindow = new StartingWindow(this);
+    startingWindow = new StartingWindow(this);
     startingWindow->show();
 
     //if(!mSettings->value("startingWindow").toBool())
@@ -26,6 +26,8 @@ MainWindow::MainWindow(QWidget *parent) :
     // Pointers to the editor subsystems.
     systemManager = ui->widget;
     lightWin = new LightWindow(this);
+
+    matWin = new MatWindow(this);
 
     loadSettings();
 
@@ -44,7 +46,10 @@ MainWindow::MainWindow(QWidget *parent) :
     MLogManager::getSingleton().addListener(ui->textBrowser);
     MLogManager::getSingleton().addListener(ui->textBrowser_2);
 
-    connect(ui->pushButton, SIGNAL(clicked()), this, SLOT(changeIndexofCanvas()));
+    ui->engineProgress->setVisible(false);
+    ui->label->setVisible(false);
+    connect(ui->pushButton, SIGNAL(clicked()), this, SLOT(startEngineLoading()));
+    connect(ui->engineProgress, SIGNAL(valueChanged(int)), this, SLOT(changeIndexofCanvas(int)));
 
     // TODO: add listeners for the subsystems.
     //MNodeManager::getSingleton().addSelectListener(&m_wndProperties);
@@ -54,14 +59,18 @@ MainWindow::MainWindow(QWidget *parent) :
     //  Connect actions to slots.
     // --------------------------------------
     connect(ui->actionAbout_Morph, SIGNAL(triggered()), this, SLOT(openAboutDialog()));
+    connect(ui->action_Quick_Start_Guide, SIGNAL(triggered()), this, SLOT(openQuickStart()));
 
     connect(ui->actionConfigure_Editor, SIGNAL(triggered()), this, SLOT(openSettingsDialog()));
     connect(ui->actionAdd_Ogre_Mesh, SIGNAL(triggered()), this, SLOT(addObj()));
     connect(ui->actionSet_Background_Color, SIGNAL(triggered()), this, SLOT(setBackgroundColor()));
     connect(ui->action_Add_Light, SIGNAL(triggered()), this, SLOT(addLight()));
 
-    // FIXME:
+    connect(ui->actionSet_Script_Path, SIGNAL(triggered()), this, SLOT(setScriptPath()));
+    connect(ui->actionSet_Texture, SIGNAL(triggered()), this, SLOT(setTexturePath()));
+
     connect(ui->actionRemoveMesh, SIGNAL(triggered()), this, SLOT(showRemoveObj()));
+    connect(ui->action_Remove_Selected, SIGNAL(triggered()), this, SLOT(removeSelected()));
 
     //  Environment Properties
     // --------------------------------------
@@ -78,15 +87,40 @@ MainWindow::MainWindow(QWidget *parent) :
     // --------------------------------------
     connect(systemManager, SIGNAL(selectedNodeChanged(bool)), this, SLOT(getObjName(bool)));
     connect(systemManager, SIGNAL(selectedNodeChanged(bool)), this, SLOT(enableObjProperties(bool)));
+    connect(systemManager, SIGNAL(selectedNodeChanged(bool)), this, SLOT(setPostions(bool)));
+    connect(systemManager, SIGNAL(selectedNodeChanged(bool)), this, SLOT(setScales(bool)));
+
     connect(objProperties->boundBoxCheckBox, SIGNAL(clicked(bool)), this, SLOT(setObjBoundingBoxes(bool)));
     connect(systemManager, SIGNAL(selectedNodeChanged(bool)), objProperties->boundBoxCheckBox, SLOT(setChecked(bool)));
+
     connect(objProperties->dispSkeletonCheckBox, SIGNAL(clicked(bool)), this, SLOT(setobjSkeleton(bool)));
 
+    connect(objProperties, SIGNAL(signalPosXChanged(int)), this, SLOT(setObjectPosX(int)));
+    connect(objProperties, SIGNAL(signalPosYChanged(int)), this, SLOT(setObjectPosY(int)));
+    connect(objProperties, SIGNAL(signalPosZChanged(int)), this, SLOT(setObjectPosZ(int)));
+
+    connect(objProperties, SIGNAL(signalRotXChanged(int)), this, SLOT(setObjectRotX(int)));
+    connect(objProperties, SIGNAL(signalRotYChanged(int)), this, SLOT(setObjectRotY(int)));
+    connect(objProperties, SIGNAL(signalRotZChanged(int)), this, SLOT(setObjectRotZ(int)));
+
+    connect(objProperties, SIGNAL(signalScaleXChanged(int)), this, SLOT(setObjectScaleX(int)));
+    connect(objProperties, SIGNAL(signalScaleYChanged(int)), this, SLOT(setObjectScaleY(int)));
+    connect(objProperties, SIGNAL(signalScaleZChanged(int)), this, SLOT(setObjectScaleZ(int)));
+
+    connect(objProperties->viewMatBtn, SIGNAL(clicked()), this, SLOT(setMaterial()));
+    connect(matWin, SIGNAL(msgBoxClicked()), this, SLOT(updateMaterial()));
+
+    connect(objProperties->listAnimCombo, SIGNAL(activated(QString)), this, SLOT(setAnimation(QString)));
+    connect(objProperties->loopCheckBox, SIGNAL(stateChanged(int)), this, SLOT(setAnimLoop(int)));
+    connect(objProperties->playCheckBox, SIGNAL(stateChanged(int)), this, SLOT(setAnimEnabled(int)));
+
+    // Light Win Properties
+    // --------------------------------------
     connect(lightWin->diffuseColorLightBtn, SIGNAL(clicked()), this, SLOT(setDiffuseLightColor()));
     connect(lightWin->specularColorLightBtn, SIGNAL(clicked()), this, SLOT(setSpecularLightColor()));
     connect(lightWin->okBtn, SIGNAL(clicked()), this, SLOT(createNewLight()));
 
-    connect(ui->grid, SIGNAL(clicked()), this, SLOT(gridChanged()));
+    connect(ui->grid, SIGNAL(clicked(bool)), this, SLOT(gridChanged(bool)));
     connect(ui->zoomSlider, SIGNAL(valueChanged(int)), ui->zommSpinBox, SLOT(setValue(int)));
     connect(ui->zommSpinBox, SIGNAL(valueChanged(int)), ui->zoomSlider, SLOT(setValue(int)));
 
@@ -95,12 +129,13 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(systemManager, SIGNAL(initialised()), this, SLOT(addNodeListener()));
     connect(systemManager, SIGNAL(initialised()), this, SLOT(initialisePlugins()));
 
+    connect(ui->zoomSlider, SIGNAL(sliderMoved(int)), this, SLOT(zoomValueChanged(int)));
+
     connect(ui->fourViews, SIGNAL(clicked()), this, SLOT(setFourViewPorts()));
     connect(ui->oneView, SIGNAL(clicked()), this, SLOT(setOneViewPort()));
     connect(ui->wireframe, SIGNAL(clicked()), this, SLOT(setViewPortToWireframe()));
     connect(ui->points, SIGNAL(clicked()), this, SLOT(setViewPortToPoints()));
     connect(ui->polygons, SIGNAL(clicked()), this, SLOT(setViewPortToPolygons()));
-
 
     //Init to white the diffuse and specular colors (NOTE: the initialisation takes effect on the "LightWindow")
     diffuseLightColor.setRgba(qRgba(255, 255, 255, 255));
@@ -142,12 +177,16 @@ void MainWindow::initialisePlugins()
     ui->grid->setEnabled(true);
     ui->zommSpinBox->setEnabled(true);
     ui->zoomSlider->setEnabled(true);
+    ui->onetoOne->setEnabled(true);
     ui->oneView->setEnabled(true);
     ui->fourViews->setEnabled(true);
     ui->wireframe->setEnabled(true);
     ui->points->setEnabled(true);
+}
 
-    // Init Grid.
+void MainWindow::zoomValueChanged(int value)
+{
+    systemManager->changeZoomValue(Ogre::Vector3(0, 0, value));
 }
 
 void MainWindow::setFourViewPorts()
@@ -223,13 +262,12 @@ void MainWindow::setViewPortToPolygons()
 void MainWindow::loadSettings()
 {
     // Set background color to the last saved setting.
-    QColor color(mSettings->value("canvasBackgroundColor").toString());
+    QColor color(mSettings->value("Canvas/canvasBackgroundColor").toString());
     if (color.isValid())
     {
         systemManager->setBackgroundColor(color);
     }
 
-    //TODO: check if the grid is enabled if(systemManager->mGridList)
     //Set grid checkbox
     ui->grid->setChecked(mSettings->value("Grid/grid").toBool());
 }
@@ -254,6 +292,12 @@ void MainWindow::openAboutDialog()
     aboutdialog->show();
 }
 
+void MainWindow::openQuickStart()
+{
+    startingWindow = new StartingWindow();
+    startingWindow->show();
+}
+
 void MainWindow::openSettingsDialog()
 {
     if(systemManager->isVisible())
@@ -268,11 +312,36 @@ void MainWindow::openSettingsDialog()
     settingsdialog->show();
 }
 
-void MainWindow::changeIndexofCanvas()
+void MainWindow::startEngineLoading()
 {
-    ui->tabWidget->setCurrentIndex(1);
-    propertiesTab->setEnabled(true);
-    setOneViewPort();
+    ui->engineProgress->setVisible(true);
+    ui->label->setVisible(true);
+    QTimer* timer = new QTimer(this);
+    connect(timer, SIGNAL(timeout()), this, SLOT(updateProgress()));
+    timer->start(10);
+}
+
+void MainWindow::updateProgress()
+{
+    static int progress = 0;
+    ui->engineProgress->setValue(++progress);
+}
+
+void MainWindow::changeIndexofCanvas(int value)
+{    
+    if(value == 1)
+        ui->tabWidget->setCurrentIndex(1);
+    else
+        ui->tabWidget->setCurrentIndex(0);
+    if(value == 100)
+    {
+        ui->tabWidget->setCurrentIndex(1);
+        propertiesTab->setEnabled(true);
+        setOneViewPort();
+        ui->engineProgress->setVisible(false);
+        ui->label->setVisible(false);
+        ui->pushButton->setVisible(false);
+    }
 }
 
 void MainWindow::gridColorChanged(QColor color)
@@ -395,11 +464,17 @@ void MainWindow::commitRemoveObj()
     systemManager->removeObject(removeObject->getMeshName().toUtf8().constData());
 }
 
+void MainWindow::removeSelected()
+{
+    if(systemManager->getSelectedNode())
+        systemManager->removeObject(systemManager->getSelectedNode()->getName());
+}
+
 void MainWindow::setBackgroundColor()
 {
     if(systemManager->isVisible())
     {
-        QColor color = QColorDialog::getColor(QColor(mSettings->value("canvasBackgroundColor").toString()), this);
+        QColor color = QColorDialog::getColor(QColor(mSettings->value("Canvas/canvasBackgroundColor").toString()), this);
 
         if(color.isValid())
         {
@@ -414,18 +489,17 @@ void MainWindow::setBackgroundColor()
         QMessageBox::warning(this, "You must open the canvas first!", "You are trying to make an action that couldn't be done without launching the canvas first!");
 }
 
-void MainWindow::gridChanged()
+void MainWindow::gridChanged(bool value)
 {
     mSettings->setValue("Grid/grid", ui->grid->isChecked());
     mSettings->sync();
 
-    //systemManager->mGrid->setEnabled(ui->grid->isChecked());
     if(ui->grid->isChecked())
         MLogManager::getSingleton().logOutput("Grid set to on", M_EDITOR_MESSAGE);
     else
         MLogManager::getSingleton().logOutput("Grid set to off", M_EDITOR_MESSAGE);
 
-    systemManager->update();
+    systemManager->gridChanged(value);
 }
 
 void MainWindow::addLight()
@@ -578,6 +652,20 @@ void MainWindow::getObjName(bool value)
         objProperties->nameText->setText("");
 }
 
+void MainWindow::setScriptPath()
+{
+    QString scriptPathName = QFileDialog::getExistingDirectory(this, tr("Select Directory"), QDir::currentPath()+"/media/materials/scripts/");
+    if(!scriptPathName.isEmpty())
+        matWin->setScriptPath(scriptPathName);
+}
+
+void MainWindow::setTexturePath()
+{
+    QString texturePathName = QFileDialog::getExistingDirectory(this, tr("Select Directory"), QDir::currentPath()+"/media/materials/textures/");
+    if(!texturePathName.isEmpty())
+        matWin->setTexturePath(texturePathName);
+}
+
 void MainWindow::setRenderDetail(int index)
 {
     if(index == 0)
@@ -604,12 +692,148 @@ void MainWindow::setobjSkeleton(bool value)
     //    systemManager->getSceneManager()->getEntity(systemManager->getSelectedNode()->getName())->setDisplaySkeleton(value);
 }
 
+void MainWindow::setObjectPosX(int value)
+{
+    if(systemManager->getSelectedNode() != NULL)
+    {
+        Ogre::Vector3 vector = systemManager->getSelectedNode()->getPosition();
+        systemManager->getSelectedNode()->setPosition(Ogre::Real(value), vector.y, vector.z);
+        systemManager->update();
+    }
+}
+
+void MainWindow::setObjectPosY(int value)
+{
+    if(systemManager->getSelectedNode() != NULL)
+    {
+        Ogre::Vector3 vector = systemManager->getSelectedNode()->getPosition();
+        systemManager->getSelectedNode()->setPosition(vector.x, Ogre::Real(value), vector.z);
+        systemManager->update();
+    }
+}
+
+void MainWindow::setObjectPosZ(int value)
+{
+    if(systemManager->getSelectedNode() != NULL)
+    {
+        Ogre::Vector3 vector = systemManager->getSelectedNode()->getPosition();
+        systemManager->getSelectedNode()->setPosition(vector.x, vector.y, Ogre::Real(value));
+        systemManager->update();
+    }
+}
+
+// -----------------------------------------
+void MainWindow::setObjectRotX(int value)
+{
+//    Ogre::Vector3 vector = systemManager->getSelectedNode()->getOrientation();
+//    systemManager->getSelectedNode()->setPosition(Ogre::Real(value.toInt()), vector.y, vector.z);
+//    systemManager->update();
+}
+
+void MainWindow::setObjectRotY(int value)
+{
+//    Ogre::Vector3 vector = systemManager->getSelectedNode()->getPosition();
+//    systemManager->getSelectedNode()->setPosition(vector.x, Ogre::Real(value.toInt()), vector.z);
+//    systemManager->update();
+}
+
+void MainWindow::setObjectRotZ(int value)
+{
+//    Ogre::Vector3 vector = systemManager->getSelectedNode()->getPosition();
+//    systemManager->getSelectedNode()->setPosition(vector.x, vector.y, Ogre::Real(value));
+//    systemManager->update();
+}
+
+// -----------------------------------------
+void MainWindow::setObjectScaleX(int value)
+{
+    if(systemManager->getSelectedNode() != NULL)
+    {
+        Ogre::Vector3 vector = systemManager->getSelectedNode()->getScale();
+        systemManager->getSelectedNode()->scale(Ogre::Real(value), vector.y, vector.z);
+        systemManager->update();
+    }
+}
+
+void MainWindow::setObjectScaleY(int value)
+{
+    if(systemManager->getSelectedNode() != NULL)
+    {
+        Ogre::Vector3 vector = systemManager->getSelectedNode()->getScale();
+        systemManager->getSelectedNode()->scale(vector.x, Ogre::Real(value), vector.z);
+        systemManager->update();
+    }
+}
+
+void MainWindow::setObjectScaleZ(int value)
+{
+    if(systemManager->getSelectedNode() != NULL)
+    {
+        Ogre::Vector3 vector = systemManager->getSelectedNode()->getScale();
+        systemManager->getSelectedNode()->scale(vector.x, vector.y, Ogre::Real(value));
+        systemManager->update();
+    }
+}
+
+void MainWindow::setMaterial()
+{
+    matWin->move(width()/2, height()/2);
+    matWin->setTexture(systemManager->getMainEntity());
+    matWin->show();
+}
+
+void MainWindow::updateMaterial()
+{
+    systemManager->updateMaterial();
+    MLogManager::getSingleton().logOutput("Please restart the application so that the new material can take effect");
+    QMessageBox::information(this, "Material Update", "Please restart the application so that the new material can take effect");
+}
+
+void MainWindow::setAnimation(QString name)
+{
+    systemManager->setAnimationState(name.toStdString());
+}
+void MainWindow::setAnimLoop(int enable)
+{
+    systemManager->setAnimLoop(enable);
+}
+void MainWindow::setAnimEnabled(int enable)
+{
+    systemManager->setAnimEnabled(enable);
+}
+
 void MainWindow::enableObjProperties(bool value)
 {
     Q_UNUSED(value)
 
     objProperties->boundBoxCheckBox->setEnabled(true);
     objProperties->dispSkeletonCheckBox->setEnabled(true);
+}
+
+void MainWindow::setPostions(bool value)
+{
+    Q_UNUSED(value)
+
+    if(systemManager->getSelectedNode())
+    {
+        Ogre::Vector3 vector = systemManager->getSelectedNode()->getPosition();
+        objProperties->posXText->setValue(int(vector.x));
+        objProperties->posYText->setValue(int(vector.y));
+        objProperties->posZText->setValue(int(vector.z));
+    }
+}
+
+void MainWindow::setScales(bool value)
+{
+    Q_UNUSED(value)
+
+    if(systemManager->getSelectedNode())
+    {
+        Ogre::Vector3 vector = systemManager->getSelectedNode()->getScale();
+        objProperties->scaleXText->setValue(int(vector.x));
+        objProperties->scaleYText->setValue(int(vector.y));
+        objProperties->scaleZText->setValue(int(vector.z));
+    }
 }
 
 void MainWindow::setDiffuseLightColor()
