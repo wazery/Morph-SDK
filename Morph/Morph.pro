@@ -12,25 +12,6 @@ TEMPLATE = app
 
 SOURCES += main.cpp\
         mainwindow.cpp \
-<<<<<<< HEAD
-<<<<<<< HEAD
-    ogrecanvas.cpp \
-    MButtonWidget.cpp \
-    to-do.cpp \
-    MButtonEventEmitter.cpp \
-    MButtonCanvasObject.cpp
-
-HEADERS += mainwindow.h \
-        splashscreen.h \
-    ogrecanvas.h \
-    MButtonWidget.h \
-    MButtonEventEmitter.h \
-    MButtonCanvasObject.h
-=======
-    button.cpp \
-    MEvent.cpp \
-=======
->>>>>>> 8ee92ded2f5b2c4d72e2464b3af91d236b0bc48d
     MorphCore/Editor/msystemmanager.cpp \
     #MorphCore/Editor/msingleton.cpp
     MorphCore/Editor/mlogmanager.cpp \
@@ -69,11 +50,7 @@ HEADERS += mainwindow.h \
     MorphCore/Editor/MNode.h \
     MorphCore/Editor/MType.h \
     MorphCore/Editor/mattribute.h \
-<<<<<<< HEAD
     MorphCore/Editor/MNodeManager.h
->>>>>>> 4f3226e29c7690b0d08e1f81b3023f10ef0beee7
-=======
-    MorphCore/Editor/MNodeManager.h \
     MorphCore/Editor/mattrobject.h \
     mOgreEntityViewer/objpropertiesview.h \
     mOgreEntityViewer/envproperties.h \
@@ -92,7 +69,6 @@ HEADERS += mainwindow.h \
     mOgreEntityViewer/objproperties.h \
     mOgreEntityViewer/startingwindow.h \
     mOgreEntityViewer/matwindow.h
->>>>>>> 8ee92ded2f5b2c4d72e2464b3af91d236b0bc48d
 
 FORMS    += mainwindow.ui \
     mOgreEntityViewer/settingsdialog.ui \
@@ -106,13 +82,7 @@ FORMS    += mainwindow.ui \
     INCLUDEPATH += /usr/include/OGRE
     CONFIG += link_pkgconfig
     PKGCONFIG += OGRE
-<<<<<<< HEAD
-=======
 
-#    INCLUDEPATH += /usr/include/sigc++-2.0
-    CONFIG += link_pkgconfig
-#    PKGCONFIG += sigc++-2.0
->>>>>>> 8ee92ded2f5b2c4d72e2464b3af91d236b0bc48d
 #}
 
 #win32

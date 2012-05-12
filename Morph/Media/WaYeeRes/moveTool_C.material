@@ -1,0 +1,15 @@
+material WaYee/CyanC
+{
+	technique
+	{
+		pass
+		{
+			lighting off
+
+			ambient 0 0 0 1
+			diffuse 0 1 1 1
+			specular 0 0 0 1
+			emissive 0 0 0
+		}
+	}
+}
