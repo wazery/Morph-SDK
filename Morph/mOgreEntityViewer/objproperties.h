@@ -38,9 +38,18 @@ public:
     void updateListAnim(Ogre::AnimationStateSet*);
 
     QTextEdit* nameText;
-    QTextEdit* posXText;
-    QTextEdit* posYText;
-    QTextEdit* posZText;
+    QSpinBox* posXText;
+    QSpinBox* posYText;
+    QSpinBox* posZText;
+
+    QSpinBox* rotXText;
+    QSpinBox* rotYText;
+    QSpinBox* rotZText;
+
+    QSpinBox* scaleXText;
+    QSpinBox* scaleYText;
+    QSpinBox* scaleZText;
+
     QComboBox* renderDetailCombo;
     QComboBox* listAnimCombo;
     QSlider* lodSlider;
@@ -50,11 +59,43 @@ public:
     QCheckBox* playCheckBox;
     QPushButton* viewMatBtn;
 
+public slots:
+    void setObjectPosX(int value);
+    void setObjectPosY(int value);
+    void setObjectPosZ(int value);
+
+    void setObjectRotX(int value);
+    void setObjectRotY(int value);
+    void setObjectRotZ(int value);
+
+    void setObjectScaleX(int value);
+    void setObjectScaleY(int value);
+    void setObjectScaleZ(int value);
+
+signals:
+    void signalPosXChanged(int value);
+    void signalPosYChanged(int value);
+    void signalPosZChanged(int value);
+
+    void signalRotXChanged(int value);
+    void signalRotYChanged(int value);
+    void signalRotZChanged(int value);
+
+    void signalScaleXChanged(int value);
+    void signalScaleYChanged(int value);
+    void signalScaleZChanged(int value);
+
 private:
     QLabel* name;
     QLabel* posX;
     QLabel* posY;
     QLabel* posZ;
+    QLabel* rotX;
+    QLabel* rotY;
+    QLabel* rotZ;
+    QLabel* scaleX;
+    QLabel* scaleY;
+    QLabel* scaleZ;
     QLabel* dispSkeleton;
     QLabel* boundingBox;
     QLabel* renderDetail;
@@ -66,11 +107,15 @@ private:
 
     QGroupBox* groupObjName;
     QGroupBox* groupPos;
+    QGroupBox* groupRot;
+    QGroupBox* groupScale;
     QGroupBox* groupDisp;
     QGroupBox* groupMat;
     QGroupBox* groupAnim;
     QGridLayout* gridNameLayout;
     QGridLayout* gridPosLayout;
+    QGridLayout* gridRotLayout;
+    QGridLayout* gridScaleLayout;
     QGridLayout* gridDispLayout;
     QGridLayout* gridMatLayout;
     QGridLayout* gridAnimLayout;

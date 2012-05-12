@@ -8,7 +8,7 @@
     <x>0</x>
     <y>0</y>
     <width>1150</width>
-    <height>877</height>
+    <height>883</height>
    </rect>
   </property>
   <property name="minimumSize">
@@ -16,6 +16,286 @@
     <width>650</width>
     <height>0</height>
    </size>
+  </property>
+  <property name="palette">
+   <palette>
+    <active>
+     <colorrole role="Button">
+      <brush brushstyle="SolidPattern">
+       <color alpha="255">
+        <red>30</red>
+        <green>30</green>
+        <blue>30</blue>
+       </color>
+      </brush>
+     </colorrole>
+     <colorrole role="Light">
+      <brush brushstyle="SolidPattern">
+       <color alpha="255">
+        <red>30</red>
+        <green>30</green>
+        <blue>30</blue>
+       </color>
+      </brush>
+     </colorrole>
+     <colorrole role="Midlight">
+      <brush brushstyle="SolidPattern">
+       <color alpha="255">
+        <red>78</red>
+        <green>78</green>
+        <blue>78</blue>
+       </color>
+      </brush>
+     </colorrole>
+     <colorrole role="Mid">
+      <brush brushstyle="SolidPattern">
+       <color alpha="255">
+        <red>54</red>
+        <green>54</green>
+        <blue>54</blue>
+       </color>
+      </brush>
+     </colorrole>
+     <colorrole role="Text">
+      <brush brushstyle="SolidPattern">
+       <color alpha="255">
+        <red>255</red>
+        <green>255</green>
+        <blue>255</blue>
+       </color>
+      </brush>
+     </colorrole>
+     <colorrole role="Base">
+      <brush brushstyle="SolidPattern">
+       <color alpha="255">
+        <red>30</red>
+        <green>30</green>
+        <blue>30</blue>
+       </color>
+      </brush>
+     </colorrole>
+     <colorrole role="Window">
+      <brush brushstyle="SolidPattern">
+       <color alpha="255">
+        <red>30</red>
+        <green>30</green>
+        <blue>30</blue>
+       </color>
+      </brush>
+     </colorrole>
+     <colorrole role="Highlight">
+      <brush brushstyle="SolidPattern">
+       <color alpha="255">
+        <red>33</red>
+        <green>33</green>
+        <blue>33</blue>
+       </color>
+      </brush>
+     </colorrole>
+     <colorrole role="HighlightedText">
+      <brush brushstyle="SolidPattern">
+       <color alpha="255">
+        <red>206</red>
+        <green>206</green>
+        <blue>206</blue>
+       </color>
+      </brush>
+     </colorrole>
+     <colorrole role="AlternateBase">
+      <brush brushstyle="SolidPattern">
+       <color alpha="255">
+        <red>207</red>
+        <green>207</green>
+        <blue>207</blue>
+       </color>
+      </brush>
+     </colorrole>
+    </active>
+    <inactive>
+     <colorrole role="Button">
+      <brush brushstyle="SolidPattern">
+       <color alpha="255">
+        <red>30</red>
+        <green>30</green>
+        <blue>30</blue>
+       </color>
+      </brush>
+     </colorrole>
+     <colorrole role="Light">
+      <brush brushstyle="SolidPattern">
+       <color alpha="255">
+        <red>30</red>
+        <green>30</green>
+        <blue>30</blue>
+       </color>
+      </brush>
+     </colorrole>
+     <colorrole role="Midlight">
+      <brush brushstyle="SolidPattern">
+       <color alpha="255">
+        <red>78</red>
+        <green>78</green>
+        <blue>78</blue>
+       </color>
+      </brush>
+     </colorrole>
+     <colorrole role="Mid">
+      <brush brushstyle="SolidPattern">
+       <color alpha="255">
+        <red>54</red>
+        <green>54</green>
+        <blue>54</blue>
+       </color>
+      </brush>
+     </colorrole>
+     <colorrole role="Text">
+      <brush brushstyle="SolidPattern">
+       <color alpha="255">
+        <red>255</red>
+        <green>255</green>
+        <blue>255</blue>
+       </color>
+      </brush>
+     </colorrole>
+     <colorrole role="Base">
+      <brush brushstyle="SolidPattern">
+       <color alpha="255">
+        <red>30</red>
+        <green>30</green>
+        <blue>30</blue>
+       </color>
+      </brush>
+     </colorrole>
+     <colorrole role="Window">
+      <brush brushstyle="SolidPattern">
+       <color alpha="255">
+        <red>30</red>
+        <green>30</green>
+        <blue>30</blue>
+       </color>
+      </brush>
+     </colorrole>
+     <colorrole role="Highlight">
+      <brush brushstyle="SolidPattern">
+       <color alpha="255">
+        <red>53</red>
+        <green>53</green>
+        <blue>53</blue>
+       </color>
+      </brush>
+     </colorrole>
+     <colorrole role="HighlightedText">
+      <brush brushstyle="SolidPattern">
+       <color alpha="255">
+        <red>255</red>
+        <green>255</green>
+        <blue>255</blue>
+       </color>
+      </brush>
+     </colorrole>
+     <colorrole role="AlternateBase">
+      <brush brushstyle="SolidPattern">
+       <color alpha="255">
+        <red>207</red>
+        <green>207</green>
+        <blue>207</blue>
+       </color>
+      </brush>
+     </colorrole>
+    </inactive>
+    <disabled>
+     <colorrole role="Button">
+      <brush brushstyle="SolidPattern">
+       <color alpha="255">
+        <red>72</red>
+        <green>92</green>
+        <blue>92</blue>
+       </color>
+      </brush>
+     </colorrole>
+     <colorrole role="Light">
+      <brush brushstyle="SolidPattern">
+       <color alpha="255">
+        <red>83</red>
+        <green>87</green>
+        <blue>92</blue>
+       </color>
+      </brush>
+     </colorrole>
+     <colorrole role="Midlight">
+      <brush brushstyle="SolidPattern">
+       <color alpha="255">
+        <red>68</red>
+        <green>74</green>
+        <blue>78</blue>
+       </color>
+      </brush>
+     </colorrole>
+     <colorrole role="Mid">
+      <brush brushstyle="SolidPattern">
+       <color alpha="255">
+        <red>45</red>
+        <green>47</green>
+        <blue>52</blue>
+       </color>
+      </brush>
+     </colorrole>
+     <colorrole role="Text">
+      <brush brushstyle="SolidPattern">
+       <color alpha="255">
+        <red>206</red>
+        <green>208</green>
+        <blue>212</blue>
+       </color>
+      </brush>
+     </colorrole>
+     <colorrole role="Base">
+      <brush brushstyle="SolidPattern">
+       <color alpha="255">
+        <red>60</red>
+        <green>64</green>
+        <blue>67</blue>
+       </color>
+      </brush>
+     </colorrole>
+     <colorrole role="Window">
+      <brush brushstyle="SolidPattern">
+       <color alpha="255">
+        <red>53</red>
+        <green>57</green>
+        <blue>60</blue>
+       </color>
+      </brush>
+     </colorrole>
+     <colorrole role="Highlight">
+      <brush brushstyle="SolidPattern">
+       <color alpha="255">
+        <red>51</red>
+        <green>56</green>
+        <blue>60</blue>
+       </color>
+      </brush>
+     </colorrole>
+     <colorrole role="HighlightedText">
+      <brush brushstyle="SolidPattern">
+       <color alpha="255">
+        <red>204</red>
+        <green>205</green>
+        <blue>211</blue>
+       </color>
+      </brush>
+     </colorrole>
+     <colorrole role="AlternateBase">
+      <brush brushstyle="SolidPattern">
+       <color alpha="255">
+        <red>180</red>
+        <green>183</green>
+        <blue>186</blue>
+       </color>
+      </brush>
+     </colorrole>
+    </disabled>
+   </palette>
   </property>
   <property name="windowTitle">
    <string>Morph Editor</string>
@@ -28,7 +308,7 @@
    <bool>false</bool>
   </property>
   <property name="styleSheet">
-   <string notr="true">background:rgb(30, 30, 30)</string>
+   <string notr="true"/>
   </property>
   <property name="documentMode">
    <bool>false</bool>
@@ -122,6 +402,7 @@
      <string>&amp;Help</string>
     </property>
     <addaction name="actionAbout_Morph"/>
+    <addaction name="action_Quick_Start_Guide"/>
    </widget>
    <widget class="QMenu" name="menuSettings">
     <property name="title">
@@ -129,10 +410,18 @@
     </property>
     <addaction name="actionConfigure_Editor"/>
    </widget>
+   <widget class="QMenu" name="menuMaterial">
+    <property name="title">
+     <string>&amp;Material</string>
+    </property>
+    <addaction name="actionSet_Script_Path"/>
+    <addaction name="actionSet_Texture"/>
+   </widget>
    <addaction name="menuFile"/>
    <addaction name="menuEdit"/>
    <addaction name="menuTools"/>
    <addaction name="menuSelection"/>
+   <addaction name="menuMaterial"/>
    <addaction name="menuObjects"/>
    <addaction name="menuView"/>
    <addaction name="menuWindows"/>
@@ -267,6 +556,9 @@
            <height>91</height>
           </rect>
          </property>
+         <property name="styleSheet">
+          <string notr="true">background-color: rgba(255, 255, 255, 0);</string>
+         </property>
          <property name="frameShape">
           <enum>QFrame::NoFrame</enum>
          </property>
@@ -290,6 +582,9 @@ p, li { white-space: pre-wrap; }
            <height>51</height>
           </rect>
          </property>
+         <property name="styleSheet">
+          <string notr="true">background-color: rgba(255, 255, 255, 0);</string>
+         </property>
          <property name="frameShape">
           <enum>QFrame::NoFrame</enum>
          </property>
@@ -312,6 +607,9 @@ p, li { white-space: pre-wrap; }
            <width>151</width>
            <height>61</height>
           </rect>
+         </property>
+         <property name="styleSheet">
+          <string notr="true">background-color: rgba(255, 255, 255, 0);</string>
          </property>
          <property name="frameShape">
           <enum>QFrame::NoFrame</enum>
@@ -375,6 +673,9 @@ p, li { white-space: pre-wrap; }
            <height>131</height>
           </rect>
          </property>
+         <property name="styleSheet">
+          <string notr="true">background-color: rgba(255, 255, 255, 0);</string>
+         </property>
          <property name="frameShape">
           <enum>QFrame::NoFrame</enum>
          </property>
@@ -416,6 +717,32 @@ p, li { white-space: pre-wrap; }
          </property>
          <property name="flat">
           <bool>false</bool>
+         </property>
+        </widget>
+        <widget class="QProgressBar" name="engineProgress">
+         <property name="geometry">
+          <rect>
+           <x>490</x>
+           <y>336</y>
+           <width>118</width>
+           <height>23</height>
+          </rect>
+         </property>
+         <property name="value">
+          <number>0</number>
+         </property>
+        </widget>
+        <widget class="QLabel" name="label">
+         <property name="geometry">
+          <rect>
+           <x>490</x>
+           <y>366</y>
+           <width>121</width>
+           <height>16</height>
+          </rect>
+         </property>
+         <property name="text">
+          <string>Initialising Engine...</string>
          </property>
         </widget>
        </widget>
@@ -462,10 +789,6 @@ p, li { white-space: pre-wrap; }
          <property name="text">
           <string>...</string>
          </property>
-         <property name="icon">
-          <iconset>
-           <normaloff>:/toolbar/icons/scale.svg</normaloff>:/toolbar/icons/scale.svg</iconset>
-         </property>
         </widget>
        </item>
        <item>
@@ -479,7 +802,10 @@ p, li { white-space: pre-wrap; }
         </widget>
        </item>
        <item>
-        <widget class="QToolButton" name="toolButton">
+        <widget class="QToolButton" name="onetoOne">
+         <property name="enabled">
+          <bool>false</bool>
+         </property>
          <property name="text">
           <string>1:1</string>
          </property>
@@ -781,8 +1107,8 @@ p, li { white-space: pre-wrap; }
   <widget class="QDockWidget" name="dockWidget_6">
    <property name="minimumSize">
     <size>
-     <width>147</width>
-     <height>133</height>
+     <width>153</width>
+     <height>139</height>
     </size>
    </property>
    <property name="windowTitle">
@@ -1024,7 +1350,7 @@ p, li { white-space: pre-wrap; }
      <normaloff>:/dialogs/Media/icons/info-2.png</normaloff>:/dialogs/Media/icons/info-2.png</iconset>
    </property>
    <property name="text">
-    <string>About Morph</string>
+    <string>&amp;About Morph</string>
    </property>
   </action>
   <action name="actionRotate">
@@ -1091,6 +1417,29 @@ p, li { white-space: pre-wrap; }
   <action name="action_Remove_Selected">
    <property name="text">
     <string>&amp;Remove Selected</string>
+   </property>
+  </action>
+  <action name="actionSet_Script_Path">
+   <property name="text">
+    <string>Set &amp;Script Path</string>
+   </property>
+  </action>
+  <action name="actionSet_Texture">
+   <property name="icon">
+    <iconset resource="icons.qrc">
+     <normaloff>:/dialogs/Media/icons/Circle.png</normaloff>:/dialogs/Media/icons/Circle.png</iconset>
+   </property>
+   <property name="text">
+    <string>Set &amp;Texture Path</string>
+   </property>
+  </action>
+  <action name="action_Quick_Start_Guide">
+   <property name="icon">
+    <iconset resource="icons.qrc">
+     <normaloff>:/dialogs/Media/icons/info.png</normaloff>:/dialogs/Media/icons/info.png</iconset>
+   </property>
+   <property name="text">
+    <string>&amp;Quick Start Guide</string>
    </property>
   </action>
  </widget>

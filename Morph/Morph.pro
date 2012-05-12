@@ -36,7 +36,8 @@ SOURCES += main.cpp\
     MorphCore/Editor/mogrecanvas.cpp \
     MorphCore/Editor/loadingbar.cpp \
     mOgreEntityViewer/objproperties.cpp \
-    mOgreEntityViewer/startingwindow.cpp
+    mOgreEntityViewer/startingwindow.cpp \
+    mOgreEntityViewer/matwindow.cpp
 
 HEADERS += mainwindow.h \
     MorphCore/Editor/msystemmanager.h \
@@ -66,7 +67,8 @@ HEADERS += mainwindow.h \
     MorphCore/Editor/mogrecanvas.h \
     MorphCore/Editor/loadingbar.h \
     mOgreEntityViewer/objproperties.h \
-    mOgreEntityViewer/startingwindow.h
+    mOgreEntityViewer/startingwindow.h \
+    mOgreEntityViewer/matwindow.h
 
 FORMS    += mainwindow.ui \
     mOgreEntityViewer/settingsdialog.ui \

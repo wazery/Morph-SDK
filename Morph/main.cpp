@@ -33,18 +33,18 @@ int main(int argc, char *argv[])
 
     QApplication a(argc, argv);
 
-    QPixmap img("Splash22.jpg");
+    //QPixmap img("Splash22.jpg");
 
-    QSplashScreen splash(img);
-    splash.show();
-    splash.showMessage("Initialising Engine..", Qt::AlignBottom, Qt::white);
-    sleep(5);
-    splash.showMessage("Starting...", Qt::AlignBottom, Qt::white);
-    sleep(1);
+//    QSplashScreen splash(img);
+//    splash.show();
+//    splash.showMessage("Initialising Engine..", Qt::AlignBottom, Qt::white);
+//    sleep(5);
+//    splash.showMessage("Starting...", Qt::AlignBottom, Qt::white);
+//    sleep(1);
 
 	MainWindow w;
 
-    splash.finish(&w);
+    //splash.finish(&w);
 	w.show();
 
     return a.exec();

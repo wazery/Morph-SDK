@@ -9,6 +9,7 @@
 - Implement Environment Properties View __done__
 - Implement Object Properties View 
 - Implement Ogre scene serializer
+- Implement Material Window __done__
 - Implement the command pattern with the following commands
  - Copy
  - Cut
@@ -24,3 +25,4 @@
 - Use setPolyMode to implement new Canvas tab __done__
 - Add faked engine loading progress
 - Add remove object dialog __done__
+- Add a quick start window with 3 guide web pages
