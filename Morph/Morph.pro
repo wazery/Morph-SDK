@@ -15,6 +15,12 @@ SOURCES += main.cpp\
     MorphCore/Editor/msystemmanager.cpp \
     #MorphCore/Editor/msingleton.cpp
     MorphCore/Editor/mlogmanager.cpp \
+    MorphCore/Editor/saveScene.cpp \
+    MorphCore/Editor/Import/DotSceneLoader.cpp \
+    MorphCore/Editor/Import/tinyxml.cpp \
+    MorphCore/Editor/Import/tinyxmlerror.cpp \
+    MorphCore/Editor/Import/tinyxmlparser.cpp \
+    MorphCore/Editor/Import/tinystr.cpp \
     mOgreEntityViewer/logview.cpp \
     mOgreEntityViewer/mogrelogproxy.cpp \
     MorphCore/Editor/mnodemanager.cpp \
@@ -43,6 +49,12 @@ HEADERS += mainwindow.h \
     MorphCore/Editor/msystemmanager.h \
     #MorphCore/Editor/msingleton.h // FIXME: implement it.
     MorphCore/Editor/mlogmanager.h \
+    MorphCore/Editor/saveScene.h \
+    MorphCore/Editor/Import/DotSceneLoader.h \
+    MorphCore/Editor/Import/tinyxml.h \
+    MorphCore/Editor/Import/tinyxmlerror.h \
+    MorphCore/Editor/Import/tinyxmlparser.h \
+    MorphCore/Editor/Import/tinystr.h \
     mOgreEntityViewer/logview.h \
     mOgreEntityViewer/mogrelogproxy.h \
     MorphCore/Editor/mnodemanager.h \
@@ -68,7 +80,8 @@ HEADERS += mainwindow.h \
     MorphCore/Editor/loadingbar.h \
     mOgreEntityViewer/objproperties.h \
     mOgreEntityViewer/startingwindow.h \
-    mOgreEntityViewer/matwindow.h
+    mOgreEntityViewer/matwindow.h \
+    MorphCore/Editor/saveScene.h
 
 FORMS    += mainwindow.ui \
     mOgreEntityViewer/settingsdialog.ui \

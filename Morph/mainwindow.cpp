@@ -1,6 +1,9 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 
+#include "MorphCore/Editor/saveScene.h"
+#include "MorphCore/Editor/Import/DotSceneLoader.h"
+
 #include <QMessageBox>
 
 using namespace Morph;
@@ -71,6 +74,9 @@ MainWindow::MainWindow(QWidget *parent) :
 
     connect(ui->actionRemoveMesh, SIGNAL(triggered()), this, SLOT(showRemoveObj()));
     connect(ui->action_Remove_Selected, SIGNAL(triggered()), this, SLOT(removeSelected()));
+
+    connect(ui->actionSave_as, SIGNAL(triggered()), this, SLOT(saveAs()));
+    connect(ui->actionOpen_Ogre_Scene, SIGNAL(triggered()), this, SLOT(openScene()));
 
     //  Environment Properties
     // --------------------------------------
@@ -462,6 +468,42 @@ void MainWindow::removeSelected()
 {
     if(systemManager->getSelectedNode())
         systemManager->removeObject(systemManager->getSelectedNode()->getName());
+}
+
+void MainWindow::saveAs()
+{
+    QString fileName = QFileDialog::getSaveFileName(this, tr("Save File"),"",tr("DotScene (*.scene)"));
+    Ogre::String basename, path;
+    Ogre::StringUtil::splitFilename(fileName.toStdString(), basename, path);
+    QFile file(fileName);
+    saveAsDotScene(QString(path.c_str()), file, systemManager->getSceneManager());
+}
+
+void MainWindow::openScene()
+{
+    if(systemManager->isVisible())
+    {
+        QString fileName = QFileDialog::getOpenFileName(this, tr("Open File"),"",tr("DotScene (*.scene)"));
+        try
+        {
+            Ogre::String basename, path;
+            Ogre::StringUtil::splitFilename(fileName.toStdString(), basename, path);
+            std::string mDirPath(path.begin(),path.end() -1);
+            ResourceGroupManager::getSingleton().addResourceLocation(mDirPath, "FileSystem","General");
+
+            systemManager->getSceneManager()->getRootSceneNode()->removeAndDestroyAllChildren();
+            DotSceneLoader* loader = new DotSceneLoader();
+            loader->parseDotScene(fileName.toStdString(), "General", systemManager->getSceneManager(), systemManager->getSceneManager()->getRootSceneNode());
+        }
+        catch(Ogre::Exception& e)
+        {
+            throw e;
+        }
+    }
+    else
+    {
+        QMessageBox::warning(this, "You must open the canvas first!", "You are trying to make an action that couldn't be done without launching the canvas first!");
+    }
 }
 
 void MainWindow::setBackgroundColor()

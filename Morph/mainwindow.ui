@@ -8,7 +8,7 @@
     <x>0</x>
     <y>0</y>
     <width>1150</width>
-    <height>883</height>
+    <height>887</height>
    </rect>
   </property>
   <property name="minimumSize">
@@ -326,7 +326,7 @@
      <x>0</x>
      <y>0</y>
      <width>1150</width>
-     <height>20</height>
+     <height>21</height>
     </rect>
    </property>
    <property name="styleSheet">
@@ -338,7 +338,7 @@
     </property>
     <addaction name="actionNew"/>
     <addaction name="actionOpen"/>
-    <addaction name="actionSave"/>
+    <addaction name="actionOpen_Ogre_Scene"/>
     <addaction name="actionSave_as"/>
     <addaction name="separator"/>
     <addaction name="actionAdd_Ogre_Mesh"/>
@@ -1147,7 +1147,7 @@ p, li { white-space: pre-wrap; }
      <normaloff>:/dialogs/Media/icons/File.png</normaloff>:/dialogs/Media/icons/File.png</iconset>
    </property>
    <property name="text">
-    <string>&amp;Open</string>
+    <string>&amp;Import Ogre Mesh</string>
    </property>
    <property name="shortcut">
     <string>Ctrl+O</string>
@@ -1192,7 +1192,7 @@ p, li { white-space: pre-wrap; }
      <normaloff>:/dialogs/Media/icons/Floppy.png</normaloff>:/dialogs/Media/icons/Floppy.png</iconset>
    </property>
    <property name="text">
-    <string>Save &amp;As</string>
+    <string>&amp;Save</string>
    </property>
    <property name="shortcut">
     <string>Ctrl+Shift+S</string>
@@ -1470,6 +1470,15 @@ p, li { white-space: pre-wrap; }
    </property>
    <property name="text">
     <string>&amp;Quick Start Guide</string>
+   </property>
+  </action>
+  <action name="actionOpen_Ogre_Scene">
+   <property name="icon">
+    <iconset resource="icons.qrc">
+     <normaloff>:/actions/Media/icons/document_alt_stroke_24x32.png</normaloff>:/actions/Media/icons/document_alt_stroke_24x32.png</iconset>
+   </property>
+   <property name="text">
+    <string>&amp;Open Ogre Scene</string>
    </property>
   </action>
  </widget>

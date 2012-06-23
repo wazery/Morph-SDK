@@ -995,7 +995,9 @@ void MSystemManager::addObject(Ogre::String name)
     rgm->addResourceLocation(name, "FileSystem", "General");
 
     //FIXME: Re implement the naming mechanism.
-    String meshName = name;
+    Ogre::String basename, path;
+    Ogre::StringUtil::splitFilename(name, basename, path);
+    String meshName = basename;
     meshName.substr(meshName.size()-5, 5);
 
     //Remove old object

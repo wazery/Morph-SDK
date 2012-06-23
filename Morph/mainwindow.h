@@ -59,6 +59,8 @@ public slots:
     void showRemoveObj();
     void commitRemoveObj();
     void removeSelected();
+    void saveAs();
+    void openScene();
 
     void setBackgroundColor();
     void gridChanged(bool value);
