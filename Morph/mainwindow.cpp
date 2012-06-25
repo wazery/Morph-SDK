@@ -17,8 +17,11 @@ MainWindow::MainWindow(QWidget *parent) :
     mSettingsFile = QApplication::applicationDirPath() + "editorSettings";
     mSettings = new QSettings(mSettingsFile, QSettings::NativeFormat);
 
-    startingWindow = new StartingWindow(this);
-    startingWindow->show();
+    if (mSettings->value("StartingWindow/startingWindow").toBool())
+    {
+        startingWindow = new StartingWindow(this);
+        startingWindow->show();
+    }
 
     //if(!mSettings->value("startingWindow").toBool())
     //{
@@ -42,9 +45,9 @@ MainWindow::MainWindow(QWidget *parent) :
     propertiesTab->addTab(objProperties, QIcon("settings.png"), ("Object"));
     propertiesTab->setEnabled(false);
 
-    ui->listWidget->addItem(new QListWidgetItem(QIcon("settings.png"), "Toggle Button"));
-    ui->listWidget->addItem(new QListWidgetItem(QIcon("check.png"), "Check Button"));
-    ui->listWidget->addItem(new QListWidgetItem(QIcon("calculator.png"), "Radio Button"));
+    //ui->listWidget->addItem(new QListWidgetItem(QIcon("settings.png"), "Toggle Button"));
+    //ui->listWidget->addItem(new QListWidgetItem(QIcon("check.png"), "Check Button"));
+    //ui->listWidget->addItem(new QListWidgetItem(QIcon("calculator.png"), "Radio Button"));
 
     MLogManager::getSingleton().addListener(ui->textBrowser);
     MLogManager::getSingleton().addListener(ui->textBrowser_2);

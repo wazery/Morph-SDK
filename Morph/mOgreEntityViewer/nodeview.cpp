@@ -90,7 +90,7 @@ bool NodeView::updateNodeTree()
 
     //m_wndNodeTree.Expand(m_hAppRoot, TVE_EXPAND);
     // TODO: replace this function as it is deprecated.
-    setItemSelected(mSelectedItem, true);
+    //setItemSelected(mSelectedItem, true);
     //m_wndNodeTree.Expand(m_hSelectedItem,TVE_EXPAND);
 
     return true;

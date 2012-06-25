@@ -505,7 +505,7 @@ void MSystemManager::createScene()
     Ogre::Light* lightSource = mSceneManager->createLight("Main Light Source");
     lightSource->setPosition(Ogre::Vector3(20, 80, 50));
 
-    addObject("ogrehead.mesh");
+    //addObject("ogrehead.mesh");
 }
 
 void MSystemManager::createLight()

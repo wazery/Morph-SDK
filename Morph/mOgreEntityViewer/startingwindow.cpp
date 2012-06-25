@@ -13,6 +13,7 @@ StartingWindow::StartingWindow(QWidget *parent) :
     mSettings = new QSettings(mSettingsFile, QSettings::NativeFormat);
 
     ui->textEdit->setFont(QFont("ubuntu"));
+    ui->showAgain->setChecked(!mSettings->value("StartingWindow/startingWindow").toBool());
 
     connect(ui->showAgain, SIGNAL(clicked(bool)), this, SLOT(setShowAgain(bool)));
 }
@@ -24,5 +25,5 @@ StartingWindow::~StartingWindow()
 
 void StartingWindow::setShowAgain(bool value)
 {
-    mSettings->setValue("StartingWindow/startingWindow", value);
+    mSettings->setValue("StartingWindow/startingWindow", !value);
 }
