@@ -17,17 +17,11 @@ MainWindow::MainWindow(QWidget *parent) :
     mSettingsFile = QApplication::applicationDirPath() + "editorSettings";
     mSettings = new QSettings(mSettingsFile, QSettings::NativeFormat);
 
-    if (mSettings->value("StartingWindow/startingWindow").toBool())
+    if (!mSettings->value("StartingWindow/startingWindow").toBool())
     {
         startingWindow = new StartingWindow(this);
         startingWindow->show();
     }
-
-    //if(!mSettings->value("startingWindow").toBool())
-    //{
-    //    if(startingWindow)
-    //        startingWindow->hide();
-    //}
 
     // Pointers to the editor subsystems.
     systemManager = ui->widget;
@@ -44,10 +38,6 @@ MainWindow::MainWindow(QWidget *parent) :
     objProperties = new ObjProperties(this);
     propertiesTab->addTab(objProperties, QIcon("settings.png"), ("Object"));
     propertiesTab->setEnabled(false);
-
-    //ui->listWidget->addItem(new QListWidgetItem(QIcon("settings.png"), "Toggle Button"));
-    //ui->listWidget->addItem(new QListWidgetItem(QIcon("check.png"), "Check Button"));
-    //ui->listWidget->addItem(new QListWidgetItem(QIcon("calculator.png"), "Radio Button"));
 
     MLogManager::getSingleton().addListener(ui->textBrowser);
     MLogManager::getSingleton().addListener(ui->textBrowser_2);
@@ -180,6 +170,8 @@ void MainWindow::initialisePlugins()
 
     // Init Object Properties
     objProperties->boundBoxCheckBox->setEnabled(false);
+    objProperties->dispSkeletonCheckBox->setEnabled(false);
+    objProperties->lodSlider->setEnabled(false);
 
     // Enable Canvas Buttons
     ui->grid->setEnabled(true);
@@ -264,7 +256,6 @@ void MainWindow::setViewPortToPolygons()
         renderWidnowList[i]->update();
     }
     MLogManager::getSingleton().logOutput("Set Viewport mode to Polygons", M_EDITOR_MESSAGE);
-    ui->polygons->setEnabled(false);
 }
 
 void MainWindow::loadSettings()
@@ -847,6 +838,7 @@ void MainWindow::enableObjProperties(bool value)
 
     objProperties->boundBoxCheckBox->setEnabled(true);
     objProperties->dispSkeletonCheckBox->setEnabled(true);
+    objProperties->lodSlider->setEnabled(true);
 }
 
 void MainWindow::setPostions(bool value)
@@ -860,6 +852,12 @@ void MainWindow::setPostions(bool value)
         objProperties->posYText->setValue(int(vector.y));
         objProperties->posZText->setValue(int(vector.z));
     }
+    else
+    {
+        objProperties->posXText->setValue(0);
+        objProperties->posYText->setValue(0);
+        objProperties->posZText->setValue(0);
+    }
 }
 
 void MainWindow::setScales(bool value)
@@ -872,6 +870,12 @@ void MainWindow::setScales(bool value)
         objProperties->scaleXText->setValue(int(vector.x));
         objProperties->scaleYText->setValue(int(vector.y));
         objProperties->scaleZText->setValue(int(vector.z));
+    }
+    else
+    {
+        objProperties->posXText->setValue(0);
+        objProperties->posYText->setValue(0);
+        objProperties->posZText->setValue(0);
     }
 }
 

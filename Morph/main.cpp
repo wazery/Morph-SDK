@@ -37,9 +37,9 @@ int main(int argc, char *argv[])
 
     QSplashScreen splash(img);
     splash.show();
-    splash.showMessage("Initialising Engine..", Qt::AlignBottom, Qt::white);
-    sleep(5);
     splash.showMessage("Starting...", Qt::AlignBottom, Qt::white);
+    sleep(3);
+    splash.showMessage("Initialising Engine...", Qt::AlignBottom, Qt::white);
     sleep(1);
 
 	MainWindow w;

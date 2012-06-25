@@ -381,63 +381,6 @@
        </layout>
       </widget>
      </widget>
-     <widget class="QWidget" name="mAssetsTab_2">
-      <attribute name="title">
-       <string>Assets</string>
-      </attribute>
-      <widget class="QGroupBox" name="groupBox_4">
-       <property name="geometry">
-        <rect>
-         <x>2</x>
-         <y>3</y>
-         <width>501</width>
-         <height>241</height>
-        </rect>
-       </property>
-       <property name="sizePolicy">
-        <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
-         <horstretch>0</horstretch>
-         <verstretch>0</verstretch>
-        </sizepolicy>
-       </property>
-       <property name="title">
-        <string>Resource Locations</string>
-       </property>
-       <property name="alignment">
-        <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
-       </property>
-       <property name="flat">
-        <bool>false</bool>
-       </property>
-       <property name="checkable">
-        <bool>false</bool>
-       </property>
-       <layout class="QGridLayout" name="gridLayout_7" rowstretch="0,0,0" columnstretch="0">
-        <property name="sizeConstraint">
-         <enum>QLayout::SetDefaultConstraint</enum>
-        </property>
-        <property name="horizontalSpacing">
-         <number>0</number>
-        </property>
-        <property name="verticalSpacing">
-         <number>2</number>
-        </property>
-        <property name="margin">
-         <number>5</number>
-        </property>
-        <item row="1" column="0">
-         <widget class="QListWidget" name="mResourceListBox"/>
-        </item>
-        <item row="2" column="0">
-         <widget class="QLabel" name="label_35">
-          <property name="text">
-           <string>(Right-Click to add resource locations)</string>
-          </property>
-         </widget>
-        </item>
-       </layout>
-      </widget>
-     </widget>
      <widget class="QWidget" name="mGrid_2">
       <attribute name="title">
        <string>Grid</string>

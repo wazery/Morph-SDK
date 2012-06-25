@@ -36,6 +36,7 @@
         <file>Media/icons/rotate.png</file>
         <file>Media/icons/scissors32.png</file>
         <file>Media/icons/trash_stroke_32x32.png</file>
+        <file>icon.png</file>
     </qresource>
     <qresource prefix="/wellcome">
         <file>Media/wellcome-images/1.png</file>
