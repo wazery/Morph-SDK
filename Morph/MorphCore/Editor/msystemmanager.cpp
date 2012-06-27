@@ -232,7 +232,7 @@ void MSystemManager::moveEvent(QMoveEvent *e)
 
 void MSystemManager::mouseDoubleClick(QMouseEvent *e)
 {
-    if(e->buttons().testFlag(Qt::LeftButton))
+    if(e->buttons().testFlag(Qt::LeftButton) && mSelectEnabled)
     {
         Ogre::Real x = e->pos().x() / (float)width();
         Ogre::Real y = e->pos().y() / (float)height();
@@ -303,6 +303,13 @@ void MSystemManager::mouseMove(QMouseEvent* e)
         update();
         mousePos = currentPos;
         mDirection = Vector3::ZERO;
+
+        if (mMoveEnabled)
+        {
+//            Ogre::SceneNode* node = selecteNode(mousePos);
+//            Vector3 vec = node->getPosition();
+//            node->setPosition(mousePos.x(), mousePos.y(), vec.z);
+        }
     }
     if(mouseRightPressed)
     {
@@ -414,7 +421,7 @@ bool MSystemManager::initialise()
 
     Ogre::Root::getSingleton().addFrameListener(this);
 
-    MNodeManager::getSingleton().initialise();
+    //MNodeManager::getSingleton().initialise();
     emit initialised();
 
     if (!mRoot)
@@ -934,6 +941,16 @@ void MSystemManager::updateStats(void)
     //mRenderWindow->updateStats();
 }
 
+void MSystemManager::setSelectEnabled(bool value)
+{
+    mSelectEnabled = value;
+}
+
+void MSystemManager::setMoveEnabled(bool value)
+{
+    mMoveEnabled = value;
+}
+
 bool MSystemManager::frameStarted(const FrameEvent& e)
 {
     if (mRenderWindow->isClosed())
@@ -968,7 +985,6 @@ void MSystemManager::dragEnterEvent(QDragEnterEvent* e)
     //else
     //    QMessageBox::warning(parentWidget(), "You can't add files with this type", "Please add file of type .mesh");
 #endif
-    if(e->mimeData()->hasFormat("text/uri-list"))
         e->acceptProposedAction();
 }
 
@@ -989,6 +1005,49 @@ void MSystemManager::dropEvent(QDropEvent* e)
         addObject(name.toStdString());
         e->acceptProposedAction();
     }
+    if(selecteNode(e->pos()))
+    {
+       Ogre::SceneNode* node = selecteNode(e->pos());
+       qDebug() << node->getName().c_str();
+    //   node->setu;
+    }
+}
+
+Ogre::SceneNode* MSystemManager::selecteNode(QPoint point)
+{
+    Ogre::Real x = point.x() / (float)width();
+    Ogre::Real y = point.y() / (float)height();
+    Ogre::Ray ray;
+
+    // Reset selected node.
+    Ogre::SceneNode* selectedNode = NULL;
+
+    for(int i = 0; i < mRenderWindowList.count(); i++)
+    {
+        ray = mRenderWindowList[i]->getCamera()->getCameraToViewportRay(x, y);
+
+        Ogre::RaySceneQuery *query = mSceneManager->createRayQuery(ray);
+        Ogre::RaySceneQueryResult &queryResult = query->execute();
+        Ogre::RaySceneQueryResult::iterator queryResultIterator = queryResult.begin();
+
+        if(queryResultIterator != queryResult.end())
+        {
+            if(queryResultIterator->movable)
+            {
+                // when the object is double clicked..
+                // replace the last line with whatever you want
+                selectedNode = queryResultIterator->movable->getParentSceneNode();
+            }
+        }
+        else
+        {
+            // when you double click on any other object..
+            selectedNode = 0;
+        }
+        mSceneManager->destroyQuery(query);
+        update();
+    }
+    return selectedNode;
 }
 
 void MSystemManager::addObject(Ogre::String name)
@@ -1021,7 +1080,7 @@ void MSystemManager::addObject(Ogre::String name)
     //MString parentChainName = "World." + MString("sometext");
     //MString nodeName = MString("lklkl") + "node";
 
-    MNodeManager::getSingleton().notifyAddNode(parentChainName, nodeName);
+    //MNodeManager::getSingleton().notifyAddNode(parentChainName, nodeName);
 
     mainNode->attachObject(mainEnt);
     mainNode->setPosition(Vector3(0, 0, 0));

@@ -387,6 +387,7 @@
      <string>&amp;Help</string>
     </property>
     <addaction name="actionAbout_Morph"/>
+    <addaction name="actionAboutQt"/>
     <addaction name="action_Quick_Start_Guide"/>
    </widget>
    <widget class="QMenu" name="menuSettings">
@@ -1055,6 +1056,9 @@ p, li { white-space: pre-wrap; }
     <layout class="QGridLayout" name="gridLayout_7">
      <item row="0" column="0">
       <widget class="QListWidget" name="listWidget">
+       <property name="dragEnabled">
+        <bool>true</bool>
+       </property>
        <property name="dragDropMode">
         <enum>QAbstractItemView::DragOnly</enum>
        </property>
@@ -1296,7 +1300,7 @@ p, li { white-space: pre-wrap; }
      <normaloff>:/dialogs/Media/icons/info-2.png</normaloff>:/dialogs/Media/icons/info-2.png</iconset>
    </property>
    <property name="text">
-    <string>&amp;About Morph</string>
+    <string>About &amp;Morph</string>
    </property>
   </action>
   <action name="actionRotate">
@@ -1419,11 +1423,20 @@ p, li { white-space: pre-wrap; }
    </property>
   </action>
   <action name="actionRestore_Default">
+   <property name="icon">
+    <iconset resource="icons.qrc">
+     <normaloff>:/dialogs/Media/icons/Backward.png</normaloff>:/dialogs/Media/icons/Backward.png</iconset>
+   </property>
    <property name="text">
     <string>&amp;Restore Default</string>
    </property>
    <property name="shortcut">
     <string>Alt+R, Alt+D</string>
+   </property>
+  </action>
+  <action name="actionAboutQt">
+   <property name="text">
+    <string>About &amp;Qt</string>
    </property>
   </action>
  </widget>

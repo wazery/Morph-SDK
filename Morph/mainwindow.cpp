@@ -56,9 +56,9 @@ MainWindow::MainWindow(QWidget *parent) :
     propertiesTab->addTab(objProperties, QIcon("settings.png"), ("Object"));
     propertiesTab->setEnabled(false);
 
-    ui->listWidget->addItem(new QListWidgetItem(QIcon("settings.png"), "Widget"));
-    ui->listWidget->addItem(new QListWidgetItem(QIcon("check.png"), "Widget2"));
-    ui->listWidget->addItem(new QListWidgetItem(QIcon("calculator.png"), "Widget3"));
+    ui->listWidget->addItem(new QListWidgetItem(QIcon("settings.png"), "3D Button"));
+    ui->listWidget->addItem(new QListWidgetItem(QIcon("check.png"), "3D Slider"));
+    ui->listWidget->addItem(new QListWidgetItem(QIcon("calculator.png"), "3D Toggle Button"));
 
     MLogManager::getSingleton().addListener(ui->textBrowser);
     MLogManager::getSingleton().addListener(ui->textBrowser_2);
@@ -91,6 +91,14 @@ MainWindow::MainWindow(QWidget *parent) :
 
     connect(ui->actionSave_as, SIGNAL(triggered()), this, SLOT(saveAs()));
     connect(ui->actionOpen_Ogre_Scene, SIGNAL(triggered()), this, SLOT(openScene()));
+
+    connect(ui->actionAboutQt, SIGNAL(triggered()), this, SLOT(aboutQt()));
+    connect(ui->actionRestore_Default, SIGNAL(triggered()), this, SLOT(restoreDefault()));
+
+    connect(ui->actionSelect, SIGNAL(triggered()), this, SLOT(selectObject()));
+    connect(ui->actionMove, SIGNAL(triggered()), this, SLOT(moveObject()));
+    connect(ui->actionRotate, SIGNAL(triggered()), this, SLOT(rotateObject()));
+    connect(ui->actionTranslate, SIGNAL(triggered()), this, SLOT(translateObject()));
 
     //  Environment Properties
     // --------------------------------------
@@ -172,22 +180,22 @@ MainWindow::~MainWindow()
 void MainWindow::addNodeListener()
 {
     qDebug() << "2) widget initialised";
-    MNodeManager::getSingleton().addNodeTreeListener(ui->treeView);
+    //MNodeManager::getSingleton().addNodeTreeListener(ui->treeView);
 }
 
 void MainWindow::initialisePlugins()
 {
-    MNodeManager::getSingleton().registerNode(MRootNode::nodeID, MRootNode::creator);
+    //MNodeManager::getSingleton().registerNode(MRootNode::nodeID, MRootNode::creator);
 
     // firstly create the root.
-    MNodePtr rootNodePtr = MNodeManager::getSingleton().createNode(MRootNode::nodeID, MRootNode::nodeID);
-    if(!rootNodePtr)
-    {
-        MLogManager::getSingleton().logOutput("Error failed in initilaizePlugin(), setting the root node", M_ERROR);
-        return;
-    }
-    MNodeManager::getSingleton().setRootNodePtr(rootNodePtr);
-    MNodeManager::getSingleton().notifyAddNode("World.", rootNodePtr->getName());
+    //MNodePtr rootNodePtr = MNodeManager::getSingleton().createNode(MRootNode::nodeID, MRootNode::nodeID);
+//    if(!rootNodePtr)
+//    {
+//        MLogManager::getSingleton().logOutput("Error failed in initilaizePlugin(), setting the root node", M_ERROR);
+//        return;
+//    }
+    //MNodeManager::getSingleton().setRootNodePtr(rootNodePtr);
+    //MNodeManager::getSingleton().notifyAddNode("World.", rootNodePtr->getName());
 
     // Init Object Properties
     objProperties->boundBoxCheckBox->setEnabled(false);
@@ -348,11 +356,11 @@ void MainWindow::openSettingsDialog()
     settingsdialog->show();
 }
 
+static QTimer* timer = new QTimer();
 void MainWindow::startEngineLoading()
 {
     ui->engineProgress->setVisible(true);
     ui->label->setVisible(true);
-    QTimer* timer = new QTimer(this);
     connect(timer, SIGNAL(timeout()), this, SLOT(updateProgress()));
     timer->start(10);
 }
@@ -364,17 +372,84 @@ void MainWindow::updateProgress()
 }
 
 void MainWindow::changeIndexofCanvas(int value)
-{    
-    if(value == 100)
+{
+    if (isActiveWindow())
     {
-        ui->tabWidget->setCurrentIndex(1);
-        ui->rendered->show();
-        propertiesTab->setEnabled(true);
-        setOneViewPort();
-        ui->engineProgress->setVisible(false);
-        ui->label->setVisible(false);
-        ui->pushButton->setVisible(false);
+        if(value == 100)
+        {
+            ui->tabWidget->setCurrentIndex(1);
+            ui->rendered->show();
+            propertiesTab->setEnabled(true);
+            setOneViewPort();
+            ui->engineProgress->setVisible(false);
+            ui->label->setVisible(false);
+            ui->pushButton->setVisible(false);
+        }
     }
+    else
+    {
+        ui->engineProgress->hide();
+        ui->label->hide();
+        timer->stop();
+        disconnect(timer, SIGNAL(timeout()), this, SLOT(updateProgress()));
+        QMessageBox::warning(this, "Window must be focused!", "In order to start loading the canvas, the Morph editor must get focused!");
+    }
+}
+
+void MainWindow::aboutQt()
+{
+    QApplication::aboutQt();
+}
+
+void MainWindow::restoreDefault()
+{
+    mSettings->setValue("Grid/gridPrespectiveSize", 130);
+    mSettings->setValue("Grid/gridDivisions", 3);
+    mSettings->setValue("Grid/gridColor", "#000000");
+    mSettings->setValue("Grid/grid", true);
+    mSettings->setValue("Grid/gridRenderLayer", 0);
+    mSettings->setValue("Canvas/canvasBackgroundColor", "#181818");
+    mSettings->setValue("StartingWindow/startingWindow", "false");
+
+    QMessageBox::information(this, "Morph Editor Needs Restart", "In order the changes to take effect, you must restart Morph Editor!");
+}
+
+void MainWindow::selectObject()
+{
+    ui->actionTranslate->setEnabled(true);
+    ui->actionRotate->setEnabled(true);
+    ui->actionMove->setEnabled(true);
+    ui->actionSelect->setEnabled(false);
+    systemManager->setCursor(Qt::CrossCursor);
+    systemManager->setSelectEnabled(true);
+}
+
+void MainWindow::moveObject()
+{
+    ui->actionSelect->setEnabled(true);
+    ui->actionTranslate->setEnabled(true);
+    ui->actionRotate->setEnabled(true);
+    ui->actionMove->setEnabled(false);
+    systemManager->setCursor(Qt::ClosedHandCursor);
+    systemManager->setMoveEnabled(true);
+}
+
+void MainWindow::translateObject()
+{
+    ui->actionSelect->setEnabled(true);
+    ui->actionRotate->setEnabled(true);
+    ui->actionMove->setEnabled(true);
+    ui->actionTranslate->setEnabled(false);
+    systemManager->setCursor(Qt::SizeAllCursor);
+}
+
+void MainWindow::rotateObject()
+{
+    ui->actionSelect->setEnabled(true);
+    ui->actionMove->setEnabled(true);
+    ui->actionTranslate->setEnabled(true);
+    ui->actionRotate->setEnabled(false);
+    systemManager->setCursor(Qt::SizeFDiagCursor);
 }
 
 void MainWindow::gridColorChanged(QColor color)

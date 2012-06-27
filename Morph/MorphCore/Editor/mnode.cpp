@@ -27,7 +27,7 @@ bool MNode::addChildNode(const MString &nodeName, MNodePtr &nodePtr)
         else
             parentStr = this->mName;
         nodePtr->setParentNodeChainName(parentStr);
-        MNodeManager::getSingleton().notifyAddNode(parentStr, nodeName);
+        //MNodeManager::getSingleton().notifyAddNode(parentStr, nodeName);
     }
     else
         return false;
@@ -41,7 +41,7 @@ bool MNode::removeChildNode(const MString &nodeName)
     it = mNodeChildren.find(nodeName);
     if (it != mNodeChildren.end())
     {
-        Morph::MNodeManager::getSingleton().notifyRemoveNode(this->mParentNodeChainName + "." + this->mName, nodeName);
+        //Morph::MNodeManager::getSingleton().notifyRemoveNode(this->mParentNodeChainName + "." + this->mName, nodeName);
         it->second->release();
         mNodeChildren.erase(it);
     }

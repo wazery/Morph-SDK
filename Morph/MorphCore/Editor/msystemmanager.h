@@ -138,6 +138,8 @@ namespace Morph
 
         void addObject(Ogre::String name);
         void removeObject(Ogre::String name);
+        void setSelectEnabled(bool value);
+        void setMoveEnabled(bool value);
 
         //Entity
         Ogre::SceneNode* mainNode;
@@ -149,6 +151,9 @@ namespace Morph
         QColor fogOldColor;//to keep the last selected color
         Ogre::ColourValue backgroundColor;
         QColor backgroundOldColor;
+
+        bool mSelectEnabled;
+        bool mMoveEnabled;
 
     public slots:
         void update();
@@ -179,6 +184,8 @@ namespace Morph
         void resizeEvent(QResizeEvent *e);
         void dragEnterEvent(QDragEnterEvent* e);
         void dropEvent(QDropEvent* e);
+
+        Ogre::SceneNode* selecteNode(QPoint point);
 
     protected:
          /** Initialise Ogre Core

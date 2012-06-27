@@ -112,6 +112,14 @@ public slots:
 
     void zoomValueChanged(int value);
 
+    void aboutQt();
+    void restoreDefault();
+
+    void selectObject();
+    void moveObject();
+    void translateObject();
+    void rotateObject();
+
 private:
     Ui::MainWindow *ui;
     QSettings *mSettings;

@@ -77,16 +77,16 @@ bool NodeView::updateNodeTree()
     //if(!MSystemManager::getSingleton().isInitialised())
         //return false;
 
-    const MNodePtr rootNode = MNodeManager::getSingleton().getRootNodePtr();
-    qDebug() << "2: " << rootNode->getName();
+    //const MNodePtr rootNode = MNodeManager::getSingleton().getRootNodePtr();
+    //qDebug() << "2: " << rootNode->getName();
 
-    if(!rootNode)
-        return false;
+//    if(!rootNode)
+//        return false;
     //m_hAppRoot = m_wndNodeTree.InsertItem(_T("world"), 0, 0);
     //m_wndNodeTree.SetItemState(m_hAppRoot, TVIS_BOLD, TVIS_BOLD);
 
-    clear();
-    createNodeItem(rootNode);
+//    clear();
+//    createNodeItem(rootNode);
 
     //m_wndNodeTree.Expand(m_hAppRoot, TVE_EXPAND);
     // TODO: replace this function as it is deprecated.
@@ -107,7 +107,7 @@ void NodeView::createNodeItem(const MNodePtr &nodePtr)
     }
     currNodeItem->setText(0, nodePtr->getName());
 
-    if(MNodeManager::getSingleton().getFirstSelectedNode() == nodePtr)
+    //if(MNodeManager::getSingleton().getFirstSelectedNode() == nodePtr)
         mSelectedItem = currNodeItem;
 
     if(!mOgreRoot)
