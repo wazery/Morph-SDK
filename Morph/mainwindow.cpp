@@ -31,6 +31,23 @@ MainWindow::MainWindow(QWidget *parent) :
 
     loadSettings();
 
+    // Disable actions
+    ui->actionNew->setEnabled(false);
+    ui->actionOpen_Ogre_Scene->setEnabled(false);
+    ui->actionAdd_Ogre_Mesh->setEnabled(false);
+    ui->actionCopy->setEnabled(false);
+    ui->actionCut->setEnabled(false);
+    ui->action_Remove_Selected->setEnabled(false);
+    ui->actionSave->setEnabled(false);
+    ui->actionSave_as->setEnabled(false);
+    ui->menuMaterial->setEnabled(false);
+    ui->menuObjects->setEnabled(false);
+    ui->menuSelection->setEnabled(false);
+    ui->menuSettings->setEnabled(false);
+    ui->menuView->setEnabled(false);
+    ui->menuTools->setEnabled(false);
+    ui->menuWindows->setEnabled(false);
+
     envProperties = new EnvProperties(this);
     propertiesTab = ui->tabWidget_3;
     propertiesTab->addTab(envProperties, QIcon("settings.png"), ("Environment"));
@@ -38,6 +55,10 @@ MainWindow::MainWindow(QWidget *parent) :
     objProperties = new ObjProperties(this);
     propertiesTab->addTab(objProperties, QIcon("settings.png"), ("Object"));
     propertiesTab->setEnabled(false);
+
+    ui->listWidget->addItem(new QListWidgetItem(QIcon("settings.png"), "Widget"));
+    ui->listWidget->addItem(new QListWidgetItem(QIcon("check.png"), "Widget2"));
+    ui->listWidget->addItem(new QListWidgetItem(QIcon("calculator.png"), "Widget3"));
 
     MLogManager::getSingleton().addListener(ui->textBrowser);
     MLogManager::getSingleton().addListener(ui->textBrowser_2);
@@ -182,6 +203,22 @@ void MainWindow::initialisePlugins()
     ui->fourViews->setEnabled(true);
     ui->wireframe->setEnabled(true);
     ui->points->setEnabled(true);
+    ui->actionNew->setEnabled(true);
+    ui->actionOpen->setEnabled(true);
+    ui->actionOpen_Ogre_Scene->setEnabled(true);
+    ui->actionAdd_Ogre_Mesh->setEnabled(true);
+    ui->actionSave->setEnabled(true);
+    ui->actionCopy->setEnabled(true);
+    ui->actionCut->setEnabled(true);
+    ui->action_Remove_Selected->setEnabled(true);
+    ui->actionSave_as->setEnabled(true);
+    ui->menuMaterial->setEnabled(true);
+    ui->menuObjects->setEnabled(true);
+    ui->menuSelection->setEnabled(true);
+    ui->menuSettings->setEnabled(true);
+    ui->menuView->setEnabled(true);
+    ui->menuTools->setEnabled(true);
+    ui->menuWindows->setEnabled(true);
 }
 
 void MainWindow::zoomValueChanged(int value)
@@ -331,6 +368,7 @@ void MainWindow::changeIndexofCanvas(int value)
     if(value == 100)
     {
         ui->tabWidget->setCurrentIndex(1);
+        ui->rendered->show();
         propertiesTab->setEnabled(true);
         setOneViewPort();
         ui->engineProgress->setVisible(false);

@@ -965,9 +965,11 @@ void MSystemManager::dragEnterEvent(QDragEnterEvent* e)
     QRegExp fileMatcher("^file://(/.*\\.mesh)$");
     if( fileMatcher.exactMatch(e->mimeData()->text()) )
         e->acceptProposedAction();
-    else
-        QMessageBox::warning(parentWidget(), "You can't add files with this type", "Please add file of type .mesh");
+    //else
+    //    QMessageBox::warning(parentWidget(), "You can't add files with this type", "Please add file of type .mesh");
 #endif
+    if(e->mimeData()->hasFormat("text/uri-list"))
+        e->acceptProposedAction();
 }
 
 void MSystemManager::dropEvent(QDropEvent* e)
