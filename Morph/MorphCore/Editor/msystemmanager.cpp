@@ -394,7 +394,7 @@ bool MSystemManager::initialise()
 
     Ogre::RenderSystem* renderSystem = mRoot->getRenderSystemByName("OpenGL Rendering Subsystem");
     mRoot->setRenderSystem(renderSystem);
-    mRoot->getRenderSystem()->setConfigOption("Full Screen", "No");
+    mRoot->getRenderSystem()->setConfigOption("Full Screen", "Yes");
 
     // Initialize the system, but don't create a render window.
     mRoot->initialise(false);
@@ -450,6 +450,7 @@ bool MSystemManager::initOgreCore()
     MLogManager::getSingleton().logOutput("Initialised all resources", M_EDITOR_MESSAGE);
     createScene();
     MLogManager::getSingleton().logOutput("Scene created", M_EDITOR_MESSAGE);
+    MLogManager::getSingleton().logOutput("A resource taer.mesh might be unresponsive", M_WARN);
     //createLight();
     //MLogManager::getSingleton().logOutput("Added light", M_EDITOR_MESSAGE);
 

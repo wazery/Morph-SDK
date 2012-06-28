@@ -43,7 +43,7 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->menuMaterial->setEnabled(false);
     ui->menuObjects->setEnabled(false);
     ui->menuSelection->setEnabled(false);
-    ui->menuSettings->setEnabled(false);
+    //ui->menuSettings->setEnabled(false);
     ui->menuView->setEnabled(false);
     ui->menuTools->setEnabled(false);
     ui->menuWindows->setEnabled(false);
@@ -117,6 +117,7 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(systemManager, SIGNAL(selectedNodeChanged(bool)), this, SLOT(enableObjProperties(bool)));
     connect(systemManager, SIGNAL(selectedNodeChanged(bool)), this, SLOT(setPostions(bool)));
     connect(systemManager, SIGNAL(selectedNodeChanged(bool)), this, SLOT(setScales(bool)));
+    connect(systemManager, SIGNAL(selectedNodeChanged(bool)), this, SLOT(updateTreeSelection(bool)));
 
     connect(objProperties->boundBoxCheckBox, SIGNAL(clicked(bool)), this, SLOT(setObjBoundingBoxes(bool)));
     connect(systemManager, SIGNAL(selectedNodeChanged(bool)), objProperties->boundBoxCheckBox, SLOT(setChecked(bool)));
@@ -179,7 +180,8 @@ MainWindow::~MainWindow()
 
 void MainWindow::addNodeListener()
 {
-    qDebug() << "2) widget initialised";
+    if(systemManager->isInitialised())
+        ui->treeView->setSystemManager(systemManager);
     //MNodeManager::getSingleton().addNodeTreeListener(ui->treeView);
 }
 
@@ -223,7 +225,7 @@ void MainWindow::initialisePlugins()
     ui->menuMaterial->setEnabled(true);
     ui->menuObjects->setEnabled(true);
     ui->menuSelection->setEnabled(true);
-    ui->menuSettings->setEnabled(true);
+    //ui->menuSettings->setEnabled(true);
     ui->menuView->setEnabled(true);
     ui->menuTools->setEnabled(true);
     ui->menuWindows->setEnabled(true);
@@ -359,6 +361,23 @@ void MainWindow::openSettingsDialog()
 static QTimer* timer = new QTimer();
 void MainWindow::startEngineLoading()
 {
+//    QMessageBox msgBox;
+//    msgBox.setText("This is the first time you start Morph Editor, wellcome and can you please set Ogre settings?");
+//    QPushButton *yesButton = msgBox.addButton(tr("OK"), QMessageBox::ActionRole);
+//    QPushButton *nolButton = msgBox.addButton(tr("Cancel"), QMessageBox::ActionRole);
+//    msgBox.exec();
+//    if (msgBox.clickedButton() == yesButton)
+//    {
+//        ui->actionConfigure_Editor->trigger();
+//    }
+//    else if (msgBox.clickedButton() == nolButton)
+//    {
+//        msgBox.close();
+//    }
+    //if(mSettings->value("Editor/firstTime").toBool())
+    //{
+
+   // }
     ui->engineProgress->setVisible(true);
     ui->label->setVisible(true);
     connect(timer, SIGNAL(timeout()), this, SLOT(updateProgress()));
@@ -384,6 +403,7 @@ void MainWindow::changeIndexofCanvas(int value)
             ui->engineProgress->setVisible(false);
             ui->label->setVisible(false);
             ui->pushButton->setVisible(false);
+            //ui->treeView->preInit();
         }
     }
     else
@@ -520,6 +540,7 @@ void MainWindow::addObj()
     {
         QString meshName = QFileDialog::getOpenFileName(this, "Add a model", QDir::currentPath() + "/Media/models", "Mesh (*.mesh)");
         loadObj(meshName);
+        ui->treeView->setSystemManager(systemManager);
     }
     else
         QMessageBox::warning(this, "You must open the canvas first!", "You are trying to make an action that couldn't be done without launching the canvas first!");
@@ -605,6 +626,8 @@ void MainWindow::openScene()
 
             OgreMax::OgreMaxScene* loader = new OgreMax::OgreMaxScene();
             loader->Load( fileName.toStdString(), systemManager->getRenderWindow(), 0 , systemManager->getSceneManager());
+
+            ui->treeView->setSystemManager(systemManager);
 //            loader->Load(mSceneFilePath, mWindow, 0, mSceneMgr, mNode);
     }
     else
@@ -990,6 +1013,13 @@ void MainWindow::setScales(bool value)
         objProperties->posYText->setValue(0);
         objProperties->posZText->setValue(0);
     }
+}
+
+void MainWindow::updateTreeSelection(bool value)
+{
+    QString name(systemManager->getSelectedNode()->getName().c_str());
+    qDebug() << name;
+    ui->treeView->updateTreeSelection(name);
 }
 
 void MainWindow::setDiffuseLightColor()

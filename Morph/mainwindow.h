@@ -83,6 +83,7 @@ public slots:
     void setPostions(bool value);
     void setScales(bool value);
     void setobjSkeleton(bool value);
+    void updateTreeSelection(bool value);
 
     void setObjectPosX(int value);
     void setObjectPosY(int value);

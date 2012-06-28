@@ -12,16 +12,46 @@ NodeView::NodeView(QWidget* parent)
     //connect(this, SIGNAL(itemClicked(QTreeWidgetItem*, int)), this, SLOT(changeSelection(QTreeWidgetItem*, int)));
 
     //mSelectedItem = NULL;
-    mOgreRoot =  NULL;
-    //initTree(MNodeManager::getSingleton().getRootNodePtr());
+    //mOgreRoot =  NULL;
 }
 
 NodeView::~NodeView()
 {
 }
 
-bool NodeView::initTree(MNodePtr root)
+void NodeView::setSystemManager(MSystemManager* manager)
 {
+    mManger = manager;
+
+    if(initTree())
+        MLogManager::getSingleton().logOutput("Canvas objects tree successfully created", M_EDITOR_MESSAGE);
+    else
+        MLogManager::getSingleton().logOutput("Canvas objects tree are not successfully created!", M_ERROR);
+}
+
+bool NodeView::initTree()
+{
+    if(!mManger->isVisible())
+        return false;
+
+    this->clear();
+
+    QTreeWidgetItem* rootNodeItem = new QTreeWidgetItem(this);
+    rootNodeItem->setFont(0, QFont("ubuntu", -1, 3, true));
+    rootNodeItem->setData(0, Qt::DecorationRole, QIcon("settings.png"));
+    rootNodeItem->setText(0, "Root");
+
+    for (Ogre::SceneManager::MovableObjectIterator i = mManger->getSceneManager()->getMovableObjectIterator("Entity"); i.hasMoreElements();)
+    {
+        Ogre::Entity *ent = static_cast<Ogre::Entity*>(i.getNext());
+        QTreeWidgetItem* NodeItem = new QTreeWidgetItem(rootNodeItem);
+        QString name(ent->getName().c_str());
+        QStringList list = name.split(".");
+        NodeItem->setText(0, list.at(0));
+        mNodeList.append(NodeItem);
+    }
+
+    return true;
 //    objectCreated(root, root->);
 //    for (MNodePtrList::iterator it = root->getChildNodesList().begin(); it != root->getChildNodesList().end(); it++)
 //    {
@@ -30,9 +60,6 @@ bool NodeView::initTree(MNodePtr root)
 //        else
 //            break;
 //    }
-
-    if(!MSystemManager::getSingleton().isInitialised())
-        return false;
 
 //    const MNodePtr rootNode = MNodeManager::getSingleton().getRootNodePtr();
 
@@ -45,25 +72,49 @@ bool NodeView::initTree(MNodePtr root)
 //    qDebug() << "init tree";
 }
 
+void NodeView::updateTreeSelection(QString name)
+{
+    QTreeWidgetItem* item = findItem(name);
+    item->setSelected(true);
+    MLogManager::getSingleton().logOutput("Object: " + item->text(0) + " has been selected!", M_EDITOR_MESSAGE);
+}
+
+QTreeWidgetItem* NodeView::findItem(QString name)
+{
+    foreach(QTreeWidgetItem* item, mNodeList)
+    {
+        qDebug() << "find: " << item->text(0);
+        qDebug() << "name" << name;
+        QStringList list = name.split(".");
+        if (item->text(0) == list.at(0))
+            return item;
+        else
+        {
+            QTreeWidgetItem* item = new QTreeWidgetItem();
+            return item;
+        }
+    }
+}
+
 void NodeView::populateTree(const MNodePtr obj)
 {
 //    if (!obj->showInObjectTree())
-//        return;
-    QTreeWidgetItem* newItem;
-    //if (parent == 0)
-    //    return;
+////        return;
+//    QTreeWidgetItem* newItem;
+//    //if (parent == 0)
+//    //    return;
 
-    QTreeWidgetItem* parentItem = findItem(0, obj->getParent());
-    if (parentItem)
-        newItem = new QTreeWidgetItem(parentItem);
-    else
-        newItem = new QTreeWidgetItem(this);
+//    QTreeWidgetItem* parentItem = findItem(0, obj->getParent());
+//    if (parentItem)
+//        newItem = new QTreeWidgetItem(parentItem);
+//    else
+//        newItem = new QTreeWidgetItem(this);
 
-    if (parentItem)
-        setItemExpanded(parentItem, true);
+//    if (parentItem)
+//        setItemExpanded(parentItem, true);
 
-    newItem->setText(0, obj->getName());
-    qDebug() << "tree name: " << obj->getName();
+//    newItem->setText(0, obj->getName());
+//    qDebug() << "tree name: " << obj->getName();
 
     //TODO:pupulateChilds
 
@@ -99,37 +150,28 @@ bool NodeView::updateNodeTree()
 // Creates tree widget items for the node and its childs.
 void NodeView::createNodeItem(const MNodePtr &nodePtr)
 {
-    QTreeWidgetItem* currNodeItem = new QTreeWidgetItem(this);
-    if(nodePtr->getName() == "World")
-    {
-        currNodeItem->setFont(0, QFont("ubuntu", -1, 3, true));
-        currNodeItem->setData(0, Qt::DecorationRole, QIcon("settings.png"));
-    }
-    currNodeItem->setText(0, nodePtr->getName());
+//    QTreeWidgetItem* currNodeItem = new QTreeWidgetItem(this);
+//    if(nodePtr->getName() == "World")
+//    {
+//        currNodeItem->setFont(0, QFont("ubuntu", -1, 3, true));
+//        currNodeItem->setData(0, Qt::DecorationRole, QIcon("settings.png"));
+//    }
+//    currNodeItem->setText(0, nodePtr->getName());
 
-    //if(MNodeManager::getSingleton().getFirstSelectedNode() == nodePtr)
-        mSelectedItem = currNodeItem;
+//    //if(MNodeManager::getSingleton().getFirstSelectedNode() == nodePtr)
+//        mSelectedItem = currNodeItem;
 
-    if(!mOgreRoot)
-        mOgreRoot = currNodeItem;
+//    if(!mOgreRoot)
+//        mOgreRoot = currNodeItem;
 
-    const MNodePtrList childNodeList = nodePtr->getChildNodesList();
-    if(childNodeList.size() > 0)
-    {
-        for(MNodePtrList::const_iterator it = childNodeList.begin(); it!=childNodeList.end(); it++)
-        {
-            createNodeItem(it->second);
-        }
-    }
-}
-
-QTreeWidgetItem* NodeView::findItem(QTreeWidgetItem* parent, MNodePtr obj)
-{
-    if(parent == 0)
-        return NULL;
-
-    QTreeWidgetItem* result = new QTreeWidgetItem(parent);
-    return result;
+//    const MNodePtrList childNodeList = nodePtr->getChildNodesList();
+//    if(childNodeList.size() > 0)
+//    {
+//        for(MNodePtrList::const_iterator it = childNodeList.begin(); it!=childNodeList.end(); it++)
+//        {
+//            createNodeItem(it->second);
+//        }
+//    }
 }
 
 void NodeView::setSelectedObject(MNodePtr obj)

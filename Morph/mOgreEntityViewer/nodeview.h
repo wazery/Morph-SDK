@@ -13,7 +13,7 @@ class NodeView : public QTreeWidget, public MNodeTreeListener
     //Q_OBJECT
 
     MNodePtr mSelectedObject;
-    bool initTree(MNodePtr root);
+    bool initTree();
 
 public:
     NodeView(QWidget* parent = 0);
@@ -29,17 +29,23 @@ public:
 //    void objectNameChanged(MNodePtr obj);
 //    void objectVisibilityChanged(MNodePtr obj, bool visible);
 
-    QTreeWidgetItem* findItem(QTreeWidgetItem* parent, MNodePtr obj);
+    QTreeWidgetItem* findItem(QString name);
     QTreeWidgetItem *FindorCreateNodeItem(const MString &nodeChainName);
+
+    void setSystemManager(MSystemManager* manager);
+
+    void updateTreeSelection(QString name);
 
     // Overriden functions from the MNodeTreeListener.
     virtual void addNode(const MString &parentNodeChainName, const MString &nodeName);
     virtual void removeNode(const MString &parentNodeChainName, const MString &nodeName);
 
 protected:
+    MSystemManager* mManger;
     QTreeView mNodeTree;
     QTreeWidgetItem* mOgreRoot;
     QTreeWidgetItem* mSelectedItem;
+    QList<QTreeWidgetItem*> mNodeList;
 
 protected slots:
     void changeSelection(QTreeWidgetItem*, int);

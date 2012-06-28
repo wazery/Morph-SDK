@@ -10,6 +10,8 @@ QT       += opengl
 TARGET = Morph
 TEMPLATE = app
 
+INSTALLS += DESTDIR_TARGET
+
 SOURCES += main.cpp\
         mainwindow.cpp \
     MorphCore/Editor/msystemmanager.cpp \
