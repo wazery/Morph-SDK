@@ -2,7 +2,7 @@
 #include "ui_mainwindow.h"
 
 #include "MorphCore/Editor/saveScene.h"
-#include "MorphCore/Editor/Import/DotSceneLoader.h"
+#include "MorphCore/Editor/OgreMax/OgreMaxScene.hpp"
 
 #include <QMessageBox>
 
@@ -591,21 +591,21 @@ void MainWindow::openScene()
     if(systemManager->isVisible())
     {
         QString fileName = QFileDialog::getOpenFileName(this, tr("Open File"),"",tr("DotScene (*.scene)"));
-        try
-        {
+        systemManager->getSceneManager()->getRootSceneNode()->removeAndDestroyAllChildren();
+
+        if(fileName.isEmpty())
+            return;
+
             Ogre::String basename, path;
             Ogre::StringUtil::splitFilename(fileName.toStdString(), basename, path);
             std::string mDirPath(path.begin(),path.end() -1);
-            ResourceGroupManager::getSingleton().addResourceLocation(mDirPath, "FileSystem","General");
+            ResourceGroupManager::getSingleton().addResourceLocation(path, "FileSystem","General",true);
+            Ogre::ResourceGroupManager::getSingleton().initialiseAllResourceGroups();
 
-            systemManager->getSceneManager()->getRootSceneNode()->removeAndDestroyAllChildren();
-            DotSceneLoader* loader = new DotSceneLoader();
-            loader->parseDotScene(fileName.toStdString(), "General", systemManager->getSceneManager(), systemManager->getSceneManager()->getRootSceneNode());
-        }
-        catch(Ogre::Exception& e)
-        {
-            throw e;
-        }
+
+            OgreMax::OgreMaxScene* loader = new OgreMax::OgreMaxScene();
+            loader->Load( fileName.toStdString(), systemManager->getRenderWindow(), 0 , systemManager->getSceneManager());
+//            loader->Load(mSceneFilePath, mWindow, 0, mSceneMgr, mNode);
     }
     else
     {

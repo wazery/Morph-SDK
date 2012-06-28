@@ -16,11 +16,6 @@ SOURCES += main.cpp\
     #MorphCore/Editor/msingleton.cpp
     MorphCore/Editor/mlogmanager.cpp \
     MorphCore/Editor/saveScene.cpp \
-    MorphCore/Editor/Import/DotSceneLoader.cpp \
-    MorphCore/Editor/Import/tinyxml.cpp \
-    MorphCore/Editor/Import/tinyxmlerror.cpp \
-    MorphCore/Editor/Import/tinyxmlparser.cpp \
-    MorphCore/Editor/Import/tinystr.cpp \
     mOgreEntityViewer/logview.cpp \
     mOgreEntityViewer/mogrelogproxy.cpp \
     MorphCore/Editor/mnodemanager.cpp \
@@ -43,18 +38,22 @@ SOURCES += main.cpp\
     MorphCore/Editor/loadingbar.cpp \
     mOgreEntityViewer/objproperties.cpp \
     mOgreEntityViewer/startingwindow.cpp \
-    mOgreEntityViewer/matwindow.cpp
+    mOgreEntityViewer/matwindow.cpp \
+    MorphCore/Editor/OgreMax/OgreMaxModel.cpp \
+    MorphCore/Editor/OgreMax/OgreMaxScene.cpp \
+    MorphCore/Editor/OgreMax/OgreMaxUtilities.cpp \
+    MorphCore/Editor/OgreMax/ProgressCalculator.cpp \
+    MorphCore/Editor/OgreMax/Version.cpp \
+    MorphCore/Editor/OgreMax/tinyxml/tinyxml.cpp \
+    MorphCore/Editor/OgreMax/tinyxml/tinyxmlerror.cpp \
+    MorphCore/Editor/OgreMax/tinyxml/tinyxmlparser.cpp
+
 
 HEADERS += mainwindow.h \
     MorphCore/Editor/msystemmanager.h \
     #MorphCore/Editor/msingleton.h // FIXME: implement it.
     MorphCore/Editor/mlogmanager.h \
     MorphCore/Editor/saveScene.h \
-    MorphCore/Editor/Import/DotSceneLoader.h \
-    MorphCore/Editor/Import/tinyxml.h \
-    MorphCore/Editor/Import/tinyxmlerror.h \
-    MorphCore/Editor/Import/tinyxmlparser.h \
-    MorphCore/Editor/Import/tinystr.h \
     mOgreEntityViewer/logview.h \
     mOgreEntityViewer/mogrelogproxy.h \
     MorphCore/Editor/mnodemanager.h \
@@ -81,7 +80,16 @@ HEADERS += mainwindow.h \
     mOgreEntityViewer/objproperties.h \
     mOgreEntityViewer/startingwindow.h \
     mOgreEntityViewer/matwindow.h \
-    MorphCore/Editor/saveScene.h
+    MorphCore/Editor/saveScene.h \
+    MorphCore/Editor/OgreMax/OgreMaxModel.hpp \
+    MorphCore/Editor/OgreMax/OgreMaxPlatform.hpp \
+    MorphCore/Editor/OgreMax/OgreMaxRenderWindowIterator.hpp \
+    MorphCore/Editor/OgreMax/OgreMaxScene.hpp \
+    MorphCore/Editor/OgreMax/OgreMaxTypes.hpp \
+    MorphCore/Editor/OgreMax/OgreMaxUtilities.hpp \
+    MorphCore/Editor/OgreMax/ProgressCalculator.hpp \
+    MorphCore/Editor/OgreMax/Version.hpp \
+    MorphCore/Editor/OgreMax/tinyxml/tinyxml.h
 
 FORMS    += mainwindow.ui \
     mOgreEntityViewer/settingsdialog.ui \

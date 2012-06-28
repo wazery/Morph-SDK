@@ -1009,7 +1009,7 @@ void MSystemManager::dropEvent(QDropEvent* e)
     {
        Ogre::SceneNode* node = selecteNode(e->pos());
        qDebug() << node->getName().c_str();
-    //   node->setu;
+       node->setUserAny(Ogre::Any(Ogre::String("Button")));
     }
 }
 
