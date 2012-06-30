@@ -61,6 +61,7 @@ public slots:
     void removeSelected();
     void saveAs();
     void openScene();
+    void newScene();
 
     void setBackgroundColor();
     void gridChanged(bool value);
@@ -119,6 +120,7 @@ public slots:
     void selectObject();
     void moveObject();
     void translateObject();
+    void fullScreen();
     void rotateObject();
 
 private:

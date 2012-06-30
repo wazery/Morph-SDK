@@ -33,7 +33,7 @@ int main(int argc, char *argv[])
 
     QApplication a(argc, argv);
 
-    QPixmap img("Splash22.jpg");
+    QPixmap img(":/wellcome/Media/wellcome-images/Splash22.jpg");
 
     QSplashScreen splash(img);
     splash.show();

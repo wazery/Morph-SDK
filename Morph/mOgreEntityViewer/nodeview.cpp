@@ -35,6 +35,7 @@ bool NodeView::initTree()
         return false;
 
     this->clear();
+    mNodeList.clear();
 
     QTreeWidgetItem* rootNodeItem = new QTreeWidgetItem(this);
     rootNodeItem->setFont(0, QFont("ubuntu", -1, 3, true));
@@ -43,7 +44,7 @@ bool NodeView::initTree()
 
     for (Ogre::SceneManager::MovableObjectIterator i = mManger->getSceneManager()->getMovableObjectIterator("Entity"); i.hasMoreElements();)
     {
-        Ogre::Entity *ent = static_cast<Ogre::Entity*>(i.getNext());
+        Ogre::Entity* ent = static_cast<Ogre::Entity*>(i.getNext());
         QTreeWidgetItem* NodeItem = new QTreeWidgetItem(rootNodeItem);
         QString name(ent->getName().c_str());
         QStringList list = name.split(".");
@@ -83,8 +84,6 @@ QTreeWidgetItem* NodeView::findItem(QString name)
 {
     foreach(QTreeWidgetItem* item, mNodeList)
     {
-        qDebug() << "find: " << item->text(0);
-        qDebug() << "name" << name;
         QStringList list = name.split(".");
         if (item->text(0) == list.at(0))
             return item;

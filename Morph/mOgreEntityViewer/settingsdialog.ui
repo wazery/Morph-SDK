@@ -54,32 +54,6 @@
    <property name="spacing">
     <number>3</number>
    </property>
-   <item row="2" column="1">
-    <widget class="QDialogButtonBox" name="buttonsBox">
-     <property name="orientation">
-      <enum>Qt::Horizontal</enum>
-     </property>
-     <property name="standardButtons">
-      <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
-     </property>
-    </widget>
-   </item>
-   <item row="1" column="1">
-    <widget class="QLabel" name="notVisible">
-     <property name="font">
-      <font>
-       <weight>75</weight>
-       <bold>true</bold>
-      </font>
-     </property>
-     <property name="styleSheet">
-      <string notr="true">QLabel { color : red; }</string>
-     </property>
-     <property name="text">
-      <string/>
-     </property>
-    </widget>
-   </item>
    <item row="0" column="1">
     <widget class="QTabWidget" name="tabWidget">
      <property name="enabled">
@@ -126,7 +100,7 @@
           <bool>false</bool>
          </property>
          <layout class="QGridLayout" name="gridLayout_9">
-          <item row="0" column="0" rowspan="2" colspan="2">
+          <item row="0" column="0">
            <layout class="QGridLayout" name="gridLayout_6">
             <item row="0" column="0">
              <widget class="QLabel" name="label_29">
@@ -164,7 +138,7 @@
              </widget>
             </item>
             <item row="0" column="2">
-             <widget class="QPushButton" name="mBrowseProjectDirButton">
+             <widget class="QPushButton" name="browseBtn">
               <property name="sizePolicy">
                <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
                 <horstretch>0</horstretch>
@@ -203,11 +177,11 @@
                </size>
               </property>
               <property name="text">
-               <string>Configuration File Path:</string>
+               <string>Configuration Path:</string>
               </property>
              </widget>
             </item>
-            <item row="1" column="1" colspan="2">
+            <item row="1" column="1">
              <widget class="QLineEdit" name="configPath">
               <property name="sizePolicy">
                <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
@@ -217,9 +191,28 @@
               </property>
               <property name="minimumSize">
                <size>
-                <width>300</width>
+                <width>250</width>
                 <height>22</height>
                </size>
+              </property>
+             </widget>
+            </item>
+            <item row="1" column="2">
+             <widget class="QPushButton" name="confBtn">
+              <property name="minimumSize">
+               <size>
+                <width>38</width>
+                <height>22</height>
+               </size>
+              </property>
+              <property name="maximumSize">
+               <size>
+                <width>38</width>
+                <height>22</height>
+               </size>
+              </property>
+              <property name="text">
+               <string>...</string>
               </property>
              </widget>
             </item>
@@ -242,7 +235,7 @@
               </property>
              </widget>
             </item>
-            <item row="2" column="1" colspan="2">
+            <item row="2" column="1">
              <widget class="QLineEdit" name="pluginsPath">
               <property name="sizePolicy">
                <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
@@ -252,9 +245,28 @@
               </property>
               <property name="minimumSize">
                <size>
-                <width>300</width>
+                <width>250</width>
                 <height>22</height>
                </size>
+              </property>
+             </widget>
+            </item>
+            <item row="2" column="2">
+             <widget class="QPushButton" name="pluginsBtn">
+              <property name="minimumSize">
+               <size>
+                <width>38</width>
+                <height>22</height>
+               </size>
+              </property>
+              <property name="maximumSize">
+               <size>
+                <width>38</width>
+                <height>22</height>
+               </size>
+              </property>
+              <property name="text">
+               <string>...</string>
               </property>
              </widget>
             </item>
@@ -273,48 +285,87 @@
                </size>
               </property>
               <property name="text">
-               <string>Scene Manager:</string>
+               <string>Ogre Log Path:</string>
               </property>
              </widget>
             </item>
-            <item row="3" column="1" colspan="2">
-             <widget class="QComboBox" name="mSceneMgrNameMenu">
-              <property name="sizePolicy">
-               <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-                <horstretch>0</horstretch>
-                <verstretch>0</verstretch>
-               </sizepolicy>
-              </property>
+            <item row="3" column="1">
+             <widget class="QLineEdit" name="ogreLogPath">
               <property name="minimumSize">
                <size>
-                <width>300</width>
+                <width>0</width>
+                <height>0</height>
+               </size>
+              </property>
+              <property name="maximumSize">
+               <size>
+                <width>250</width>
+                <height>16777215</height>
+               </size>
+              </property>
+             </widget>
+            </item>
+            <item row="3" column="2">
+             <widget class="QPushButton" name="ogreBtn">
+              <property name="minimumSize">
+               <size>
+                <width>38</width>
                 <height>22</height>
                </size>
+              </property>
+              <property name="maximumSize">
+               <size>
+                <width>38</width>
+                <height>22</height>
+               </size>
+              </property>
+              <property name="text">
+               <string>...</string>
+              </property>
+             </widget>
+            </item>
+            <item row="4" column="0">
+             <widget class="QLabel" name="label_4">
+              <property name="text">
+               <string>Morph Log Path:</string>
+              </property>
+             </widget>
+            </item>
+            <item row="4" column="1">
+             <widget class="QLineEdit" name="morphLogPath">
+              <property name="maximumSize">
+               <size>
+                <width>250</width>
+                <height>16777215</height>
+               </size>
+              </property>
+             </widget>
+            </item>
+            <item row="4" column="2">
+             <widget class="QPushButton" name="morphBtn">
+              <property name="minimumSize">
+               <size>
+                <width>38</width>
+                <height>22</height>
+               </size>
+              </property>
+              <property name="maximumSize">
+               <size>
+                <width>38</width>
+                <height>22</height>
+               </size>
+              </property>
+              <property name="text">
+               <string>...</string>
               </property>
              </widget>
             </item>
            </layout>
           </item>
-          <item row="1" column="1">
-           <spacer name="verticalSpacer">
-            <property name="orientation">
-             <enum>Qt::Vertical</enum>
-            </property>
-            <property name="sizeType">
-             <enum>QSizePolicy::Fixed</enum>
-            </property>
-            <property name="sizeHint" stdset="0">
-             <size>
-              <width>40</width>
-              <height>40</height>
-             </size>
-            </property>
-           </spacer>
-          </item>
-          <item row="2" column="0" colspan="2">
+          <item row="1" column="0">
            <widget class="QLabel" name="RestartNote">
             <property name="text">
-             <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Note: These changes will take effect when you restart Morph Editor.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+             <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600; color:#ff0000;&quot;&gt;Note:&lt;/span&gt;&lt;span style=&quot; font-weight:600;&quot;&gt; These changes are important for the Editor's engine to start working.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
             </property>
             <property name="wordWrap">
              <bool>true</bool>
@@ -625,7 +676,7 @@
          </layout>
         </widget>
        </item>
-       <item row="1" column="0">
+       <item row="2" column="0">
         <spacer name="verticalSpacer_2">
          <property name="orientation">
           <enum>Qt::Vertical</enum>
@@ -637,6 +688,22 @@
           </size>
          </property>
         </spacer>
+       </item>
+       <item row="1" column="0">
+        <widget class="QLabel" name="notVisible">
+         <property name="font">
+          <font>
+           <weight>75</weight>
+           <bold>true</bold>
+          </font>
+         </property>
+         <property name="styleSheet">
+          <string notr="true">QLabel { color : red; }</string>
+         </property>
+         <property name="text">
+          <string/>
+         </property>
+        </widget>
        </item>
       </layout>
      </widget>
@@ -912,6 +979,16 @@
        </layout>
       </widget>
      </widget>
+    </widget>
+   </item>
+   <item row="2" column="1">
+    <widget class="QDialogButtonBox" name="buttonsBox">
+     <property name="orientation">
+      <enum>Qt::Horizontal</enum>
+     </property>
+     <property name="standardButtons">
+      <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
+     </property>
     </widget>
    </item>
   </layout>

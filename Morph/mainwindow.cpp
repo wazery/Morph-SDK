@@ -23,6 +23,8 @@ MainWindow::MainWindow(QWidget *parent) :
         startingWindow->show();
     }
 
+    //if(mSettings->value("Editor/firstTime").toBool())
+
     // Pointers to the editor subsystems.
     systemManager = ui->widget;
     lightWin = new LightWindow(this);
@@ -91,6 +93,7 @@ MainWindow::MainWindow(QWidget *parent) :
 
     connect(ui->actionSave_as, SIGNAL(triggered()), this, SLOT(saveAs()));
     connect(ui->actionOpen_Ogre_Scene, SIGNAL(triggered()), this, SLOT(openScene()));
+    connect(ui->actionNew, SIGNAL(triggered()), this, SLOT(newScene()));
 
     connect(ui->actionAboutQt, SIGNAL(triggered()), this, SLOT(aboutQt()));
     connect(ui->actionRestore_Default, SIGNAL(triggered()), this, SLOT(restoreDefault()));
@@ -98,7 +101,8 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->actionSelect, SIGNAL(triggered()), this, SLOT(selectObject()));
     connect(ui->actionMove, SIGNAL(triggered()), this, SLOT(moveObject()));
     connect(ui->actionRotate, SIGNAL(triggered()), this, SLOT(rotateObject()));
-    connect(ui->actionTranslate, SIGNAL(triggered()), this, SLOT(translateObject()));
+    connect(ui->actionNavigation, SIGNAL(triggered()), this, SLOT(translateObject()));
+    //connect(ui->actionFull_Screen, SIGNAL(triggered()), this, SLOT(fullScreen()));
 
     //  Environment Properties
     // --------------------------------------
@@ -361,23 +365,25 @@ void MainWindow::openSettingsDialog()
 static QTimer* timer = new QTimer();
 void MainWindow::startEngineLoading()
 {
-//    QMessageBox msgBox;
-//    msgBox.setText("This is the first time you start Morph Editor, wellcome and can you please set Ogre settings?");
-//    QPushButton *yesButton = msgBox.addButton(tr("OK"), QMessageBox::ActionRole);
-//    QPushButton *nolButton = msgBox.addButton(tr("Cancel"), QMessageBox::ActionRole);
-//    msgBox.exec();
-//    if (msgBox.clickedButton() == yesButton)
-//    {
-//        ui->actionConfigure_Editor->trigger();
-//    }
-//    else if (msgBox.clickedButton() == nolButton)
-//    {
-//        msgBox.close();
-//    }
-    //if(mSettings->value("Editor/firstTime").toBool())
-    //{
+    if(mSettings->value("Editor/resourcesPath").toString().isEmpty() || mSettings->value("Editor/configurationPath").toString().isEmpty() || mSettings->value("Editor/pluginsPath").toString().isEmpty() || mSettings->value("Editor/ogreLogPath").toString().isEmpty() || mSettings->value("Editor/morphLogPath").toString().isEmpty())
+    {
+        QMessageBox msgBox;
+        msgBox.setText("This is the first time you start Morph Editor, wellcome and can you please set Ogre settings?");
+        msgBox.setIcon(QMessageBox::Question);
+        QPushButton* yesButton = msgBox.addButton(tr("OK"), QMessageBox::ActionRole);
+        QPushButton* noButton = msgBox.addButton(tr("Cancel"), QMessageBox::ActionRole);
+        msgBox.exec();
 
-   // }
+        if (msgBox.clickedButton() == yesButton)
+        {
+            ui->actionConfigure_Editor->trigger();
+        }
+        else if (msgBox.clickedButton() == noButton)
+        {
+            msgBox.close();
+        }
+    }
+
     ui->engineProgress->setVisible(true);
     ui->label->setVisible(true);
     connect(timer, SIGNAL(timeout()), this, SLOT(updateProgress()));
@@ -436,7 +442,7 @@ void MainWindow::restoreDefault()
 
 void MainWindow::selectObject()
 {
-    ui->actionTranslate->setEnabled(true);
+    ui->actionNavigation->setEnabled(true);
     ui->actionRotate->setEnabled(true);
     ui->actionMove->setEnabled(true);
     ui->actionSelect->setEnabled(false);
@@ -447,29 +453,38 @@ void MainWindow::selectObject()
 void MainWindow::moveObject()
 {
     ui->actionSelect->setEnabled(true);
-    ui->actionTranslate->setEnabled(true);
+    ui->actionNavigation->setEnabled(true);
     ui->actionRotate->setEnabled(true);
     ui->actionMove->setEnabled(false);
+    systemManager->setSelectEnabled(false);
     systemManager->setCursor(Qt::ClosedHandCursor);
     systemManager->setMoveEnabled(true);
 }
 
 void MainWindow::translateObject()
 {
+    systemManager->setMoveEnabled(false);
     ui->actionSelect->setEnabled(true);
-    ui->actionRotate->setEnabled(true);
     ui->actionMove->setEnabled(true);
-    ui->actionTranslate->setEnabled(false);
-    systemManager->setCursor(Qt::SizeAllCursor);
+    ui->actionNavigation->setEnabled(false);
+    systemManager->setCursor(Qt::ArrowCursor);
+}
+
+void MainWindow::fullScreen()
+{
+//    if(!isFullScreen())
+//        this->fullScreen();
+//    else
+//        setWindowState(Qt::WindowMaximized);
 }
 
 void MainWindow::rotateObject()
 {
-    ui->actionSelect->setEnabled(true);
-    ui->actionMove->setEnabled(true);
-    ui->actionTranslate->setEnabled(true);
-    ui->actionRotate->setEnabled(false);
-    systemManager->setCursor(Qt::SizeFDiagCursor);
+//    ui->actionSelect->setEnabled(true);
+//    ui->actionMove->setEnabled(true);
+//    ui->actionNavigation->setEnabled(true);
+//    ui->actionRotate->setEnabled(false);
+//    systemManager->setCursor(Qt::SizeFDiagCursor);
 }
 
 void MainWindow::gridColorChanged(QColor color)
@@ -590,12 +605,16 @@ void MainWindow::commitRemoveObj()
 {
     RemoveObject* removeObject = qobject_cast<RemoveObject*>(QObject::sender());
     systemManager->removeObject(removeObject->getMeshName().toUtf8().constData());
+
+    ui->treeView->setSystemManager(systemManager);
 }
 
 void MainWindow::removeSelected()
 {
     if(systemManager->getSelectedNode())
         systemManager->removeObject(systemManager->getSelectedNode()->getName());
+
+    ui->treeView->setSystemManager(systemManager);
 }
 
 void MainWindow::saveAs()
@@ -611,29 +630,78 @@ void MainWindow::openScene()
 {
     if(systemManager->isVisible())
     {
+        QMessageBox msgBox;
+        msgBox.setText("Do you want to save current scene?");
+        msgBox.setIcon(QMessageBox::Question);
+        QPushButton* yesButton = msgBox.addButton(tr("Yes"), QMessageBox::ActionRole);
+        QPushButton* noButton = msgBox.addButton(tr("No"), QMessageBox::ActionRole);
+        msgBox.exec();
+
+        if (msgBox.clickedButton() == yesButton)
+        {
+            ui->actionSave_as->trigger();
+        }
+        else if (msgBox.clickedButton() == noButton)
+        {
+            msgBox.close();
+        }
+
         QString fileName = QFileDialog::getOpenFileName(this, tr("Open File"),"",tr("DotScene (*.scene)"));
-        systemManager->getSceneManager()->getRootSceneNode()->removeAndDestroyAllChildren();
 
         if(fileName.isEmpty())
             return;
 
-            Ogre::String basename, path;
-            Ogre::StringUtil::splitFilename(fileName.toStdString(), basename, path);
-            std::string mDirPath(path.begin(),path.end() -1);
-            ResourceGroupManager::getSingleton().addResourceLocation(path, "FileSystem","General",true);
-            Ogre::ResourceGroupManager::getSingleton().initialiseAllResourceGroups();
+        for (Ogre::SceneManager::MovableObjectIterator i = systemManager->getSceneManager()->getMovableObjectIterator("Entity"); i.hasMoreElements();)
+        {
+            Ogre::Entity* ent = static_cast<Ogre::Entity*>(i.getNext());
+            systemManager->getSceneManager()->destroyEntity(ent->getName());
+        }
+
+        Ogre::String basename, path;
+        Ogre::StringUtil::splitFilename(fileName.toStdString(), basename, path);
+        std::string mDirPath(path.begin(),path.end() -1);
+        ResourceGroupManager::getSingleton().addResourceLocation(path, "FileSystem","General",true);
+        Ogre::ResourceGroupManager::getSingleton().initialiseAllResourceGroups();
 
 
-            OgreMax::OgreMaxScene* loader = new OgreMax::OgreMaxScene();
-            loader->Load( fileName.toStdString(), systemManager->getRenderWindow(), 0 , systemManager->getSceneManager());
+        OgreMax::OgreMaxScene* loader = new OgreMax::OgreMaxScene();
+        loader->Load( fileName.toStdString(), systemManager->getRenderWindow(), 0 , systemManager->getSceneManager());
 
-            ui->treeView->setSystemManager(systemManager);
-//            loader->Load(mSceneFilePath, mWindow, 0, mSceneMgr, mNode);
+        ui->treeView->setSystemManager(systemManager);
+        //            loader->Load(mSceneFilePath, mWindow, 0, mSceneMgr, mNode);
     }
     else
     {
         QMessageBox::warning(this, "You must open the canvas first!", "You are trying to make an action that couldn't be done without launching the canvas first!");
     }
+}
+
+void MainWindow::newScene()
+{
+    QMessageBox msgBox;
+    msgBox.setText("Do you want to save current scene?");
+    msgBox.setIcon(QMessageBox::Question);
+    QPushButton* yesButton = msgBox.addButton(tr("Yes"), QMessageBox::ActionRole);
+    QPushButton* noButton = msgBox.addButton(tr("No"), QMessageBox::ActionRole);
+    msgBox.exec();
+
+    if (msgBox.clickedButton() == yesButton)
+    {
+        ui->actionSave_as->trigger();
+    }
+    else if (msgBox.clickedButton() == noButton)
+    {
+        msgBox.close();
+    }
+
+    for (Ogre::SceneManager::MovableObjectIterator i = systemManager->getSceneManager()->getMovableObjectIterator("Entity"); i.hasMoreElements();)
+    {
+        Ogre::Entity* ent = static_cast<Ogre::Entity*>(i.getNext());
+        systemManager->getSceneManager()->destroyEntity(ent->getName());
+    }
+
+    ui->treeView->setSystemManager(systemManager);
+    systemManager->update();
 }
 
 void MainWindow::setBackgroundColor()
@@ -812,8 +880,13 @@ void MainWindow::deleteLight()
 void MainWindow::getObjName(bool value)
 {
     Q_UNUSED(value)
+
     if(systemManager->getSelectedNode())
-        objProperties->nameText->setText(QString(systemManager->getSelectedNode()->getName().c_str()));
+    {
+        QString name(systemManager->getSelectedNode()->getName().c_str());
+        QStringList list = name.split(".");
+        objProperties->nameText->setText(list.at(0));
+    }
     else
         objProperties->nameText->setText("");
 }
@@ -891,23 +964,23 @@ void MainWindow::setObjectPosZ(int value)
 // -----------------------------------------
 void MainWindow::setObjectRotX(int value)
 {
-//    Ogre::Vector3 vector = systemManager->getSelectedNode()->getOrientation();
-//    systemManager->getSelectedNode()->setPosition(Ogre::Real(value.toInt()), vector.y, vector.z);
-//    systemManager->update();
+    Quaternion q(Degree(10), Vector3::UNIT_X);
+    systemManager->getSelectedNode()->rotate(q);
+    systemManager->update();
 }
 
 void MainWindow::setObjectRotY(int value)
 {
-//    Ogre::Vector3 vector = systemManager->getSelectedNode()->getPosition();
-//    systemManager->getSelectedNode()->setPosition(vector.x, Ogre::Real(value.toInt()), vector.z);
-//    systemManager->update();
+    Quaternion q(Degree(10), Vector3::UNIT_Y);
+    systemManager->getSelectedNode()->rotate(q);
+    systemManager->update();
 }
 
 void MainWindow::setObjectRotZ(int value)
 {
-//    Ogre::Vector3 vector = systemManager->getSelectedNode()->getPosition();
-//    systemManager->getSelectedNode()->setPosition(vector.x, vector.y, Ogre::Real(value));
-//    systemManager->update();
+    Quaternion q(Degree(10), Vector3::UNIT_Z);
+    systemManager->getSelectedNode()->rotate(q);
+    systemManager->update();
 }
 
 // -----------------------------------------
@@ -916,6 +989,10 @@ void MainWindow::setObjectScaleX(int value)
     if(systemManager->getSelectedNode() != NULL)
     {
         Ogre::Vector3 vector = systemManager->getSelectedNode()->getScale();
+
+        if(Ogre::Real(value) == vector.x)
+            return;
+
         systemManager->getSelectedNode()->scale(Ogre::Real(value), vector.y, vector.z);
         systemManager->update();
     }
@@ -926,6 +1003,10 @@ void MainWindow::setObjectScaleY(int value)
     if(systemManager->getSelectedNode() != NULL)
     {
         Ogre::Vector3 vector = systemManager->getSelectedNode()->getScale();
+
+        if(Ogre::Real(value) == vector.y)
+            return;
+
         systemManager->getSelectedNode()->scale(vector.x, Ogre::Real(value), vector.z);
         systemManager->update();
     }
@@ -936,6 +1017,10 @@ void MainWindow::setObjectScaleZ(int value)
     if(systemManager->getSelectedNode() != NULL)
     {
         Ogre::Vector3 vector = systemManager->getSelectedNode()->getScale();
+
+        if(Ogre::Real(value) == vector.z)
+            return;
+
         systemManager->getSelectedNode()->scale(vector.x, vector.y, Ogre::Real(value));
         systemManager->update();
     }
@@ -1017,9 +1102,11 @@ void MainWindow::setScales(bool value)
 
 void MainWindow::updateTreeSelection(bool value)
 {
-    QString name(systemManager->getSelectedNode()->getName().c_str());
-    qDebug() << name;
-    ui->treeView->updateTreeSelection(name);
+    if(systemManager->getSelectedNode())
+    {
+        QString name(systemManager->getSelectedNode()->getName().c_str());
+        ui->treeView->updateTreeSelection(name);
+    }
 }
 
 void MainWindow::setDiffuseLightColor()

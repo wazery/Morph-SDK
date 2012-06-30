@@ -23,6 +23,8 @@
  * ============================================================ */
 
 #include "MLogManager.h"
+#include <QApplication>
+#include <QSettings>
 #include <iomanip>
 
 using namespace Morph;
@@ -39,7 +41,10 @@ MLogListener::~MLogListener()
 
 MLogManager::MLogManager()
 {
-    mOutputFile.open("Morph.log");
+    QString mSettingsFile = QApplication::applicationDirPath() + "editorSettings";
+    QSettings* mSettings = new QSettings(mSettingsFile, QSettings::NativeFormat);
+
+    mOutputFile.open(mSettings->value("Editor/morphLogPath").toString().toStdString().c_str());
 }
 
 MLogManager::~MLogManager()

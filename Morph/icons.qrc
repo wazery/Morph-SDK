@@ -46,5 +46,7 @@
         <file>Media/wellcome-images/bg.png</file>
         <file>Media/wellcome-images/Logo.png</file>
         <file>Media/wellcome-images/wellcome.png</file>
+        <file>Media/wellcome-images/Splash22.jpg</file>
+        <file>Media/wellcome-images/dashboard.png</file>
     </qresource>
 </RCC>

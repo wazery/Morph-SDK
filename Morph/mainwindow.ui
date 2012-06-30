@@ -336,6 +336,7 @@
     <property name="title">
      <string>&amp;File</string>
     </property>
+    <addaction name="actionNew"/>
     <addaction name="actionOpen_Ogre_Scene"/>
     <addaction name="actionSave_as"/>
     <addaction name="separator"/>
@@ -368,7 +369,7 @@
     </property>
     <addaction name="actionSelect"/>
     <addaction name="actionMove"/>
-    <addaction name="actionTranslate"/>
+    <addaction name="actionNavigation"/>
     <addaction name="actionRemoveMesh"/>
    </widget>
    <widget class="QMenu" name="menuWindows">
@@ -380,6 +381,7 @@
     <addaction name="actionCanvas"/>
     <addaction name="actionLogging"/>
     <addaction name="actionScene_Explorer"/>
+    <addaction name="actionShowProperties"/>
     <addaction name="actionWidgets"/>
    </widget>
    <widget class="QMenu" name="menuHelp">
@@ -465,10 +467,9 @@
    <attribute name="toolBarBreak">
     <bool>false</bool>
    </attribute>
+   <addaction name="actionNavigation"/>
    <addaction name="actionSelect"/>
    <addaction name="actionMove"/>
-   <addaction name="actionTranslate"/>
-   <addaction name="actionRotate"/>
    <addaction name="separator"/>
   </widget>
   <widget class="QDockWidget" name="dockWidget">
@@ -563,7 +564,7 @@ p, li { white-space: pre-wrap; }
         <widget class="QTextEdit" name="textEdit_3">
          <property name="geometry">
           <rect>
-           <x>20</x>
+           <x>24</x>
            <y>180</y>
            <width>311</width>
            <height>141</height>
@@ -625,7 +626,7 @@ p, li { white-space: pre-wrap; }
          <property name="geometry">
           <rect>
            <x>640</x>
-           <y>16</y>
+           <y>28</y>
            <width>99</width>
            <height>23</height>
           </rect>
@@ -637,8 +638,8 @@ p, li { white-space: pre-wrap; }
         <widget class="QTextEdit" name="textEdit">
          <property name="geometry">
           <rect>
-           <x>20</x>
-           <y>21</y>
+           <x>25</x>
+           <y>27</y>
            <width>441</width>
            <height>141</height>
           </rect>
@@ -664,8 +665,8 @@ p, li { white-space: pre-wrap; }
         <widget class="QPushButton" name="pushButton">
          <property name="geometry">
           <rect>
-           <x>652</x>
-           <y>358</y>
+           <x>636</x>
+           <y>361</y>
            <width>104</width>
            <height>23</height>
           </rect>
@@ -692,7 +693,7 @@ p, li { white-space: pre-wrap; }
         <widget class="QProgressBar" name="engineProgress">
          <property name="geometry">
           <rect>
-           <x>20</x>
+           <x>28</x>
            <y>320</y>
            <width>221</width>
            <height>23</height>
@@ -705,7 +706,7 @@ p, li { white-space: pre-wrap; }
         <widget class="QLabel" name="label">
          <property name="geometry">
           <rect>
-           <x>20</x>
+           <x>28</x>
            <y>350</y>
            <width>121</width>
            <height>16</height>
@@ -715,6 +716,31 @@ p, li { white-space: pre-wrap; }
           <string>Initialising Engine...</string>
          </property>
         </widget>
+        <widget class="QLabel" name="label_2">
+         <property name="geometry">
+          <rect>
+           <x>20</x>
+           <y>24</y>
+           <width>731</width>
+           <height>401</height>
+          </rect>
+         </property>
+         <property name="text">
+          <string/>
+         </property>
+         <property name="pixmap">
+          <pixmap resource="icons.qrc">:/wellcome/Media/wellcome-images/dashboard.png</pixmap>
+         </property>
+        </widget>
+        <zorder>label_2</zorder>
+        <zorder>textEdit_2</zorder>
+        <zorder>textEdit_3</zorder>
+        <zorder>textEdit_4</zorder>
+        <zorder>pushButton_6</zorder>
+        <zorder>textEdit</zorder>
+        <zorder>pushButton</zorder>
+        <zorder>engineProgress</zorder>
+        <zorder>label</zorder>
        </widget>
        <widget class="QWidget" name="rendered">
         <attribute name="icon">
@@ -757,7 +783,7 @@ p, li { white-space: pre-wrap; }
           <bool>false</bool>
          </property>
          <property name="text">
-          <string>...</string>
+          <string>Four View</string>
          </property>
         </widget>
        </item>
@@ -767,7 +793,7 @@ p, li { white-space: pre-wrap; }
           <bool>false</bool>
          </property>
          <property name="text">
-          <string>One</string>
+          <string>One View</string>
          </property>
         </widget>
        </item>
@@ -821,7 +847,7 @@ p, li { white-space: pre-wrap; }
          </property>
          <property name="sizeHint" stdset="0">
           <size>
-           <width>150</width>
+           <width>100</width>
            <height>20</height>
           </size>
          </property>
@@ -1081,9 +1107,6 @@ p, li { white-space: pre-wrap; }
    <property name="text">
     <string>&amp;Import Ogre Mesh</string>
    </property>
-   <property name="shortcut">
-    <string>Ctrl+O</string>
-   </property>
   </action>
   <action name="actionSave">
    <property name="icon">
@@ -1127,7 +1150,7 @@ p, li { white-space: pre-wrap; }
     <string>&amp;Save</string>
    </property>
    <property name="shortcut">
-    <string>Ctrl+Shift+S</string>
+    <string>Ctrl+S</string>
    </property>
   </action>
   <action name="actionSelect">
@@ -1154,13 +1177,16 @@ p, li { white-space: pre-wrap; }
     <string>Move</string>
    </property>
   </action>
-  <action name="actionTranslate">
+  <action name="actionNavigation">
    <property name="icon">
     <iconset resource="icons.qrc">
-     <normaloff>:/actions/Media/icons/move.png</normaloff>:/actions/Media/icons/move.png</iconset>
+     <normaloff>:/actions/Media/icons/arrow32.png</normaloff>:/actions/Media/icons/arrow32.png</iconset>
    </property>
    <property name="text">
-    <string>&amp;Translate</string>
+    <string>&amp;Navigation</string>
+   </property>
+   <property name="toolTip">
+    <string>Navigation</string>
    </property>
   </action>
   <action name="actionCopy">
@@ -1263,6 +1289,10 @@ p, li { white-space: pre-wrap; }
    </property>
   </action>
   <action name="actionWidgets">
+   <property name="icon">
+    <iconset resource="icons.qrc">
+     <normaloff>:/dialogs/Media/icons/Control Panel.png</normaloff>:/dialogs/Media/icons/Control Panel.png</iconset>
+   </property>
    <property name="text">
     <string>&amp;Widgets</string>
    </property>
@@ -1412,6 +1442,9 @@ p, li { white-space: pre-wrap; }
    <property name="text">
     <string>&amp;Open</string>
    </property>
+   <property name="shortcut">
+    <string>Ctrl+O</string>
+   </property>
   </action>
   <action name="actionQuit2">
    <property name="icon">
@@ -1435,8 +1468,21 @@ p, li { white-space: pre-wrap; }
    </property>
   </action>
   <action name="actionAboutQt">
+   <property name="icon">
+    <iconset resource="icons.qrc">
+     <normaloff>:/dialogs/Media/icons/Machine.png</normaloff>:/dialogs/Media/icons/Machine.png</iconset>
+   </property>
    <property name="text">
     <string>About &amp;Qt</string>
+   </property>
+  </action>
+  <action name="actionShowProperties">
+   <property name="icon">
+    <iconset resource="icons.qrc">
+     <normaloff>:/dialogs/Media/icons/Work.png</normaloff>:/dialogs/Media/icons/Work.png</iconset>
+   </property>
+   <property name="text">
+    <string>Properties</string>
    </property>
   </action>
  </widget>
@@ -1481,22 +1527,6 @@ p, li { white-space: pre-wrap; }
     <hint type="destinationlabel">
      <x>485</x>
      <y>303</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>actionFull_Screen</sender>
-   <signal>activated()</signal>
-   <receiver>MainWindow</receiver>
-   <slot>showFullScreen()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>-1</x>
-     <y>-1</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>536</x>
-     <y>388</y>
     </hint>
    </hints>
   </connection>
@@ -1593,6 +1623,38 @@ p, li { white-space: pre-wrap; }
     <hint type="destinationlabel">
      <x>574</x>
      <y>443</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>actionFull_Screen</sender>
+   <signal>triggered()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>showFullScreen()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>574</x>
+     <y>443</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>actionShowProperties</sender>
+   <signal>activated()</signal>
+   <receiver>dockWidget_5</receiver>
+   <slot>show()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>1017</x>
+     <y>458</y>
     </hint>
    </hints>
   </connection>

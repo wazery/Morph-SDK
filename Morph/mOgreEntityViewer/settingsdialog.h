@@ -26,6 +26,18 @@ public slots:
     void gridRenderLayerChanged(int index);
     void gridRenderScaleChanged(bool value);
     
+    void browseDialog();
+    void confDialog();
+    void pluginsDialog();
+    void ogreLogDialog();
+    void morphLogDialog();
+
+    void setOgreLogPath(QString string);
+    void setMorphLogPath(QString string);
+    void setResourcesPath(QString string);
+    void setConfigPath(QString string);
+    void setPluginsPath(QString string);
+
 signals:
    void signalGridDivisionsChanged(int size);
    void signalGridPrespectiveSizeChanged(int size);

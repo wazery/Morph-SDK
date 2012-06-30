@@ -140,6 +140,9 @@ namespace Morph
         void removeObject(Ogre::String name);
         void setSelectEnabled(bool value);
         void setMoveEnabled(bool value);
+        void enableMouseMoveMode(bool value);
+
+        Ogre::MovableObject* getNode(float mouseScreenX, float mouseScreenY);
 
         //Entity
         Ogre::SceneNode* mainNode;
@@ -186,6 +189,7 @@ namespace Morph
         void dropEvent(QDropEvent* e);
 
         Ogre::SceneNode* selecteNode(QPoint point);
+        void selectObjectForEdit(char* idObject, char* type);
 
     protected:
          /** Initialise Ogre Core
@@ -226,6 +230,7 @@ namespace Morph
         void updateStats(void);
 
         // FrameListener overrides
+        //virtual bool frameRenderingQueued(const Ogre::FrameEvent& evt);
         virtual bool frameStarted(const FrameEvent& evt);
         virtual bool frameEnded(const FrameEvent& evt);
 
@@ -249,6 +254,14 @@ namespace Morph
 
         QVBoxLayout *mVerticalLayout;
         Ogre::ColourValue mBackgroundColor;
+        Ogre::RaySceneQuery* mRaySceneQuery;
+
+        int selectedGizmo;
+        Ogre::Vector3 oldpos;
+        Ogre::Vector3 originalPos;
+
+        QSettings* mSettings;
+        QString mSettingsFile;
 
     protected:
         Ogre::Root          *mRoot;

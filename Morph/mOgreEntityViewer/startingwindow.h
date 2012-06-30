@@ -18,6 +18,7 @@ public:
 
 public slots:
     void setShowAgain(bool value);
+    void openEditorGuide();
     
 private:
     Ui::StartingWindow *ui;

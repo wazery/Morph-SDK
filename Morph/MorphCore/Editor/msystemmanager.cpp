@@ -76,6 +76,9 @@ MSystemManager::MSystemManager(QWidget *parent)
     ui->setupUi(this);
 
     mVerticalLayout = new QVBoxLayout(this);
+
+    mSettingsFile = QApplication::applicationDirPath() + "editorSettings";
+    mSettings = new QSettings(mSettingsFile, QSettings::NativeFormat);
 }
 
 MSystemManager::~MSystemManager()
@@ -280,60 +283,195 @@ void MSystemManager::mouseDoubleClick(QMouseEvent *e)
     }
 }
 
+void MSystemManager::enableMouseMoveMode(bool value)
+{
+//    if(value)
+//    {
+//        //move widgets
+//        try
+//        {
+//            //sceneNodes
+//            SceneNode* node = mSceneManager->createSceneNode("move_widget");
+//            SceneNode* node_x = node->createChildSceneNode("move_widget_x");node_x->showBoundingBox(false);
+//            SceneNode* node_y = node->createChildSceneNode("move_widget_y");node_y->showBoundingBox(false);
+//            SceneNode* node_z = node->createChildSceneNode("move_widget_z");node_z->showBoundingBox(false);
+
+//            //node_x->setPosition(node->getPosition());
+//            //node_y->setPosition(node->getPosition());
+//            //node_z->setPosition(node->getPosition());
+
+//            node_x->yaw(Degree(90));
+//            node_y->pitch(Degree(-90));
+//            node_z->pitch(Degree(90));
+
+//            //Materials
+//            MaterialPtr blue = MaterialManager::getSingleton().create("blue_widget",ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME);
+//            blue->setSelfIllumination(0,0,1);
+//            blue->setAmbient(0,0,0);
+//            blue->setSpecular(0,0,0,1);
+//            blue->setDiffuse(0.5,0.5,0.5,1);
+//            MaterialPtr red = MaterialManager::getSingleton().create("red_widget",ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME);
+//            red->setSelfIllumination(1,0,0);
+//            red->setAmbient(0,0,0);
+//            red->setSpecular(0,0,0,1);
+//            red->setDiffuse(0.5,0.5,0.5,1);
+//            MaterialPtr green = MaterialManager::getSingleton().create("green_widget",ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME);
+//            green->setSelfIllumination(0,1,0);
+//            green->setAmbient(0,0,0);
+//            green->setSpecular(0,0,0,1);
+//            green->setDiffuse(0.5,0.5,0.5,1);
+
+//            //Entities
+//            Entity* entityZ = mSceneManager->createEntity("move_widget_z", "moveTool_Z.mesh");
+//            Entity* entityX = mSceneManager->createEntity("move_widget_x", "moveTool_X.mesh");
+//            Entity* entityY = mSceneManager->createEntity("move_widget_y", "moveTool_Y.mesh");
+
+//            MovablePlane* mPlane;
+//            mPlane = new MovablePlane("dummy_plane_x");
+//            mPlane->normal = Vector3::UNIT_Y;
+//            MeshManager::getSingleton().createPlane("dummy_plane_x",ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME,*mPlane, 800, 800, 1, 1, true, 1, 1, 1, Vector3::UNIT_X);
+//            mSceneManager->createEntity( "dummy_plane_x", "dummy_plane_x" );
+//            mSceneManager->getEntity("dummy_plane_x")->setVisible(false);
+
+//            mPlane = new MovablePlane("dummy_plane_z");
+//            mPlane->normal = Vector3::UNIT_X;
+//            MeshManager::getSingleton().createPlane("dummy_plane_z",ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME,*mPlane, 800, 800, 1, 1, true, 1, 1, 1, Vector3::UNIT_Y);
+
+//            mSceneManager->createEntity( "dummy_plane_z", "dummy_plane_z" );
+//            mSceneManager->getEntity("dummy_plane_z")->setVisible(false);
+
+//            mPlane = new MovablePlane("dummy_plane_y");
+//            mPlane->normal = Vector3::UNIT_Z;
+//            MeshManager::getSingleton().createPlane("dummy_plane_y",ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME,*mPlane, 800, 800, 1, 1, true, 1, 1, 1, Vector3::UNIT_Y);
+//            mSceneManager->createEntity( "dummy_plane_y", "dummy_plane_y" );
+//            mSceneManager->getEntity("dummy_plane_y")->setVisible(false);
+
+//            //ZZ arrows
+//            //entityZ->setNormaliseNormals(true);
+//            entityZ->setCastShadows(false);
+//            entityZ->setMaterialName("blue_widget");
+//            node_z->attachObject(entityZ);
+
+//            //XX arrows
+//            //entityX->setNormaliseNormals(true);
+//            entityX->setCastShadows(false);
+//            entityX->setMaterialName("red_widget");
+//            node_x->attachObject(entityX);
+
+//            //YY arrows
+//            //entityY->setNormaliseNormals(true);
+//            entityY->setCastShadows(false);
+//            entityY->setMaterialName("green_widget");
+//            node_y->attachObject(entityY);
+//            update();
+
+//        }
+//        catch(Ogre::Exception e)
+//        {
+//            std::cout << "An exception has occured while creating widgets: " << e.getFullDescription().c_str() << std::endl;
+//            MLogManager::getSingletonPtr()->logOutput("An exception has occured while creating move widgets:" + QString(e.getFullDescription().c_str()), M_ERROR);
+//        }
+//    }
+}
+
 void MSystemManager::mouseMove(QMouseEvent* e)
 {
-    if(mouseMiddleBtn || mouseLeftPressed)
+    if(!mMoveEnabled)
     {
-        QPoint currentPos = e->pos();
-
-        if(mousePos.x() < currentPos.x())
-            mDirection.x = 1;
-        else if(mousePos.x() > currentPos.x())
-            mDirection.x = -1;
-        else
-            mDirection.x = 0;
-
-        if(mousePos.y() < currentPos.y())
-            mDirection.y = -1;
-        else if(mousePos.y() > currentPos.y())
-            mDirection.y = 1;
-        else
-            mDirection.y = 0;
-
-        update();
-        mousePos = currentPos;
-        mDirection = Vector3::ZERO;
-
-        if (mMoveEnabled)
+        if(mouseMiddleBtn || mouseLeftPressed)
         {
-//            Ogre::SceneNode* node = selecteNode(mousePos);
-//            Vector3 vec = node->getPosition();
-//            node->setPosition(mousePos.x(), mousePos.y(), vec.z);
+            QPoint currentPos = e->pos();
+
+            if(mousePos.x() < currentPos.x())
+                mDirection.x = 1;
+            else if(mousePos.x() > currentPos.x())
+                mDirection.x = -1;
+            else
+                mDirection.x = 0;
+
+            if(mousePos.y() < currentPos.y())
+                mDirection.y = -1;
+            else if(mousePos.y() > currentPos.y())
+                mDirection.y = 1;
+            else
+                mDirection.y = 0;
+
+            update();
+            mousePos = currentPos;
+            mDirection = Vector3::ZERO;
         }
-    }
-    if(mouseRightPressed)
-    {
-        QPoint currentPos = e->pos();
+        if(mouseRightPressed)
+        {
+            QPoint currentPos = e->pos();
 
-        if(mousePos.x() < currentPos.x())
-            angleX = -0.01;
-        else if(mousePos.x() > currentPos.x())
-            angleX = 0.01;
-        else
+            if(mousePos.x() < currentPos.x())
+                angleX = -0.01;
+            else if(mousePos.x() > currentPos.x())
+                angleX = 0.01;
+            else
+                angleX = 0.00;
+
+            if(mousePos.y() < currentPos.y())
+                angleY = -0.01;
+            else if(mousePos.y() > currentPos.y())
+                angleY = 0.01;
+            else
+                angleY = 0.00;
+
+            update();
+            mousePos = currentPos;
             angleX = 0.00;
-
-        if(mousePos.y() < currentPos.y())
-            angleY = -0.01;
-        else if(mousePos.y() > currentPos.y())
-            angleY = 0.01;
-        else
             angleY = 0.00;
 
-        update();
-        mousePos = currentPos;
-        angleX = 0.00;
-        angleY = 0.00;
+        }
     }
+    else
+    {
+        for(int i = 0; i < mRenderWindowList.count(); i++)
+        {
+            Ogre::Ray p_MouseRay = mRenderWindowList[i]->getCamera()->getCameraToViewportRay(e->pos().x() / (float)width(), e->pos().y() / (float)height());
+            const AxisAlignedBox& l_AxisAlignedBox = getSelectedNode()->_getWorldAABB();
+            std::pair<bool, Real> l_IntersectResult = p_MouseRay.intersects(l_AxisAlignedBox);
+            if(l_IntersectResult.first)
+            {
+                Vector3 l_Intersection = p_MouseRay.getPoint(l_IntersectResult.second);
+                std::cout<<l_Intersection<<std::endl;
+                getSelectedNode()->setPosition(l_Intersection.x, l_Intersection.y, getSelectedNode()->getPosition().z);
+            }
+
+        }
+        update();
+    }
+}
+
+Ogre::MovableObject* MSystemManager::getNode(float mouseScreenX, float mouseScreenY)
+ {
+//    for(int i = 0; i < mRenderWindowList.count(); i++)
+//    {
+//        Ray mouseRay = mRenderWindowList[i]->getCamera()->getCameraToViewportRay(mouseScreenX, mouseScreenY);
+//        mRaySceneQuery = mSceneManager->createRayQuery(mouseRay);
+//        mRaySceneQuery->setSortByDistance(true);
+//        RaySceneQueryResult& result = mRaySceneQuery->execute();
+
+//        Ogre::MovableObject *closestObject = NULL;
+//        Real closestDistance = 100000;
+
+//        Ogre::RaySceneQueryResult::iterator rayIterator;
+
+//        for(rayIterator = result.begin(); rayIterator != result.end(); rayIterator++ )
+//        {
+//            if ((*rayIterator).movable !=NULL && closestDistance>(*rayIterator).distance && (*rayIterator).movable->getMovableType() != "TerrainMipMap")
+//            {
+//                closestObject = ( *rayIterator ).movable;
+//                closestDistance = ( *rayIterator ).distance;
+//                oldpos = mouseRay.getPoint((*rayIterator).distance);
+//                originalPos = oldpos;
+//            }
+//        }
+
+//        mRaySceneQuery->clearResults();
+//        return closestObject;
+//    }
 }
 
 void MSystemManager::mousePress(QMouseEvent* e)
@@ -347,7 +485,47 @@ void MSystemManager::mousePress(QMouseEvent* e)
     }
     if(e->button() == Qt::MidButton)
         mouseMiddleBtn = true;
+
+    //IF the left mouse button is pressed
+//    if(mouseMiddleBtn && mMoveEnabled)
+//    {
+//        Ogre::MovableObject* nodeM = getNode(e->pos().x()/(float)width(), e->pos().y()/ (float)height());
+
+//        if(nodeM != NULL)
+//        {
+//            Ogre::String name = nodeM->getParentSceneNode()->getName();
+//            char* tmp = const_cast<char*>(name.c_str());
+
+//            if (name=="move_widget_x")
+//            {
+//                nodeM->getParentSceneNode()->attachObject(mSceneManager->getEntity("dummy_plane_x"));
+//                nodeM->getParentSceneNode()->attachObject(mSceneManager->getEntity("dummy_plane_z"));
+//                selectedGizmo=1;
+//            }
+//            else
+//                if (name=="move_widget_y")
+//                {
+//                    nodeM->getParentSceneNode()->attachObject(mSceneManager->getEntity("dummy_plane_x"));
+//                    nodeM->getParentSceneNode()->attachObject(mSceneManager->getEntity("dummy_plane_z"));
+//                    selectedGizmo=2;
+//                }
+//                else
+//                    if (name=="move_widget_z")
+//                    {
+//                        nodeM->getParentSceneNode()->attachObject(mSceneManager->getEntity("dummy_plane_x"));
+//                        nodeM->getParentSceneNode()->attachObject(mSceneManager->getEntity("dummy_plane_z"));
+//                        selectedGizmo=3;
+//                    }
+//                    else
+//                        selectObjectForEdit(tmp,"move_widget");
+//        }
+//    }
 }
+
+void MSystemManager::selectObjectForEdit(char* idObject, char* type)
+ {
+
+ }
 
 void MSystemManager::mouseRelease(QMouseEvent* e)
 {
@@ -386,7 +564,7 @@ void MSystemManager::update()
 
 bool MSystemManager::initialise()
 {      
-    mRoot = OGRE_NEW Ogre::Root();
+    mRoot = OGRE_NEW Ogre::Root(mSettings->value("Editor/pluginsPath").toString().toStdString(), mSettings->value("Editor/configurationPath").toString().toStdString(), mSettings->value("Editor/ogreLogPath").toString().toStdString());
 
     // Logging Ogre messages to the editors logging listeners.
     MOgreLogProxy* log = new MOgreLogProxy();
@@ -394,7 +572,7 @@ bool MSystemManager::initialise()
 
     Ogre::RenderSystem* renderSystem = mRoot->getRenderSystemByName("OpenGL Rendering Subsystem");
     mRoot->setRenderSystem(renderSystem);
-    mRoot->getRenderSystem()->setConfigOption("Full Screen", "Yes");
+    mRoot->getRenderSystem()->setConfigOption("Full Screen", "No");
 
     // Initialize the system, but don't create a render window.
     mRoot->initialise(false);
@@ -470,7 +648,7 @@ void MSystemManager::addResourceLocations()
 {
     // Load resource paths from config file
     ConfigFile cf;
-    cf.load("resources.cfg");
+    cf.load(mSettings->value("Editor/resourcesPath").toString().toStdString());
 
     // Go through all sections & settings in the file
     ConfigFile::SectionIterator seci = cf.getSectionIterator();
@@ -546,21 +724,18 @@ void MSystemManager::createGrid(MOgreCanvas* renderWindowList, int index)
 {
     mGridList.append(new ViewportGrid(mSceneManager, renderWindowList->getViewport()));
 
-    QString settingsFile = QApplication::applicationDirPath() + "editorSettings";
-    QSettings* settings = new QSettings(settingsFile, QSettings::NativeFormat);
-
     Ogre::ColourValue ogreColor;
-    ogreColor.setAsARGB(QColor(settings->value("Grid/gridColor").toString()).rgba());
+    ogreColor.setAsARGB(QColor(mSettings->value("Grid/gridColor").toString()).rgba());
     mGridList[index]->setColour(ogreColor);
-    mGridList[index]->setPerspectiveSize(settings->value("Grid/gridPrespectiveSize").toInt());
+    mGridList[index]->setPerspectiveSize(mSettings->value("Grid/gridPrespectiveSize").toInt());
 
-    if(settings->value("Grid/gridRenderLayer").toInt() == 0)
+    if(mSettings->value("Grid/gridRenderLayer").toInt() == 0)
         mGridList[index]->setRenderLayer(ViewportGrid::RL_BEHIND);
     else
         mGridList[index]->setRenderLayer(ViewportGrid::RL_INFRONT);
 
     renderWindowList->hasGrid = true;
-    mGridList[index]->setEnabled(settings->value("Grid/grid").toBool());
+    mGridList[index]->setEnabled(mSettings->value("Grid/grid").toBool());
     mGridList[index]->setDivision(30);
 }
 
@@ -707,28 +882,28 @@ void MSystemManager::updateMaterial()
 
 void MSystemManager::setAnimationState(Ogre::String name)
 {
-    if(mainEntAnim != NULL){
-        mainEntAnim->setLoop(false);
-        mainEntAnim->setEnabled(false);
-    }
-    mainEntAnim = mainEnt->getAnimationState(name);
-    mainEntAnim->setLoop(false);
-    if(isLoopOn)
-        mainEntAnim->setLoop(true);
-    if(isAnimEnabled)
-        mainEntAnim->setEnabled(true);
+//    if(mainEntAnim != NULL){
+//        mainEntAnim->setLoop(false);
+//        mainEntAnim->setEnabled(false);
+//    }
+//    mainEntAnim = mainEnt->getAnimationState(name);
+//    mainEntAnim->setLoop(false);
+//    if(isLoopOn)
+//        mainEntAnim->setLoop(true);
+//    if(isAnimEnabled)
+//        mainEntAnim->setEnabled(true);
 }
 
 void MSystemManager::setAnimLoop(bool enable)
 {
-    mainEntAnim->setLoop(enable);
-    isLoopOn = enable;
+//    mainEntAnim->setLoop(enable);
+//    isLoopOn = enable;
 }
 
 void MSystemManager::setAnimEnabled(bool enable)
 {
-    mainEntAnim->setEnabled(enable);
-    isAnimEnabled = enable;
+//    mainEntAnim->setEnabled(enable);
+//    isAnimEnabled = enable;
 }
 
 void MSystemManager::createPointLight(Ogre::String name, String xPos, String yPos, String zPos, String diffuse, String specular)
@@ -934,7 +1109,7 @@ void MSystemManager::createFrameListener()
 //   mDebugOverlay = OverlayManager::getSingleton().getByName("Core/DebugOverlay");
 //   mDebugOverlay->show();
 
-   //mRoot->getSingletonPtr()->addFrameListener(this);
+   mRoot->getSingletonPtr()->addFrameListener(this);
 }
 
 void MSystemManager::updateStats(void)

@@ -1,3 +1,5 @@
+#include <QDesktopServices>
+#include <QUrl>
 #include "startingwindow.h"
 #include "ui_startingwindow.h"
 
@@ -16,6 +18,7 @@ StartingWindow::StartingWindow(QWidget *parent) :
     ui->showAgain->setChecked(mSettings->value("StartingWindow/startingWindow").toBool());
 
     connect(ui->showAgain, SIGNAL(clicked(bool)), this, SLOT(setShowAgain(bool)));
+    connect(ui->toolButton, SIGNAL(clicked()), this, SLOT(openEditorGuide()));
 }
 
 StartingWindow::~StartingWindow()
@@ -26,4 +29,11 @@ StartingWindow::~StartingWindow()
 void StartingWindow::setShowAgain(bool value)
 {
     mSettings->setValue("StartingWindow/startingWindow", value);
+}
+
+void StartingWindow::openEditorGuide()
+{
+    QUrl url;
+    url.setUrl("file:///home/wazery/source-codes/Morph-SDK/Desktop/Turn%20Off%20the%20Lights%20-%20Chrome%20Extension.htm");
+    QDesktopServices::openUrl(url);
 }
